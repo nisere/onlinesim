@@ -5,7 +5,7 @@ import java.util.List;
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.Vm;
 
-public interface MySchedulingAlgorithm {
+public interface SchedulingAlgorithm {
 
 	/** Creates the schedule. */
 	void computeSchedule(List<? extends Cloudlet> cloudletList,

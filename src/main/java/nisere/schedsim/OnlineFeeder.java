@@ -7,11 +7,11 @@ import org.cloudbus.cloudsim.UtilizationModel;
 import org.cloudbus.cloudsim.UtilizationModelFull;
 import org.cloudbus.cloudsim.distributions.UniformDistr;
 
-public class MyOnlineFeeder implements Runnable {
+public class OnlineFeeder implements Runnable {
 
-	private MyOnlineQueue queue;
+	private OnlineQueue queue;
 
-	public MyOnlineFeeder(MyOnlineQueue myOnlineQueue) {
+	public OnlineFeeder(OnlineQueue myOnlineQueue) {
 		this.queue = myOnlineQueue;
 	}
 	

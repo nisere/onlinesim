@@ -3,12 +3,12 @@ package nisere.schedsim.algorithm;
 import java.util.ArrayList;
 import java.util.List;
 
-import nisere.schedsim.MySchedulingAlgorithm;
+import nisere.schedsim.SchedulingAlgorithm;
 
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.Vm;
 
-public class MinMinAlgorithm implements MySchedulingAlgorithm {
+public class MinMinAlgorithm implements SchedulingAlgorithm {
 	/** Processor workload. */
 	protected double[] workload;
 

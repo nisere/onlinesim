@@ -26,7 +26,7 @@ import org.cloudbus.cloudsim.lists.VmList;
 public class MyDatacenterBroker extends DatacenterBroker {
 
 	/** The algorithm used for scheduling. */
-	private MySchedulingAlgorithm algorithm;
+	private SchedulingAlgorithm algorithm;
 
 	/**
 	 * Created a new MyDatacenterBroker object.
@@ -45,7 +45,7 @@ public class MyDatacenterBroker extends DatacenterBroker {
 	 * 
 	 * @return the scheduling algorithm
 	 */
-	public MySchedulingAlgorithm getAlgorithm() {
+	public SchedulingAlgorithm getAlgorithm() {
 		return algorithm;
 	}
 
@@ -55,7 +55,7 @@ public class MyDatacenterBroker extends DatacenterBroker {
 	 * @param algorithm
 	 *            the scheduling algorithm
 	 */
-	public void setAlgorithm(MySchedulingAlgorithm algorithm) {
+	public void setAlgorithm(SchedulingAlgorithm algorithm) {
 		this.algorithm = algorithm;
 	}
 
@@ -72,7 +72,7 @@ public class MyDatacenterBroker extends DatacenterBroker {
 			return;
 		}
 
-		MySchedulingAlgorithm algorithm = getAlgorithm();
+		SchedulingAlgorithm algorithm = getAlgorithm();
 		algorithm.computeSchedule(getCloudletList(), getVmList());
 
 		int vmIndex = 0;

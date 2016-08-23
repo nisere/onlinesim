@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.cloudbus.cloudsim.Cloudlet;
 
-public class MyOnlineQueue implements Runnable {
+public class OnlineQueue implements Runnable {
 	protected final Object lock = new Object();
 	
 	private LinkedList<Cloudlet> cloudlets;
