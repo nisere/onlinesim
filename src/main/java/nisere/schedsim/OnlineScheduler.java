@@ -7,7 +7,7 @@ import java.util.TimerTask;
 
 import org.cloudbus.cloudsim.Datacenter;
 
-public class OnlineScheduler implements Runnable {
+public class OnlineScheduler extends TimerTask {
 
 	private OnlineQueue queue;
 	
@@ -53,7 +53,6 @@ public class OnlineScheduler implements Runnable {
 		}
 	}
 
-	protected ScheduledTask task;
 	protected Timer timer;
 
 	public OnlineScheduler(OnlineQueue queue, 
@@ -69,38 +68,22 @@ public class OnlineScheduler implements Runnable {
 		initializeTimer();
 	}
 	
-	private void initializeTimer() {
+	protected void initializeTimer() {
 		this.timer =  new Timer();
-		this.task = new ScheduledTask(this.queue);
-		this.timer.schedule(this.task, 1000, 1000);
+		this.timer.schedule(this, 0, 1000);
 	}
 
-	protected class ScheduledTask extends TimerTask {
-		protected OnlineQueue queue;
-		
-		public ScheduledTask(OnlineQueue queue) {
-			this.queue = queue;
-		}
-		
-		@Override
-		public void run() {
-			getCloudlets();
-			//scheduleCloudlets();
-		}
-
-		protected void getCloudlets() {
-			System.out.format("Scheduler: %s%n", this.queue.getCloudletsNo());
-			
-		}		
-	}
 
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
 		//while(true)
-		//getCloudlets();
+		getCloudlets();
 		//scheduleCloudlets();
 	}
 
-	
+	protected void getCloudlets() {
+		System.out.format("Scheduler: %s%n", this.queue.getCloudletsNo());
+		
+	}	
 }
