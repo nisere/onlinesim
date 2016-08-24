@@ -68,60 +68,13 @@ public class OnlineMain {
 			
 			
 			//-----------------------------------
-			List<Vm> vmlist = new ArrayList<Vm>();
-
-			int brokerId = broker.getId();
-			// Fourth step: Create virtual machines
-			vmlist = new ArrayList<Vm>();
-
-			// VM description
-			int vmid = 0;
-			int mips = 1000;
-			long size = 10000; // image size (MB)
-			int ram = 512; // vm memory (MB)
-			long bw = 1000;
-			int pesNumber = 1; // number of cpus
-			String vmm = "Xen"; // VMM name
-
-			UniformDistr mipsUnif = new UniformDistr(minMipsUnif, maxMipsUnif,
-					seed);
-
-			// add noVms VMs
-			for (int i = 0; i < noVms; i++) {
-				int mult = (int) mipsUnif.sample();
-				vmlist.add(new Vm(vmid++, brokerId, mips * mult, pesNumber,
-						ram, bw, size, vmm, new CloudletSchedulerSpaceShared()));
-			}
-
 			// submit vm list to the broker
-			broker.submitVmList(vmlist);
+			broker.submitVmList(createRandomVms(broker.getId(),noVms,minMipsUnif, maxMipsUnif, seed));
 			//------------------------
 			
-			// Fifth step: Create Cloudlets
-			ArrayList<Cloudlet> cloudletList = new ArrayList<Cloudlet>();
-
-			// Cloudlet properties
-			int id = 0;
-			pesNumber = 1;
-			//long length = 250000;
-			long fileSize = 0;
-			long outputSize = 0;
-			UtilizationModel utilizationModel = new UtilizationModelFull();
-
-			UniformDistr lengthUnif = new UniformDistr(minLengthUnif,
-					maxLengthUnif, seed);
-
-			// add noCloudlets cloudlets
-			for (int i = 0; i < noCloudlets; i++) {
-				int randomLength = (int) lengthUnif.sample();
-				Cloudlet cloudlet = new Cloudlet(id++, randomLength, pesNumber,
-						fileSize, outputSize, utilizationModel,
-						utilizationModel, utilizationModel);
-				cloudlet.setUserId(brokerId);
-				cloudletList.add(cloudlet);
-			}
+			//broker.submitCloudletList(createRandomCloudlets(broker.getId(),noCloudlets,minLengthUnif, maxLengthUnif, seed));
 			
-			queue.addCloudletAll(cloudletList);
+			queue.addCloudletAll(createRandomCloudlets(broker.getId(),noCloudlets,minLengthUnif, maxLengthUnif, seed));
 			//-------------------------
 			
 			queue.run();
@@ -269,6 +222,62 @@ public class OnlineMain {
 			Log.print(counter[i] + ",");
 		}
 		Log.printLine();
+	}
+	
+	private static List<Vm> createRandomVms(int brokerId, int noVms, int minMipsUnif, int maxMipsUnif,
+			int seed) {
+		List<Vm> vmlist = new ArrayList<Vm>();
+
+		// Fourth step: Create virtual machines
+		vmlist = new ArrayList<Vm>();
+
+		// VM description
+		int vmid = 0;
+		int mips = 1000;
+		long size = 10000; // image size (MB)
+		int ram = 512; // vm memory (MB)
+		long bw = 1000;
+		int pesNumber = 1; // number of cpus
+		String vmm = "Xen"; // VMM name
+
+		UniformDistr mipsUnif = new UniformDistr(minMipsUnif, maxMipsUnif,
+				seed);
+
+		// add noVms VMs
+		for (int i = 0; i < noVms; i++) {
+			int mult = (int) mipsUnif.sample();
+			vmlist.add(new Vm(vmid++, brokerId, mips * mult, pesNumber,
+					ram, bw, size, vmm, new CloudletSchedulerSpaceShared()));
+		}
+		return vmlist;
+	}
+	
+	private static List<Cloudlet> createRandomCloudlets(int brokerId, int noCloudlets, int minLengthUnif, int maxLengthUnif,
+			int seed) {
+		// Fifth step: Create Cloudlets
+		ArrayList<Cloudlet> cloudletList = new ArrayList<Cloudlet>();
+
+		// Cloudlet properties
+		int id = 0;
+		int pesNumber = 1;
+		//long length = 250000;
+		long fileSize = 0;
+		long outputSize = 0;
+		UtilizationModel utilizationModel = new UtilizationModelFull();
+
+		UniformDistr lengthUnif = new UniformDistr(minLengthUnif,
+				maxLengthUnif, seed);
+
+		// add noCloudlets cloudlets
+		for (int i = 0; i < noCloudlets; i++) {
+			int randomLength = (int) lengthUnif.sample();
+			Cloudlet cloudlet = new Cloudlet(id++, randomLength, pesNumber,
+					fileSize, outputSize, utilizationModel,
+					utilizationModel, utilizationModel);
+			cloudlet.setUserId(brokerId);
+			cloudletList.add(cloudlet);
+		}
+		return cloudletList;
 	}
 	
 }

@@ -9,6 +9,19 @@ public class MyCloudlet extends Cloudlet {
 	 * must be completed. A value of 0 means there is no deadline.
 	 */
 	private int deadline;
+	
+	/**
+	 * The delay from the start of the simulation when this cloudlet was received.
+	 */
+	private int delay;
+
+	public int getDelay() {
+		return delay;
+	}
+
+	public void setDelay(int delay) {
+		this.delay = delay;
+	}
 
 	/**
 	 * Allocates a MyCloudlet object.
