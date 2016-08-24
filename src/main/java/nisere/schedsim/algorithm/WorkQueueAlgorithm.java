@@ -1,27 +1,26 @@
 package nisere.schedsim.algorithm;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
-
-import nisere.schedsim.SchedulingAlgorithm;
 
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.Vm;
 
-public class WorkQueueAlgorithm implements SchedulingAlgorithm {
+public class WorkQueueAlgorithm extends SchedulingAlgorithm {
 	/** Processor workload. */
 	protected double[] workload;
 
-	/** List of scheduled cloudlets. */
-	protected List<Cloudlet> cloudletScheduledList;
-
+	@Override
+	protected void initCloudletScheduledList() {
+		setCloudletScheduledList(new LinkedList<Cloudlet>());
+	}
+	
 	/**
 	 * Creates the schedule with WorkQueue algorithm.
 	 */
 	public void computeSchedule(List<? extends Cloudlet> cloudletList,
 			List<? extends Vm> vmList) {
 		workload = new double[vmList.size()];
-		cloudletScheduledList = new ArrayList<Cloudlet>();
 		boolean isNotScheduled = true;
 		int randomId = 0;
 		while (isNotScheduled && randomId < cloudletList.size()) {
@@ -46,22 +45,12 @@ public class WorkQueueAlgorithm implements SchedulingAlgorithm {
 			if (min >= 0) {
 				// schedule cloudlet on VM with min workload
 				cloudlet.setVmId(minVmId);
-				cloudletScheduledList.add(cloudlet);
+				getCloudletScheduledList().add(cloudlet);
 				workload[minVmId] += cloudlet.getCloudletLength()
 						/ vmList.get(minVmId).getMips();
 			} else {
 				isNotScheduled = false;
 			}
 		}
-	}
-
-	/**
-	 * Gets the list of scheduled cloudlets.
-	 * 
-	 * @return the list of scheduled cloudlets
-	 */
-	public List<? extends Cloudlet> getCloudletScheduledList() {
-
-		return cloudletScheduledList;
 	}
 }

@@ -8,6 +8,11 @@
 
 package nisere.schedsim;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import nisere.schedsim.algorithm.SchedulingAlgorithm;
+
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.DatacenterBroker;
 import org.cloudbus.cloudsim.Log;
@@ -76,6 +81,7 @@ public class MyDatacenterBroker extends DatacenterBroker {
 		algorithm.computeSchedule(getCloudletList(), getVmList());
 
 		int vmIndex = 0;
+		List<Cloudlet> successfullySubmitted = new ArrayList<Cloudlet>();
 		for (Cloudlet cloudlet : algorithm.getCloudletScheduledList()) {
 			Vm vm;
 			// if user didn't bind this cloudlet and it has not been executed
@@ -102,11 +108,13 @@ public class MyDatacenterBroker extends DatacenterBroker {
 			cloudletsSubmitted++;
 			vmIndex = (vmIndex + 1) % getVmsCreatedList().size();
 			getCloudletSubmittedList().add(cloudlet);
+			//algorithm.getCloudletScheduledList().remove(cloudlet);
+			successfullySubmitted.add(cloudlet);
 		}
-
-		// remove submitted cloudlets from waiting list
-		for (Cloudlet cloudlet : getCloudletSubmittedList()) {
-			algorithm.getCloudletScheduledList().remove(cloudlet);
+		
+		for (Cloudlet cloudlet : algorithm.getCloudletScheduledList()) {
+			//algorithm.getCloudletScheduledList().remove(cloudlet);
+			algorithm.getCloudletScheduledList().removeAll(successfullySubmitted);
 		}
 	}
 

@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import nisere.schedsim.algorithm.SchedulingAlgorithm;
+
 import org.cloudbus.cloudsim.Datacenter;
 
 public class OnlineScheduler extends TimerTask {
@@ -78,7 +80,7 @@ public class OnlineScheduler extends TimerTask {
 	public void run() {
 		// TODO Auto-generated method stub
 		//while(true)
-		getCloudlets();
+		getCloudlets();//removes from queue
 		//scheduleCloudlets();
 	}
 

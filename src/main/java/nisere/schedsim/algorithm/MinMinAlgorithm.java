@@ -1,27 +1,25 @@
 package nisere.schedsim.algorithm;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
-
-import nisere.schedsim.SchedulingAlgorithm;
 
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.Vm;
 
-public class MinMinAlgorithm implements SchedulingAlgorithm {
+public class MinMinAlgorithm extends SchedulingAlgorithm {
 	/** Processor workload. */
 	protected double[] workload;
 
-	/** List of scheduled cloudlets. */
-	protected List<Cloudlet> cloudletScheduledList;
-
+	@Override
+	protected void initCloudletScheduledList() {
+		setCloudletScheduledList(new LinkedList<Cloudlet>());
+	}
 	/**
 	 * Creates the schedule with MinMin algorithm.
 	 */
 	public void computeSchedule(List<? extends Cloudlet> cloudletList,
 			List<? extends Vm> vmList) {
 		workload = new double[vmList.size()];
-		cloudletScheduledList = new ArrayList<Cloudlet>();
 		boolean isNotScheduled = true;
 		while (isNotScheduled) {
 			Cloudlet minCloudlet = null;
@@ -48,20 +46,10 @@ public class MinMinAlgorithm implements SchedulingAlgorithm {
 			if (min >= 0) {
 				minCloudlet.setVmId(minVmId);
 				workload[minVmId] = min;
-				cloudletScheduledList.add(minCloudlet);
+				getCloudletScheduledList().add(minCloudlet);
 			} else {
 				isNotScheduled = false;
 			}
 		}
-	}
-
-	/**
-	 * Gets the list of scheduled cloudlets.
-	 * 
-	 * @return the list of scheduled cloudlets
-	 */
-	public List<? extends Cloudlet> getCloudletScheduledList() {
-
-		return cloudletScheduledList;
 	}
 }

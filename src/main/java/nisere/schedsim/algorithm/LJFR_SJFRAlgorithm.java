@@ -1,19 +1,19 @@
 package nisere.schedsim.algorithm;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
-
-import nisere.schedsim.SchedulingAlgorithm;
 
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.Vm;
 
-public class LJFR_SJFRAlgorithm implements SchedulingAlgorithm {
+public class LJFR_SJFRAlgorithm extends SchedulingAlgorithm {
 	/** Processor workload. */
 	protected double[] workload;
 
-	/** List of scheduled cloudlets. */
-	protected List<Cloudlet> cloudletScheduledList;
+	@Override
+	protected void initCloudletScheduledList() {
+		setCloudletScheduledList(new LinkedList<Cloudlet>());
+	}
 
 	/**
 	 * Creates the schedule with LJFR_SJFR algorithm.
@@ -21,7 +21,7 @@ public class LJFR_SJFRAlgorithm implements SchedulingAlgorithm {
 	public void computeSchedule(List<? extends Cloudlet> cloudletList,
 			List<? extends Vm> vmList) {
 		workload = new double[vmList.size()];
-		cloudletScheduledList = new ArrayList<Cloudlet>();
+		//cloudletScheduledList = new ArrayList<Cloudlet>();
 		boolean isNotScheduled = true;
 
 		// first noVms cloudlets are scheduled with MaxMin
@@ -62,7 +62,7 @@ public class LJFR_SJFRAlgorithm implements SchedulingAlgorithm {
 			if (max >= 0) {
 				maxCloudlet.setVmId(maxVmId);
 				workload[maxVmId] = max;
-				cloudletScheduledList.add(maxCloudlet);
+				getCloudletScheduledList().add(maxCloudlet);
 			} else {
 				isNotScheduled = false;
 			}
@@ -94,7 +94,7 @@ public class LJFR_SJFRAlgorithm implements SchedulingAlgorithm {
 			if (minmin >= 0) {
 				minminCloudlet.setVmId(minminVmId);
 				workload[minminVmId] = minmin;
-				cloudletScheduledList.add(minminCloudlet);
+				getCloudletScheduledList().add(minminCloudlet);
 			} else {
 				isNotScheduled = false;
 			}
@@ -136,20 +136,10 @@ public class LJFR_SJFRAlgorithm implements SchedulingAlgorithm {
 			if (max >= 0) {
 				maxCloudlet.setVmId(maxVmId);
 				workload[maxVmId] = max;
-				cloudletScheduledList.add(maxCloudlet);
+				getCloudletScheduledList().add(maxCloudlet);
 			} else {
 				isNotScheduled = false;
 			}
 		}
-	}
-
-	/**
-	 * Gets the list of scheduled cloudlets.
-	 * 
-	 * @return the list of scheduled cloudlets
-	 */
-	public List<? extends Cloudlet> getCloudletScheduledList() {
-
-		return cloudletScheduledList;
 	}
 }
