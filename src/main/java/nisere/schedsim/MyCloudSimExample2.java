@@ -15,12 +15,14 @@ import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
+import nisere.schedsim.algorithm.SchedulingAlgorithm;
 import nisere.schedsim.algorithm.WorkQueueAlgorithm;
 
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.CloudletSchedulerSpaceShared;
 import org.cloudbus.cloudsim.CloudletSchedulerTimeShared;
 import org.cloudbus.cloudsim.Datacenter;
+import org.cloudbus.cloudsim.DatacenterBroker;
 import org.cloudbus.cloudsim.DatacenterCharacteristics;
 import org.cloudbus.cloudsim.Host;
 import org.cloudbus.cloudsim.Log;
@@ -91,7 +93,7 @@ public class MyCloudSimExample2 {
 			Datacenter datacenter0 = createDatacenter("Datacenter_0", noVms);
 
 			// Third step: Create Broker
-			MyDatacenterBroker broker = createBroker();
+			DatacenterBroker broker = createBroker();
 			int brokerId = broker.getId();
 
 			// Fourth step: Create virtual machines
@@ -143,12 +145,15 @@ public class MyCloudSimExample2 {
 				cloudletList.add(cloudlet);
 			}
 
-			// submit cloudlet list to the broker
-			broker.submitCloudletList(cloudletList);
 
 			// //use scheduler to bind cloudlets to VM
 			// broker.computeSchedule();
-			broker.setAlgorithm(new WorkQueueAlgorithm());
+			//broker.setAlgorithm(new WorkQueueAlgorithm());
+			SchedulingAlgorithm algorithm = new WorkQueueAlgorithm();
+			algorithm.computeSchedule(cloudletList, vmlist);
+			
+			// submit cloudlet list to the broker
+			broker.submitCloudletList(algorithm.getCloudletScheduledList());
 
 			// Sixth step: Starts the simulation
 			CloudSim.startSimulation();
@@ -239,11 +244,11 @@ public class MyCloudSimExample2 {
 	// We strongly encourage users to develop their own broker policies, to
 	// submit vms and cloudlets according
 	// to the specific rules of the simulated scenario
-	private static MyDatacenterBroker createBroker() {
+	private static DatacenterBroker createBroker() {
 
-		MyDatacenterBroker broker = null;
+		DatacenterBroker broker = null;
 		try {
-			broker = new MyDatacenterBroker("MyBroker");
+			broker = new DatacenterBroker("MyBroker");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

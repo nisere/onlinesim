@@ -1,17 +1,22 @@
 package nisere.schedsim;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import nisere.schedsim.algorithm.SchedulingAlgorithm;
 
 import org.cloudbus.cloudsim.Datacenter;
+import org.cloudbus.cloudsim.DatacenterBroker;
 
 public class OnlineScheduler extends TimerTask {
 
 	private OnlineQueue queue;
+	private HashMap<String,Datacenter> datacenters;
+	private DatacenterBroker broker;
+	private SchedulingAlgorithm algorithm;
+
+	protected Timer timer;
 	
 	public OnlineQueue getQueue() {
 		return queue;
@@ -21,10 +26,6 @@ public class OnlineScheduler extends TimerTask {
 		this.queue = queue;
 	}
 
-	private HashMap<String,Datacenter> datacenters;
-	private MyDatacenterBroker broker;
-	private SchedulingAlgorithm algorithm;
-	
 	public SchedulingAlgorithm getAlgorithm() {
 		return algorithm;
 	}
@@ -33,11 +34,11 @@ public class OnlineScheduler extends TimerTask {
 		this.algorithm = algorithm;
 	}
 
-	public MyDatacenterBroker getBroker() {
+	public DatacenterBroker getBroker() {
 		return broker;
 	}
 
-	public void setBroker(MyDatacenterBroker broker) {
+	public void setBroker(DatacenterBroker broker) {
 		this.broker = broker;
 	}
 
@@ -55,17 +56,14 @@ public class OnlineScheduler extends TimerTask {
 		}
 	}
 
-	protected Timer timer;
-
-	public OnlineScheduler(OnlineQueue queue, 
+	public OnlineScheduler(HashMap<String,Datacenter> datacenters,
+			OnlineQueue queue, 
 			SchedulingAlgorithm algorithm,
-			HashMap<String,Datacenter> datacenters,
-			MyDatacenterBroker broker) throws Exception {
-		this.queue = (queue == null ? new OnlineQueue() : queue);
+			DatacenterBroker broker) throws Exception {
+		this.datacenters = datacenters;
+		this.queue = queue;
 		this.algorithm = algorithm;
-		this.datacenters = (datacenters == null ? new HashMap<String,Datacenter>() : datacenters);
-		this.broker = (broker == null ? new MyDatacenterBroker("MyBroker") : broker);
-		this.broker.setAlgorithm(algorithm);
+		this.broker = broker;
 		
 		initializeTimer();
 	}
@@ -78,10 +76,20 @@ public class OnlineScheduler extends TimerTask {
 
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
-		//while(true)
+
 		getCloudlets();//removes from queue
-		//scheduleCloudlets();
+		scheduleCloudlets();
+		submitCloudlets();
+	}
+
+	private void submitCloudlets() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void scheduleCloudlets() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	protected void getCloudlets() {

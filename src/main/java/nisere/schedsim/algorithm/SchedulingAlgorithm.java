@@ -6,7 +6,6 @@ import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.Vm;
 
 public abstract class SchedulingAlgorithm {
-	
 
 	/** List of scheduled cloudlets. */
 	private List<? extends Cloudlet> cloudletScheduledList;
@@ -26,10 +25,10 @@ public abstract class SchedulingAlgorithm {
 		initCloudletScheduledList();
 	}
 
-	public synchronized void addCloudletToScheduledList(Cloudlet cloudlet) {
-		
-	}
-	
+//	public synchronized void addCloudletToScheduledList(Cloudlet cloudlet) {
+//		
+//	}
+//	
 	
 	/** Creates the schedule. */
 	public abstract void computeSchedule(List<? extends Cloudlet> cloudletList,
