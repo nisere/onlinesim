@@ -18,7 +18,7 @@ public class OnlineFeeder implements Runnable {
 	public void run() {
 		try {
 			while(true) {
-				Thread.sleep(1500);
+				Thread.sleep(15000);
 			
 				System.out.println("Feeder: adding a cloudlet");
 				this.queue.addCloudlet(new Cloudlet(0, 0, 0, 0, 0, null, null, null));

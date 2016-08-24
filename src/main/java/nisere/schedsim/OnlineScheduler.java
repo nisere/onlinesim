@@ -1,13 +1,16 @@
 package nisere.schedsim;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import nisere.schedsim.algorithm.SchedulingAlgorithm;
 
+import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.Datacenter;
 import org.cloudbus.cloudsim.DatacenterBroker;
+import org.cloudbus.cloudsim.Vm;
 
 public class OnlineScheduler extends TimerTask {
 
@@ -70,30 +73,32 @@ public class OnlineScheduler extends TimerTask {
 	
 	protected void initializeTimer() {
 		this.timer =  new Timer();
-		this.timer.schedule(this, 0, 1000);
+		this.timer.schedule(this, 0, 2000);
 	}
 
 
 	@Override
 	public void run() {
-
-		getCloudlets();//removes from queue
-		scheduleCloudlets();
-		submitCloudlets();
+		List<Cloudlet> cloudlets = getCloudlets();
+		List<Cloudlet> scheduledCloudlets = scheduleCloudlets(cloudlets, getBroker().getVmList());
+		submitCloudlets(scheduledCloudlets);
 	}
 
-	private void submitCloudlets() {
-		// TODO Auto-generated method stub
-		
+	protected void submitCloudlets(List<Cloudlet> cloudlets) {
+		getBroker().submitCloudletList(cloudlets);
 	}
 
-	private void scheduleCloudlets() {
-		// TODO Auto-generated method stub
-		
+	protected List<Cloudlet> scheduleCloudlets(List<Cloudlet> cloudlets, List<Vm> vms) {
+		getAlgorithm().computeSchedule(cloudlets, vms);
+		return algorithm.getCloudletScheduledList();
 	}
 
-	protected void getCloudlets() {
-		System.out.format("Scheduler: %s%n", this.queue.getCloudletsNo());
+	protected List<Cloudlet> getCloudlets() {
 		
+		int no = getQueue().getCloudletsNo();
+		System.out.format("Scheduler: %s%n", no);
+		List<Cloudlet> cloudlets = getQueue().getNCloudlets(no);
+		
+		return cloudlets;
 	}	
 }

@@ -2,6 +2,7 @@ package nisere.schedsim;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import org.cloudbus.cloudsim.Cloudlet;
 
@@ -9,6 +10,7 @@ public class OnlineQueue implements Runnable {
 	protected final Object lock = new Object();
 	
 	private LinkedList<Cloudlet> cloudlets;
+	//private LinkedList<Cloudlet> bufferedCloudlets;
 	
 	protected LinkedList<Cloudlet> getCloudlets() {
 		if (cloudlets == null) {
@@ -20,6 +22,12 @@ public class OnlineQueue implements Runnable {
 	public void addCloudlet(Cloudlet cloudlet) {
 		synchronized (lock) {
 			getCloudlets().add(cloudlet);
+		}
+	}
+	
+	public void addCloudletAll(List<Cloudlet> cloudlets) {
+		synchronized (lock) {
+			getCloudlets().addAll(cloudlets);
 		}
 	}
 	
@@ -45,5 +53,15 @@ public class OnlineQueue implements Runnable {
 		return cloudlets;
 	}
 
-	public void run() {}
+	public void run() {
+//		try{
+//			Random rand = new Random();
+//			while (true) {
+//				int n = rand.nextInt(1000);
+//				Thread.sleep(n);
+//			}
+//		} catch (InterruptedException e) {
+//			System.out.println("Queue interrupted !!!");
+//		}
+	}
 }
