@@ -34,7 +34,7 @@ import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
 public class OnlineMainTest {
 
 	public static void main(String[] args) {
-		int noCloudlets = 10;
+		int noCloudlets = 4;
 		int noVms = 2;
 		// generate [minMipsUnif;maxMipsUnif) and multiply with 1000 to get
 		// mips
@@ -44,7 +44,7 @@ public class OnlineMainTest {
 		int minLengthUnif = 100000;
 		int maxLengthUnif = 200000;
 		int seed = 9;
-		long delayInterval = 1000;
+		long delayInterval = 400;
 		int intervals = 2;
 		
 		try {
@@ -196,15 +196,17 @@ public class OnlineMainTest {
 		UniformDistr lengthUnif = new UniformDistr(minLengthUnif,
 				maxLengthUnif, seed);
 
-		// add noCloudlets cloudlets
-		for (int i = 0; i < noCloudlets; i++) {
-			int randomLength = (int) lengthUnif.sample();
-			long delay = (i%intervals)*delayInterval;
-			MyCloudlet cloudlet = new MyCloudlet(id++, randomLength, pesNumber,
-					fileSize, outputSize, utilizationModel,
-					utilizationModel, utilizationModel, deadline, delay);
-			cloudlet.setUserId(brokerId);
-			cloudletList.add(cloudlet);
+		// add noCloudlets*intervals cloudlets
+		for (int j = 0; j < intervals; j++) {
+			for (int i = 0; i < noCloudlets; i++) {
+				int randomLength = (int) lengthUnif.sample();
+				long delay = j*delayInterval;
+				MyCloudlet cloudlet = new MyCloudlet(id++, randomLength, pesNumber,
+						fileSize, outputSize, utilizationModel,
+						utilizationModel, utilizationModel, deadline, delay);
+				cloudlet.setUserId(brokerId);
+				cloudletList.add(cloudlet);
+			}
 		}
 		return cloudletList;
 	}

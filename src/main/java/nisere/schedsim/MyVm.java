@@ -60,12 +60,21 @@ public class MyVm extends Vm {
 		this.datacenterId = -1;
 	}
 
+//	/** Clones a vm */
+//	public MyVm clone(int newId) {
+//		return new MyVm(newId, getUserId(), getMips(),
+//				getNumberOfPes(), getRam(), getBw(),
+//				getSize(), getVmm(),
+//				getCloudletScheduler(),
+//				getTimeInterval(), getCostPerTimeInterval());
+//	}
+	
 	/**
 	 * Gets the cost of this VM applied per interval of time.
 	 * 
 	 * @return the cost of this VM applied per interval of time
 	 */
-	public double getCost() {
+	public double getCostPerTimeInterval() {
 		return costPerTimeInterval;
 	}
 
@@ -96,7 +105,7 @@ public class MyVm extends Vm {
 	 * @return <code>true</code> if it is successful, <code>false</code>
 	 *         otherwise
 	 */
-	public boolean setCost(double cost) {
+	public boolean setCostPerTimeInterval(double cost) {
 		boolean success = false;
 		if (cost >= 0) {
 			costPerTimeInterval = cost;

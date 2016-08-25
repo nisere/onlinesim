@@ -284,7 +284,7 @@ public class MyCloudSimExample4 {
 				if ((int) intervals != intervals) {
 					intervals = (int) intervals + 1;
 				}
-				cost += intervals * vm.getCost();
+				cost += intervals * vm.getCostPerTimeInterval();
 			}
 		}
 		Log.printLine("Cost: " + dft.format(cost));
