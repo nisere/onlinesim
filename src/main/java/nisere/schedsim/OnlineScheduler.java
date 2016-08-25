@@ -34,7 +34,7 @@ public class OnlineScheduler {
 		return algorithm;
 	}
 
-	//	public <T extends DatacenterBroker> T getBroker() {
+//	public <T extends DatacenterBroker> T getBroker() {
 //		return (T)broker;
 //	}
 	public DatacenterBroker getBroker() {

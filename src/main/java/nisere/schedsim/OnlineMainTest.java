@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import nisere.schedsim.algorithm.NOAlgorithm;
 import nisere.schedsim.algorithm.SchedulingAlgorithm;
 import nisere.schedsim.algorithm.WorkQueueAlgorithm;
 
@@ -30,19 +31,21 @@ import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
 
-public class OnlineMainMy {
+public class OnlineMainTest {
 
 	public static void main(String[] args) {
-		int noCloudlets = 512;
-		int noVms = 16;
+		int noCloudlets = 10;
+		int noVms = 2;
 		// generate [minMipsUnif;maxMipsUnif) and multiply with 1000 to get
 		// mips
 		int minMipsUnif = 1;
-		int maxMipsUnif = 11;
+		int maxMipsUnif = 2;
 		// generate length [minLengthUnif;maxLengthUnif)
 		int minLengthUnif = 100000;
-		int maxLengthUnif = 400000;
+		int maxLengthUnif = 200000;
 		int seed = 9;
+		long delayInterval = 1000;
+		int intervals = 2;
 		
 		try {
 			// Initialize the CloudSim package before creating any entities.
@@ -62,9 +65,9 @@ public class OnlineMainMy {
 			
 			List<MyVm> vmList = createRandomMyVms(broker.getId(),noVms,minMipsUnif, maxMipsUnif, seed);
 			
-			List<MyCloudlet> cloudletList = createRandomMyCloudlets(broker.getId(),noCloudlets,minLengthUnif, maxLengthUnif, seed);
+			List<MyCloudlet> cloudletList = createRandomMyCloudlets(broker.getId(),noCloudlets,minLengthUnif, maxLengthUnif, seed, delayInterval, intervals);
 			
-			SchedulingAlgorithm algorithm = new WorkQueueAlgorithm();
+			SchedulingAlgorithm algorithm = new NOAlgorithm();
 			
 			OnlineScheduler scheduler = new OnlineScheduler(datacenters,broker,vmList,cloudletList,algorithm);
 
@@ -178,7 +181,7 @@ public class OnlineMainMy {
 	}
 	
 	private static List<MyCloudlet> createRandomMyCloudlets(int brokerId, int noCloudlets, int minLengthUnif, int maxLengthUnif,
-			int seed) {
+			int seed, long delayInterval, int intervals) {
 		List<MyCloudlet> cloudletList = new ArrayList<>();
 
 		// Cloudlet properties
@@ -189,7 +192,6 @@ public class OnlineMainMy {
 		long outputSize = 0;
 		UtilizationModel utilizationModel = new UtilizationModelFull();
 		int deadline = 0;
-		long delay = 0;
 
 		UniformDistr lengthUnif = new UniformDistr(minLengthUnif,
 				maxLengthUnif, seed);
@@ -197,6 +199,7 @@ public class OnlineMainMy {
 		// add noCloudlets cloudlets
 		for (int i = 0; i < noCloudlets; i++) {
 			int randomLength = (int) lengthUnif.sample();
+			long delay = (i%intervals)*delayInterval;
 			MyCloudlet cloudlet = new MyCloudlet(id++, randomLength, pesNumber,
 					fileSize, outputSize, utilizationModel,
 					utilizationModel, utilizationModel, deadline, delay);

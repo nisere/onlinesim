@@ -40,6 +40,7 @@ public class MyDatacenterBroker extends DatacenterBroker {
 		List<MyCloudlet> successfullySubmitted = new ArrayList<MyCloudlet>();
 		List<MyCloudlet> cloudletList = getCloudletList();
 		for (MyCloudlet cloudlet : cloudletList) {
+			double x = CloudSim.clock();
 			if (CloudSim.clock() < cloudlet.getDelay()) {
 				continue;
 			}
