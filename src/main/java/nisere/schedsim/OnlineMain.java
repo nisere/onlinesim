@@ -58,39 +58,24 @@ public class OnlineMain {
 			
 			HashMap<String,Datacenter> datacenters = new HashMap<>();
 			datacenters.put("Private", datacenter0);
-			OnlineQueue queue = new OnlineQueue();
+			
 			DatacenterBroker broker = new DatacenterBroker("MyBroker");
+			
+			List<Vm> vmList = createRandomVms(broker.getId(),noVms,minMipsUnif, maxMipsUnif, seed);
+			
+			List<Cloudlet> cloudletList = createRandomCloudlets(broker.getId(),noCloudlets,minLengthUnif, maxLengthUnif, seed);
+			
 			SchedulingAlgorithm algorithm = new WorkQueueAlgorithm();
-			OnlineScheduler scheduler = new OnlineScheduler(datacenters,queue,algorithm,broker);
-			OnlineFeeder feeder = new OnlineFeeder(queue);
+			
+			OnlineScheduler scheduler = new OnlineScheduler(datacenters,broker,vmList,cloudletList,algorithm);
 
-			
-			
-			
-			//-----------------------------------
-			// submit vm list to the broker
-			broker.submitVmList(createRandomVms(broker.getId(),noVms,minMipsUnif, maxMipsUnif, seed));
-			//------------------------
-			
-			//broker.submitCloudletList(createRandomCloudlets(broker.getId(),noCloudlets,minLengthUnif, maxLengthUnif, seed));
-			
-			queue.addCloudletAll(createRandomCloudlets(broker.getId(),noCloudlets,minLengthUnif, maxLengthUnif, seed));
-			//-------------------------
-			
-			queue.run();
-			//feeder.run();
-			scheduler.run();
-			
-			//---------------------
-			// Sixth step: Starts the simulation
+			scheduler.prepareSimulation();
+
 			CloudSim.startSimulation();
-
-			// Final step: Print results when simulation is over
-			List<Cloudlet> newList = broker.getCloudletReceivedList();
 
 			CloudSim.stopSimulation();
 
-			printCloudletList(newList);
+			scheduler.printResult();
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -164,64 +149,6 @@ public class OnlineMain {
 		}
 
 		return datacenter;
-	}
-
-	/**
-	 * Prints the Cloudlet objects
-	 * 
-	 * @param list
-	 *            list of Cloudlets
-	 */
-	private static void printCloudletList(List<Cloudlet> list) {
-		int size = list.size();
-		Cloudlet cloudlet;
-		double flowtime = 0;
-		double cost = 0;
-
-		String indent = "    ";
-		Log.printLine();
-		Log.printLine("========== OUTPUT ==========");
-		Log.printLine("Cloudlet ID" + indent + "STATUS" + indent
-				+ "Data center ID" + indent + "VM ID" + indent + "Time"
-				+ indent + "Start Time" + indent + "Finish Time");
-
-		int[] counter = new int[13];
-		int index = 0;
-		int step = 1000;
-		DecimalFormat dft = new DecimalFormat("###.##");
-		for (int i = 0; i < size; i++) {
-			cloudlet = list.get(i);
-			Log.print(indent + cloudlet.getCloudletId() + indent + indent);
-
-			if (cloudlet.getStatus() == Cloudlet.SUCCESS) {
-				Log.print("SUCCESS");
-
-				Log.printLine(indent + indent + cloudlet.getResourceId()
-						+ indent + indent + indent + cloudlet.getVmId()
-						+ indent + indent
-						+ dft.format(cloudlet.getActualCPUTime()) + indent
-						+ indent + dft.format(cloudlet.getExecStartTime())
-						+ indent + indent
-						+ dft.format(cloudlet.getFinishTime()));
-
-				flowtime += cloudlet.getFinishTime();
-
-				if (cloudlet.getFinishTime() <= step * (index + 1)) {
-					counter[index]++;
-				} else {
-					index++;
-					counter[index] = counter[index - 1] + 1;
-				}
-			}
-		}
-
-		Log.printLine();
-		Log.printLine("Flowtime: " + dft.format(flowtime));
-		Log.printLine();
-		for (int i = 0; i < 13; i++) {
-			Log.print(counter[i] + ",");
-		}
-		Log.printLine();
 	}
 	
 	private static List<Vm> createRandomVms(int brokerId, int noVms, int minMipsUnif, int maxMipsUnif,
