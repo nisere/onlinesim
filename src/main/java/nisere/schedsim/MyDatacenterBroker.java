@@ -11,9 +11,6 @@ package nisere.schedsim;
 import java.util.ArrayList;
 import java.util.List;
 
-import nisere.schedsim.algorithm.SchedulingAlgorithm;
-
-import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.DatacenterBroker;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.Vm;
@@ -32,7 +29,6 @@ public class MyDatacenterBroker extends DatacenterBroker {
 
 	public MyDatacenterBroker(String name) throws Exception {
 		super(name);
-		// TODO Auto-generated constructor stub
 	}
 	
 	/**

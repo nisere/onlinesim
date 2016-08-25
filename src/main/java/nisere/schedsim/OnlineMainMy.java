@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import nisere.schedsim.algorithm.NOAlgorithm;
 import nisere.schedsim.algorithm.SchedulingAlgorithm;
 import nisere.schedsim.algorithm.WorkQueueAlgorithm;
 
@@ -31,7 +30,7 @@ import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
 
-public class OnlineMain {
+public class OnlineMainMy {
 
 	public static void main(String[] args) {
 		int noCloudlets = 512;
@@ -61,9 +60,9 @@ public class OnlineMain {
 			
 			DatacenterBroker broker = new DatacenterBroker("MyBroker");
 			
-			List<Vm> vmList = createRandomVms(broker.getId(),noVms,minMipsUnif, maxMipsUnif, seed);
+			List<MyVm> vmList = createRandomMyVms(broker.getId(),noVms,minMipsUnif, maxMipsUnif, seed);
 			
-			List<Cloudlet> cloudletList = createRandomCloudlets(broker.getId(),noCloudlets,minLengthUnif, maxLengthUnif, seed);
+			List<MyCloudlet> cloudletList = createRandomMyCloudlets(broker.getId(),noCloudlets,minLengthUnif, maxLengthUnif, seed);
 			
 			SchedulingAlgorithm algorithm = new WorkQueueAlgorithm();
 			
@@ -75,7 +74,7 @@ public class OnlineMain {
 
 			CloudSim.stopSimulation();
 
-			scheduler.printResult();
+			printResult(scheduler.getFinishedCloudlets());
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -151,12 +150,9 @@ public class OnlineMain {
 		return datacenter;
 	}
 	
-	private static List<Vm> createRandomVms(int brokerId, int noVms, int minMipsUnif, int maxMipsUnif,
+	private static List<MyVm> createRandomMyVms(int brokerId, int noVms, int minMipsUnif, int maxMipsUnif,
 			int seed) {
-		List<Vm> vmlist = new ArrayList<Vm>();
-
-		// Fourth step: Create virtual machines
-		vmlist = new ArrayList<Vm>();
+		List<MyVm> vmlist = new ArrayList<>();
 
 		// VM description
 		int vmid = 0;
@@ -166,6 +162,8 @@ public class OnlineMain {
 		long bw = 1000;
 		int pesNumber = 1; // number of cpus
 		String vmm = "Xen"; // VMM name
+		int timeInterval = 0;
+		double costPerTimeInterval = 0;
 
 		UniformDistr mipsUnif = new UniformDistr(minMipsUnif, maxMipsUnif,
 				seed);
@@ -173,16 +171,15 @@ public class OnlineMain {
 		// add noVms VMs
 		for (int i = 0; i < noVms; i++) {
 			int mult = (int) mipsUnif.sample();
-			vmlist.add(new Vm(vmid++, brokerId, mips * mult, pesNumber,
-					ram, bw, size, vmm, new CloudletSchedulerSpaceShared()));
+			vmlist.add(new MyVm(vmid++, brokerId, mips * mult, pesNumber,
+					ram, bw, size, vmm, new CloudletSchedulerSpaceShared(), timeInterval, costPerTimeInterval));
 		}
 		return vmlist;
 	}
 	
-	private static List<Cloudlet> createRandomCloudlets(int brokerId, int noCloudlets, int minLengthUnif, int maxLengthUnif,
+	private static List<MyCloudlet> createRandomMyCloudlets(int brokerId, int noCloudlets, int minLengthUnif, int maxLengthUnif,
 			int seed) {
-		// Fifth step: Create Cloudlets
-		ArrayList<Cloudlet> cloudletList = new ArrayList<Cloudlet>();
+		List<MyCloudlet> cloudletList = new ArrayList<>();
 
 		// Cloudlet properties
 		int id = 0;
@@ -191,6 +188,8 @@ public class OnlineMain {
 		long fileSize = 0;
 		long outputSize = 0;
 		UtilizationModel utilizationModel = new UtilizationModelFull();
+		int deadline = 0;
+		long delay = 0;
 
 		UniformDistr lengthUnif = new UniformDistr(minLengthUnif,
 				maxLengthUnif, seed);
@@ -198,13 +197,64 @@ public class OnlineMain {
 		// add noCloudlets cloudlets
 		for (int i = 0; i < noCloudlets; i++) {
 			int randomLength = (int) lengthUnif.sample();
-			Cloudlet cloudlet = new Cloudlet(id++, randomLength, pesNumber,
+			MyCloudlet cloudlet = new MyCloudlet(id++, randomLength, pesNumber,
 					fileSize, outputSize, utilizationModel,
-					utilizationModel, utilizationModel);
+					utilizationModel, utilizationModel, deadline, delay);
 			cloudlet.setUserId(brokerId);
 			cloudletList.add(cloudlet);
 		}
 		return cloudletList;
 	}
-	
+
+	private static void printResult(List<Cloudlet> list) {
+		int size = list.size();
+		Cloudlet cloudlet;
+		double flowtime = 0;
+		//double cost = 0;
+
+		String indent = "    ";
+		Log.printLine();
+		Log.printLine("========== OUTPUT ==========");
+		Log.printLine("Cloudlet ID" + indent + "STATUS" + indent
+				+ "Data center ID" + indent + "VM ID" + indent + "Time"
+				+ indent + "Start Time" + indent + "Finish Time");
+
+		int[] counter = new int[13];
+		int index = 0;
+		int step = 1000;
+		DecimalFormat dft = new DecimalFormat("###.##");
+		for (int i = 0; i < size; i++) {
+			cloudlet = list.get(i);
+			Log.print(indent + cloudlet.getCloudletId() + indent + indent);
+
+			if (cloudlet.getStatus() == Cloudlet.SUCCESS) {
+				Log.print("SUCCESS");
+
+				Log.printLine(indent + indent + cloudlet.getResourceId()
+						+ indent + indent + indent + cloudlet.getVmId()
+						+ indent + indent
+						+ dft.format(cloudlet.getActualCPUTime()) + indent
+						+ indent + dft.format(cloudlet.getExecStartTime())
+						+ indent + indent
+						+ dft.format(cloudlet.getFinishTime()));
+
+				flowtime += cloudlet.getFinishTime();
+
+				if (cloudlet.getFinishTime() <= step * (index + 1)) {
+					counter[index]++;
+				} else {
+					index++;
+					counter[index] = counter[index - 1] + 1;
+				}
+			}
+		}
+
+		Log.printLine();
+		Log.printLine("Flowtime: " + dft.format(flowtime));
+		Log.printLine();
+		for (int i = 0; i < 13; i++) {
+			Log.print(counter[i] + ",");
+		}
+		Log.printLine();
+	}
 }

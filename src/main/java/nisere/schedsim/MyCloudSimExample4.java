@@ -83,15 +83,18 @@ public class MyCloudSimExample4 {
 			long bw = 1000;
 			int pesNumber = 1; // number of cpus
 			String vmm = "Xen"; // VMM name
+			int timeInterval = 1;
+			double costPerTimeInterval1 = 0.1;
+			double costPerTimeInterval2 = 0.2;
 
 			// create two VMs
 			MyVm vm1 = new MyVm(vmid, brokerId, mips, pesNumber, ram, bw, size,
-					vmm, 1, 0.1, new CloudletSchedulerTimeShared());
+					vmm, new CloudletSchedulerTimeShared(), timeInterval, costPerTimeInterval1);
 			// vm1.setDatacenterId(datacenter1.getId());
 
 			vmid++;
 			MyVm vm2 = new MyVm(vmid, brokerId, mips, pesNumber, ram, bw, size,
-					vmm, 1, 0.2, new CloudletSchedulerTimeShared());
+					vmm, new CloudletSchedulerTimeShared(), timeInterval, costPerTimeInterval1);
 			// vm2.setDatacenterId(datacenter0.getId());
 
 			// add the VMs to the vmList
@@ -110,17 +113,18 @@ public class MyCloudSimExample4 {
 			long fileSize = 300;
 			long outputSize = 300;
 			int deadline = 0;
+			long delay = 0;
 			UtilizationModel utilizationModel = new UtilizationModelFull();
 
 			MyCloudlet cloudlet1 = new MyCloudlet(id, length, pesNumber,
-					fileSize, outputSize, deadline, utilizationModel,
-					utilizationModel, utilizationModel);
+					fileSize, outputSize, utilizationModel,
+					utilizationModel, utilizationModel, deadline, delay);
 			cloudlet1.setUserId(brokerId);
 
 			id++;
 			MyCloudlet cloudlet2 = new MyCloudlet(id, length, pesNumber,
-					fileSize, outputSize, deadline, utilizationModel,
-					utilizationModel, utilizationModel);
+					fileSize, outputSize, utilizationModel,
+					utilizationModel, utilizationModel, deadline, delay);
 			cloudlet2.setUserId(brokerId);
 
 			// add the cloudlets to the list

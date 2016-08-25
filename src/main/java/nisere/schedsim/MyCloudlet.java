@@ -9,19 +9,12 @@ public class MyCloudlet extends Cloudlet {
 	 * must be completed. A value of 0 means there is no deadline.
 	 */
 	private int deadline;
-	
+
 	/**
-	 * The delay from the start of the simulation when this cloudlet was received.
+	 * The delay from the start of the simulation when this cloudlet was
+	 * received. The delay of the cloudlet is in seconds.
 	 */
-	private int delay;
-
-	public int getDelay() {
-		return delay;
-	}
-
-	public void setDelay(int delay) {
-		this.delay = delay;
-	}
+	private long delay;
 
 	/**
 	 * Allocates a MyCloudlet object.
@@ -38,6 +31,8 @@ public class MyCloudlet extends Cloudlet {
 	 *            the size of this cloudlet when finished (in bytes) >= 1
 	 * @param deadline
 	 *            the deadline of this cloudlet >= 0
+	 * @param delay
+	 *            the delay when this cloudlet is received >= 0
 	 * @param utilizationModelCpu
 	 *            the utilization model of the CPU
 	 * @param utilizationModelRam
@@ -47,32 +42,17 @@ public class MyCloudlet extends Cloudlet {
 	 */
 	public MyCloudlet(final int cloudletId, final long cloudletLength,
 			final int pesNumber, final long cloudletFileSize,
-			final long cloudletOutputSize, final int deadline,
+			final long cloudletOutputSize,
 			final UtilizationModel utilizationModelCpu,
 			final UtilizationModel utilizationModelRam,
-			final UtilizationModel utilizationModelBw) {
+			final UtilizationModel utilizationModelBw,
+			final int deadline, final long delay) {
 		super(cloudletId, cloudletLength, Math.max(1, pesNumber),
 				cloudletFileSize, cloudletOutputSize, utilizationModelCpu,
 				utilizationModelRam, utilizationModelBw);
 
 		this.deadline = Math.max(0, deadline);
-	}
-
-	/**
-	 * Sets the deadline of this cloudlet.
-	 * 
-	 * @param hours
-	 *            the deadline of this cloudlet (in hours)
-	 * @return <code>true</code> if it is successful, <code>false</code>
-	 *         otherwise
-	 */
-	public boolean setDeadline(final int hours) {
-		boolean success = false;
-		if (hours >= 0) {
-			deadline = hours;
-			success = true;
-		}
-		return success;
+		this.delay = Math.max(0, delay);
 	}
 
 	/**
@@ -83,4 +63,48 @@ public class MyCloudlet extends Cloudlet {
 	public int getDeadline() {
 		return deadline;
 	}
+	
+	/**
+	 * Gets the delay of this cloudlet.
+	 * 
+	 * @return the delay of this cloudlet (in seconds)
+	 */
+	public long getDelay() {
+		return delay;
+	}
+
+	/**
+	 * Sets the deadline of this cloudlet.
+	 * 
+	 * @param hours
+	 *            the deadline of this cloudlet (in hours)
+	 * @return <code>true</code> if it is successful, <code>false</code>
+	 *         otherwise
+	 */
+	public boolean setDeadline(final int deadline) {
+		boolean success = false;
+		if (deadline >= 0) {
+			this.deadline = deadline;
+			success = true;
+		}
+		return success;
+	}
+
+	/**
+	 * Sets the delay of this cloudlet.
+	 * 
+	 * @param hours
+	 *            the delay of this cloudlet (in seconds)
+	 * @return <code>true</code> if it is successful, <code>false</code>
+	 *         otherwise
+	 */
+	public boolean setDelay(final long delay) {
+		boolean success = false;
+		if (delay >= 0) {
+			this.delay = delay;
+			success = true;
+		}
+		return success;
+	}
+
 }
