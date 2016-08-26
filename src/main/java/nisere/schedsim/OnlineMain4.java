@@ -4,8 +4,10 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import nisere.schedsim.algorithm.NOAlgorithm;
 import nisere.schedsim.algorithm.SchedulingAlgorithm;
@@ -31,11 +33,11 @@ import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
 
-public class OnlineMainTest {
+public class OnlineMain4 {
 
 	public static void main(String[] args) {
 		int noCloudlets = 4;
-		int noVms = 2;
+		int noVms = 1;
 		// generate [minMipsUnif;maxMipsUnif) and multiply with 1000 to get
 		// mips
 		int minMipsUnif = 1;
@@ -44,7 +46,7 @@ public class OnlineMainTest {
 		int minLengthUnif = 100000;
 		int maxLengthUnif = 200000;
 		int seed = 9;
-		long delayInterval = 400;
+		long delayInterval = 0;
 		int intervals = 2;
 		
 		try {
@@ -55,15 +57,26 @@ public class OnlineMainTest {
 			CloudSim.init(num_user, calendar, trace_flag);
 			// Datacenters are the resource providers in CloudSim. We need at
 			// list one of them to run a CloudSim simulation
-			Datacenter datacenter0 = createDatacenter("Private", noVms);
+			Datacenter datacenter2 = createDatacenter("Private", noVms);
+			Datacenter datacenter3 = createDatacenter("Public", noVms);
 
 			
 			HashMap<String,Datacenter> datacenters = new HashMap<>();
-			datacenters.put("Private", datacenter0);
+			datacenters.put("Private", datacenter2);
+			datacenters.put("Public", datacenter3);
+			
+			//-----------
+			int[] datacenterIds = new int[datacenters.size()];
+			int i = 0;
+			for(Map.Entry<String, Datacenter> entry : datacenters.entrySet()){
+			    //System.out.printf("Key : %s and Value: %s %n", entry.getKey(), entry.getValue());
+				datacenterIds[i++] = entry.getValue().getId();
+			}
+			//-----------
 			
 			MyDatacenterBroker broker = new MyDatacenterBroker("MyBroker");
 			
-			List<MyVm> vmList = createRandomMyVms(broker.getId(),noVms,minMipsUnif, maxMipsUnif, seed);
+			List<MyVm> vmList = createRandomMyVms(broker.getId(),noVms,minMipsUnif, maxMipsUnif, seed, datacenterIds);
 			
 			List<MyCloudlet> cloudletList = createRandomMyCloudlets(broker.getId(),noCloudlets,minLengthUnif, maxLengthUnif, seed, delayInterval, intervals);
 			
@@ -154,7 +167,7 @@ public class OnlineMainTest {
 	}
 	
 	private static List<MyVm> createRandomMyVms(int brokerId, int noVms, int minMipsUnif, int maxMipsUnif,
-			int seed) {
+			int seed, int[] datacenterIds) {
 		List<MyVm> vmlist = new ArrayList<>();
 
 		// VM description
@@ -167,17 +180,34 @@ public class OnlineMainTest {
 		String vmm = "Xen"; // VMM name
 		int timeInterval = 0;
 		double costPerTimeInterval = 0;
-		int datacenterId = -1;
+		//int datacenterId = -1;
 
 		UniformDistr mipsUnif = new UniformDistr(minMipsUnif, maxMipsUnif,
 				seed);
 
-		// add noVms VMs
+//		for (int datacenterId : datacenterIds) {
+//		// add noVms VMs
+//			for (int i = 0; i < noVms; i++) {
+//				int mult = (int) mipsUnif.sample();
+//				vmlist.add(new MyVm(vmid++, brokerId, mips * mult, pesNumber,
+//						ram, bw, size, vmm, new CloudletSchedulerSpaceShared(), timeInterval, costPerTimeInterval,
+//						datacenterId));
+//			}
+//		}
+		
 		for (int i = 0; i < noVms; i++) {
 			int mult = (int) mipsUnif.sample();
 			vmlist.add(new MyVm(vmid++, brokerId, mips * mult, pesNumber,
-					ram, bw, size, vmm, new CloudletSchedulerSpaceShared(), timeInterval, costPerTimeInterval, datacenterId));
+					ram, bw, size, vmm, new CloudletSchedulerSpaceShared(), timeInterval, costPerTimeInterval,
+					3));
 		}
+		for (int i = 0; i < noVms; i++) {
+			int mult = (int) mipsUnif.sample();
+			vmlist.add(new MyVm(vmid++, brokerId, mips * mult, pesNumber,
+					ram, bw, size, vmm, new CloudletSchedulerSpaceShared(), timeInterval, costPerTimeInterval,
+					2));
+		}
+		
 		return vmlist;
 	}
 	

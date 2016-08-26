@@ -17,6 +17,7 @@ public class MyVm extends Vm {
 
 	/**
 	 * The datacenter id where this VM is assigned.
+	 * A value of -1 means no assignment.
 	 */
 	private int datacenterId;
 
@@ -51,23 +52,14 @@ public class MyVm extends Vm {
 			final int numberOfPes, final int ram, final long bw,
 			final long size, final String vmm,
 			final CloudletScheduler cloudletScheduler,			 
-			final int timeInterval, final double costPerTimeInterval) {
+			final int timeInterval, final double costPerTimeInterval, final int datacenterId) {
 		super(id, userId, mips, numberOfPes, ram, bw, size, vmm,
 				cloudletScheduler);
 
 		this.timeInterval = Math.max(0, timeInterval);
 		this.costPerTimeInterval = Math.max(0, costPerTimeInterval);
-		this.datacenterId = -1;
+		this.datacenterId = datacenterId;
 	}
-
-//	/** Clones a vm */
-//	public MyVm clone(int newId) {
-//		return new MyVm(newId, getUserId(), getMips(),
-//				getNumberOfPes(), getRam(), getBw(),
-//				getSize(), getVmm(),
-//				getCloudletScheduler(),
-//				getTimeInterval(), getCostPerTimeInterval());
-//	}
 	
 	/**
 	 * Gets the cost of this VM applied per interval of time.

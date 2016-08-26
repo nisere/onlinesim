@@ -18,6 +18,7 @@ import java.util.List;
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.CloudletSchedulerTimeShared;
 import org.cloudbus.cloudsim.Datacenter;
+import org.cloudbus.cloudsim.DatacenterBroker;
 import org.cloudbus.cloudsim.DatacenterCharacteristics;
 import org.cloudbus.cloudsim.Host;
 import org.cloudbus.cloudsim.Log;
@@ -69,7 +70,7 @@ public class MyCloudSimExample4 {
 			Datacenter datacenter1 = createDatacenter("Public");
 
 			// Third step: Create Broker
-			MyDatacenterBroker broker = createBroker();
+			MyDatacenterBroker broker = createMyBroker();
 			int brokerId = broker.getId();
 
 			// Fourth step: Create one virtual machine
@@ -86,20 +87,27 @@ public class MyCloudSimExample4 {
 			int timeInterval = 1;
 			double costPerTimeInterval1 = 0.1;
 			double costPerTimeInterval2 = 0.2;
+			int datacenterId = -1;
 
 			// create two VMs
 			MyVm vm1 = new MyVm(vmid, brokerId, mips, pesNumber, ram, bw, size,
-					vmm, new CloudletSchedulerTimeShared(), timeInterval, costPerTimeInterval1);
-			// vm1.setDatacenterId(datacenter1.getId());
+					vmm, new CloudletSchedulerTimeShared(), timeInterval, costPerTimeInterval1, datacenterId);
+			vm1.setDatacenterId(datacenter1.getId());
 
 			vmid++;
 			MyVm vm2 = new MyVm(vmid, brokerId, mips, pesNumber, ram, bw, size,
-					vmm, new CloudletSchedulerTimeShared(), timeInterval, costPerTimeInterval1);
-			// vm2.setDatacenterId(datacenter0.getId());
+					vmm, new CloudletSchedulerTimeShared(), timeInterval, costPerTimeInterval2, datacenterId);
+			vm2.setDatacenterId(datacenter0.getId());
+			
+			vmid++;
+			MyVm vm3 = new MyVm(vmid, brokerId, mips, pesNumber, ram, bw, size,
+					vmm, new CloudletSchedulerTimeShared(), timeInterval, costPerTimeInterval2, datacenterId);
+			//vm3.setDatacenterId(datacenter1.getId());
 
 			// add the VMs to the vmList
 			vmList.add(vm1);
 			vmList.add(vm2);
+			vmList.add(vm3);
 
 			// submit vm list to the broker
 			broker.submitVmList(vmList);
@@ -189,6 +197,11 @@ public class MyCloudSimExample4 {
 				new BwProvisionerSimple(bw), storage, peList,
 				new VmSchedulerSpaceShared(peList))); // This is our first
 														// machine
+		
+//		hostList.add(new Host(hostId+1, new RamProvisionerSimple(ram),
+//				new BwProvisionerSimple(bw), storage, peList,
+//				new VmSchedulerSpaceShared(peList))); // This is our second
+//														// machine
 
 		// 5. Create a DatacenterCharacteristics object that stores the
 		// properties of a data center: architecture, OS, list of
@@ -230,11 +243,25 @@ public class MyCloudSimExample4 {
 	// We strongly encourage users to develop their own broker policies, to
 	// submit vms and cloudlets according
 	// to the specific rules of the simulated scenario
-	private static MyDatacenterBroker createBroker() {
+	private static MyDatacenterBroker createMyBroker() {
 
 		MyDatacenterBroker broker = null;
 		try {
 			broker = new MyDatacenterBroker("Broker");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		return broker;
+	}
+	
+	//We strongly encourage users to develop their own broker policies, to submit vms and cloudlets according
+	//to the specific rules of the simulated scenario
+	private static DatacenterBroker createBroker(){
+
+		DatacenterBroker broker = null;
+		try {
+			broker = new DatacenterBroker("Broker");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
