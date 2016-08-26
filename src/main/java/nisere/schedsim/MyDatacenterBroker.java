@@ -20,43 +20,46 @@ import org.cloudbus.cloudsim.core.CloudSimTags;
 import org.cloudbus.cloudsim.core.SimEvent;
 import org.cloudbus.cloudsim.lists.VmList;
 
-/**
- * MyDatacentreBroker modifies the Cloudsim DatacentreBroker to add scheduling
- * algorithms. These are static algorithms: MinMin, MinMax, MaxMin, LJFR_SJFR,
- * Sufferage, WorkQueue
- * 
- * @author Alina Chera
- */
 public class MyDatacenterBroker extends DatacenterBroker {
+	public static final int CLOUDLET_DELAY = 999;
 
 	public MyDatacenterBroker(String name) throws Exception {
 		super(name);
 	}
 	
+	/**
+	 * It processes CLOUDLET_DELAY event.
+	 */
 	@Override
 	protected void processOtherEvent(SimEvent ev) {
-		
-//		List<MyVm> list = new ArrayList<>();
-//		for (Vm vm : getVmList()) {
-//			list.add(((MyVm)vm).clone(vm.getId() + 100));
-//		}
-//		submitVmList(list);
-		int datacenterId = getVmsToDatacentersMap().get((getVmList().get(0).getId()));
-		createVmsInDatacenter(datacenterId);
-		submitCloudlets();
+		switch (ev.getTag()) {
+		case CLOUDLET_DELAY:
+	//		List<MyVm> list = new ArrayList<>();
+	//		for (Vm vm : getVmList()) {
+	//			list.add(((MyVm)vm).clone(vm.getId() + 100));
+	//		}
+	//		submitVmList(list);
+			int datacenterId = getVmsToDatacentersMap().get((getVmList().get(0).getId()));
+			createVmsInDatacenter(datacenterId);
+			submitCloudlets();
+			break;
+		}
 	}
 	
 	/**
-	 * This takes into account the delay of the cloudlet before submitting
+	 * Submit cloudlets to the created VMs taking into account the delay of the cloudlet before submitting.
+	 * 
+	 * For the case when it is used to simulate online arrival of cloudlets,
+	 * it expects the cloudlet list to be sorted by delay ascending to simulate a real queue.
 	 */
 	@Override
 	protected void submitCloudlets() {
 		int vmIndex = 0;
-		List<MyCloudlet> successfullySubmitted = new ArrayList<MyCloudlet>();
-		List<MyCloudlet> cloudletList = getCloudletList();//this should be sorted ascending by delay
-		for (MyCloudlet cloudlet : cloudletList) {
-			if (CloudSim.clock() < cloudlet.getDelay()) {
-				send(getName(), cloudlet.getDelay(), 999);
+		List<Cloudlet> successfullySubmitted = new ArrayList<Cloudlet>();
+		List<Cloudlet> cloudletList = getCloudletList();
+		for (Cloudlet cloudlet : cloudletList) {
+			if ((cloudlet instanceof MyCloudlet) && (CloudSim.clock() < ((MyCloudlet)cloudlet).getDelay())) {
+				send(getName(), ((MyCloudlet)cloudlet).getDelay(), CLOUDLET_DELAY);
 				break;
 			}
 			Vm vm;
@@ -90,62 +93,68 @@ public class MyDatacenterBroker extends DatacenterBroker {
 		// remove submitted cloudlets from scheduled list
 		getCloudletList().removeAll(successfullySubmitted);
 	}
-	
-	/** Doesn't destroy Vm */
-	@Override
-	protected void processCloudletReturn(SimEvent ev) {
-		Cloudlet cloudlet = (Cloudlet) ev.getData();
-		getCloudletReceivedList().add(cloudlet);
-		Log.printConcatLine(CloudSim.clock(), ": ", getName(), ": Cloudlet ", cloudlet.getCloudletId(),
-				" received");
-		cloudletsSubmitted--;
-		if (getCloudletList().size() == 0 && cloudletsSubmitted == 0) { // all cloudlets executed
-			Log.printConcatLine(CloudSim.clock(), ": ", getName(), ": All Cloudlets executed. Finishing...");
-			clearDatacenters();
-			finishExecution();
-		} else { // some cloudlets haven't finished yet
-			if (getCloudletList().size() > 0 && cloudletsSubmitted == 0) {
-				// all the cloudlets sent finished. It means that some bount
-				// cloudlet is waiting its VM be created
-				clearDatacenters();
-				int datacenterId = getVmsToDatacentersMap().get((getVmList().get(0).getId()));
-				createVmsInDatacenter(datacenterId);
-			}
 
-		}
-	}
-
-	 /**
+	/**
 	 * Create the virtual machines in a datacenter.
+	 * 
 	 * It overrides the original method with an additional checking
 	 * for the case when there are different datacenters with specific VM.
-	 *
+	 * 
+	 * It also removes the check for the existing of the VM in the datacenter
+	 * to allow recreation after it was destroyed.
+	 * 
 	 * @param datacenterId the id of the chosen datacenter
 	 */
-	 @Override
-	 protected void createVmsInDatacenter(int datacenterId) {
-		 // send as much vms as possible for this datacenter before trying the
-		 //next one
-		 // except when a different datacenter is already assinged to the VM
-		 int requestedVms = 0;
-		 String datacenterName = CloudSim.getEntityName(datacenterId);
-		 for (Vm vm : getVmList()) {
-			 //if (!getVmsToDatacentersMap().containsKey(vm.getId())) {
-				 if ( (vm instanceof MyVm) && ( ( ((MyVm)vm).getDatacenterId() == -1 ) ||
-						 	( ((MyVm)vm).getDatacenterId() == datacenterId ) ) ) {
-				
-					 Log.printLine(CloudSim.clock() + ": " + getName() +
-							 ": Trying to Create VM #" + vm.getId()
-							 + " in " + datacenterName);
-					 sendNow(datacenterId, CloudSimTags.VM_CREATE_ACK, vm);
-					 requestedVms++;
-				 }
-			 //}
-		 }
+	@Override
+	protected void createVmsInDatacenter(int datacenterId) {
+		// send as much vms as possible for this datacenter before trying the next one
+		// except when a different datacenter is already assigned to the VM
+		int requestedVms = 0;
+		String datacenterName = CloudSim.getEntityName(datacenterId);
+		for (Vm vm : getVmList()) {
+			if (!( (vm instanceof MyVm) && ( ( ((MyVm)vm).getDatacenterId() == -1 ) ||
+					( ((MyVm)vm).getDatacenterId() == datacenterId ) ) )) {
+				continue;
+			}
+			Log.printLine(CloudSim.clock() + ": " + getName() +
+					": Trying to Create VM #" + vm.getId()
+					+ " in " + datacenterName);
+			sendNow(datacenterId, CloudSimTags.VM_CREATE_ACK, vm);
+			requestedVms++;
+		}
 		
-		 getDatacenterRequestedIdsList().add(datacenterId);
+		getDatacenterRequestedIdsList().add(datacenterId);
 		
-		 setVmsRequested(requestedVms);
-		 setVmsAcks(0);
-	 }
+		setVmsRequested(requestedVms);
+		setVmsAcks(0);
+	}
+	 
+	/**
+	 * Process a cloudlet return event.
+	 * The change allow for the simulation to continue until all cloudlets are finished.
+	 * 
+	 * @param ev a SimEvent object
+	 */
+	@Override
+	protected void processCloudletReturn(SimEvent ev) {
+       Cloudlet cloudlet = (Cloudlet) ev.getData();
+       getCloudletReceivedList().add(cloudlet);
+       Log.printConcatLine(CloudSim.clock(), ": ", getName(), ": Cloudlet ", cloudlet.getCloudletId(),
+                       " received");
+       cloudletsSubmitted--;
+       if (getCloudletList().size() == 0 && cloudletsSubmitted == 0) { // all cloudlets executed
+           Log.printConcatLine(CloudSim.clock(), ": ", getName(), ": All Cloudlets executed. Finishing...");
+           clearDatacenters();
+           finishExecution();
+       } else { // some cloudlets haven't finished yet
+           if (getCloudletList().size() > 0 && cloudletsSubmitted == 0) {
+                   // all the cloudlets sent finished. It means that some bound
+                   // cloudlet is waiting its VM be created
+                   clearDatacenters();
+                   int datacenterId = getVmsToDatacentersMap().get((getVmList().get(0).getId()));
+                   createVmsInDatacenter(datacenterId);
+           }
+       }
+	}
+	 
 }
