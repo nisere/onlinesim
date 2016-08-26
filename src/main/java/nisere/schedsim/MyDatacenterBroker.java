@@ -126,8 +126,8 @@ public class MyDatacenterBroker extends DatacenterBroker {
 	 
 	/**
 	 * Process a cloudlet return event.
-	 * The change allow for the simulation to continue after the VMs are destroyed,
-	 * until all cloudlets are finished.
+	 * 
+	 * The VMs aren't destroyed anymore until all cloudlets are finished.
 	 * 
 	 * @param ev a SimEvent object
 	 */
@@ -142,18 +142,7 @@ public class MyDatacenterBroker extends DatacenterBroker {
            Log.printConcatLine(CloudSim.clock(), ": ", getName(), ": All Cloudlets executed. Finishing...");
            clearDatacenters();
            finishExecution();
-       } else { // some cloudlets haven't finished yet
-           if (getCloudletList().size() > 0 && cloudletsSubmitted == 0) {
-               // all the cloudlets sent finished. It means that some bound
-               // cloudlet is waiting its VM be created
-               clearDatacenters();
-               // Recreate VMs, starting with first datacenter.
-               // No need to iterate since the modified method 
-               // creates all VMs that have a datacenter assigned
-               // in one pass.
-               createVmsInDatacenter(getDatacenterIdsList().get(0));
-           }
-       }
+       } // else some cloudlets haven't finished yet
 	}
 	
 
