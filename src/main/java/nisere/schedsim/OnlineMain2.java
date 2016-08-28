@@ -66,7 +66,7 @@ public class OnlineMain2 {
 			
 			SchedulingAlgorithm algorithm = new WorkQueueAlgorithm();
 			
-			OnlineScheduler scheduler = new OnlineScheduler(datacenters,broker,vmList,cloudletList,algorithm);
+			Scheduler scheduler = new Scheduler(datacenters,broker,vmList,cloudletList,algorithm);
 
 			scheduler.prepareSimulation();
 

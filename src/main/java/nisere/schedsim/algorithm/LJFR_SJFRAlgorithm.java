@@ -184,4 +184,21 @@ public class LJFR_SJFRAlgorithm extends SchedulingAlgorithm {
 			}
 		}
 	}
+	
+	/** 
+	 * This method is used to reset the workload taking into account
+	 * a moment in time and previous workload.
+	 * 
+	 * If there is outstanding work then the workload will be initialized
+	 * with the difference between the workload and the moment in time.
+	 * 
+	 * @param time the moment in time
+	 */
+	@Override
+	public void prepare(double time) {
+		for (Map.Entry<Integer, Double> entry : getWorkloadMap().entrySet()) {
+			double value = Math.max(0, entry.getValue() - time);
+			getWorkloadMap().put(entry.getKey(), value);
+		}
+	}
 }

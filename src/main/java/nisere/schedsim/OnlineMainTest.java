@@ -42,7 +42,7 @@ public class OnlineMainTest {
 		// generate length [minLengthUnif;maxLengthUnif)
 		int minLengthUnif = 100000;
 		int maxLengthUnif = 200000;
-		int seed = 9;
+		int seed = 1;
 		long delayInterval = 400;
 		int intervals = 2;
 		
@@ -71,14 +71,14 @@ public class OnlineMainTest {
 			datacenters.put("Private", datacenter3);
 			
 			//SchedulingAlgorithm algorithm = new NOAlgorithm();
-			//SchedulingAlgorithm algorithm = new WorkQueueAlgorithm();
+			SchedulingAlgorithm algorithm = new WorkQueueAlgorithm();
 			//SchedulingAlgorithm algorithm = new SufferageAlgorithm();
 			//SchedulingAlgorithm algorithm = new MinMinAlgorithm();
 			//SchedulingAlgorithm algorithm = new MinMaxAlgorithm();
 			//SchedulingAlgorithm algorithm = new MaxMinAlgorithm();
-			SchedulingAlgorithm algorithm = new LJFR_SJFRAlgorithm();
+			//SchedulingAlgorithm algorithm = new LJFR_SJFRAlgorithm();
 			
-			OnlineScheduler scheduler = new OnlineScheduler(datacenters,broker,vmList,cloudletList,algorithm);
+			Scheduler scheduler = new OnlineScheduler(datacenters,broker,vmList,cloudletList,algorithm);
 
 			scheduler.prepareSimulation();
 
