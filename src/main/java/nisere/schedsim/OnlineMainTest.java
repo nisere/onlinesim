@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import nisere.schedsim.algorithm.NOAlgorithm;
 import nisere.schedsim.algorithm.SchedulingAlgorithm;
@@ -55,17 +56,21 @@ public class OnlineMainTest {
 			CloudSim.init(num_user, calendar, trace_flag);
 			// Datacenters are the resource providers in CloudSim. We need at
 			// list one of them to run a CloudSim simulation
-			Datacenter datacenter0 = createDatacenter("Private", noVms);
-
-			
-			HashMap<String,Datacenter> datacenters = new HashMap<>();
-			datacenters.put("Private", datacenter0);
 			
 			MyDatacenterBroker broker = new MyDatacenterBroker("MyBroker");
 			
 			List<MyVm> vmList = createRandomMyVms(broker.getId(),noVms,minMipsUnif, maxMipsUnif, seed);
-			
+
 			List<MyCloudlet> cloudletList = createRandomMyCloudlets(broker.getId(),noCloudlets,minLengthUnif, maxLengthUnif, seed, delayInterval, intervals);
+			
+			Map<String,Datacenter> datacenters = new HashMap<>();
+			
+			Map<Integer,Integer> vmCount = new HashMap<>();
+			for (Vm vm : vmList) {
+				vmCount.put(vm.getId(), 1);
+			}
+			MyDatacenter datacenter3 = createMyDatacenter("Private", vmList, vmCount);
+			datacenters.put("Private", datacenter3);
 			
 			SchedulingAlgorithm algorithm = new NOAlgorithm();
 			
@@ -84,72 +89,45 @@ public class OnlineMainTest {
 		}
 	}
 	
-	private static Datacenter createDatacenter(String name, int noHosts) {
-
-		// Here are the steps needed to create a PowerDatacenter:
-		// 1. We need to create a list to store
-		// our machine
-		List<Host> hostList = new ArrayList<Host>();
-
-		// 2. A Machine contains one or more PEs or CPUs/Cores.
-		// In this example, it will have only one core.
-		List<Pe> peList = new ArrayList<Pe>();
-
-		int mips = 10000;
-
-		// 3. Create PEs and add these into a list.
-		peList.add(new Pe(0, new PeProvisionerSimple(mips))); // need to store
-																// Pe id and
-																// MIPS Rating
-
-		// 4. Create Host with its id and list of PEs and add them to the list
-		// of machines
-		int hostId = 0;
-		int ram = 2048; // host memory (MB)
-		long storage = 1000000; // host storage
-		int bw = 10000;
-
-		// add noHosts machines
-		for (int i = 0; i < noHosts; i++) {
-			hostList.add(new Host(hostId++, new RamProvisionerSimple(ram),
-					new BwProvisionerSimple(bw), storage, peList,
-					new VmSchedulerSpaceShared(peList))); // This is our machine
-		}
-
-		// 5. Create a DatacenterCharacteristics object that stores the
-		// properties of a data center: architecture, OS, list of
-		// Machines, allocation policy: time- or space-shared, time zone
-		// and its price (G$/Pe time unit).
+	private static MyDatacenter createMyDatacenter(String name, List<? extends Vm> vmList, 
+			Map<Integer,Integer> vmCount) throws Exception {
+		MyDatacenter datacenter;
+	
+		// Create a DatacenterCharacteristics object
 		String arch = "x86"; // system architecture
 		String os = "Linux"; // operating system
 		String vmm = "Xen";
 		double time_zone = 10.0; // time zone this resource located
 		double cost = 3.0; // the cost of using processing in this resource
 		double costPerMem = 0.05; // the cost of using memory in this resource
-		double costPerStorage = 0.001; // the cost of using storage in this
-										// resource
+		double costPerStorage = 0.001; // the cost of using storage in this resource
 		double costPerBw = 0.0; // the cost of using bw in this resource
-		LinkedList<Storage> storageList = new LinkedList<Storage>(); // we are
-																		// not
-																		// adding
-																		// SAN
-																		// devices
-																		// by
-																		// now
+		LinkedList<Storage> storageList = new LinkedList<Storage>(); // we are not adding SAN devices
 
+		List<Host> hostList = new ArrayList<Host>();
+		int hostId = 0;
+		// for each vm type check how many must be created;
+		// for each vm create a host
+		for (Vm vm : vmList ) {
+			if (vmCount.containsKey(vm.getId())) {
+				int n = vmCount.get(vm.getId());
+				List<Pe> peList = new ArrayList<Pe>();
+				peList.add(new Pe(0, new PeProvisionerSimple(vm.getMips())));
+				for (int i = 0; i < n; i++) {
+					hostList.add(new Host(hostId++, new RamProvisionerSimple(vm.getRam()),
+							new BwProvisionerSimple(vm.getBw()), vm.getSize(), 
+							peList,	new VmSchedulerSpaceShared(peList)));					
+				}
+			}
+		}
+		
 		DatacenterCharacteristics characteristics = new DatacenterCharacteristics(
 				arch, os, vmm, hostList, time_zone, cost, costPerMem,
 				costPerStorage, costPerBw);
-
-		// 6. Finally, we need to create a PowerDatacenter object.
-		Datacenter datacenter = null;
-		try {
-			datacenter = new Datacenter(name, characteristics,
-					new VmAllocationPolicySimple(hostList), storageList, 0);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
+		
+		datacenter = new MyDatacenter(name, characteristics, new VmAllocationPolicySimple(hostList), 
+				storageList, 0, vmList, vmCount);
+		
 		return datacenter;
 	}
 	

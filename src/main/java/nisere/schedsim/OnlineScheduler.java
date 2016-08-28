@@ -1,7 +1,7 @@
 package nisere.schedsim;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import nisere.schedsim.algorithm.SchedulingAlgorithm;
 
@@ -12,13 +12,13 @@ import org.cloudbus.cloudsim.Vm;
 
 public class OnlineScheduler {
 	
-	private HashMap<String,? extends Datacenter> datacenters;
+	private Map<String,? extends Datacenter> datacenters;
 	private DatacenterBroker broker;
 	private List<? extends Vm> vmList;
 	private List<? extends Cloudlet> cloudletList;	
 	private SchedulingAlgorithm algorithm;
 	
-	public OnlineScheduler(HashMap<String,Datacenter> datacenters,
+	public OnlineScheduler(Map<String,Datacenter> datacenters,
 			DatacenterBroker broker,
 			List<? extends Vm> vmList,
 			List<? extends Cloudlet> cloudletList,
@@ -42,8 +42,8 @@ public class OnlineScheduler {
 		return (List<T>)cloudletList;
 	}
 
-	public <T extends Datacenter> HashMap<String,T> getDatacenters() {
-		return (HashMap<String,T>)datacenters;
+	public <T extends Datacenter> Map<String,T> getDatacenters() {
+		return (Map<String,T>)datacenters;
 	}
 
 	public <T extends Vm> List<T> getVmList() {
@@ -86,7 +86,7 @@ public class OnlineScheduler {
 		this.cloudletList = cloudletList;
 	}
 
-	public void setDatacenters(HashMap<String,Datacenter> datacenters) {
+	public void setDatacenters(Map<String,Datacenter> datacenters) {
 		this.datacenters = datacenters;
 	}
 
