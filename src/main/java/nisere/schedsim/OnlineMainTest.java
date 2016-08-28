@@ -8,9 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import nisere.schedsim.algorithm.NOAlgorithm;
-import nisere.schedsim.algorithm.SchedulingAlgorithm;
-import nisere.schedsim.algorithm.WorkQueueAlgorithm;
+import nisere.schedsim.algorithm.*;
 
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.CloudletSchedulerSpaceShared;
@@ -57,7 +55,7 @@ public class OnlineMainTest {
 			// Datacenters are the resource providers in CloudSim. We need at
 			// list one of them to run a CloudSim simulation
 			
-			MyDatacenterBroker broker = new MyDatacenterBroker("MyBroker");
+			DatacenterBroker broker = new MyDatacenterBroker("MyBroker");
 			
 			List<MyVm> vmList = createRandomMyVms(broker.getId(),noVms,minMipsUnif, maxMipsUnif, seed);
 
@@ -72,7 +70,13 @@ public class OnlineMainTest {
 			MyDatacenter datacenter3 = createMyDatacenter("Private", vmList, vmCount);
 			datacenters.put("Private", datacenter3);
 			
-			SchedulingAlgorithm algorithm = new NOAlgorithm();
+			//SchedulingAlgorithm algorithm = new NOAlgorithm();
+			//SchedulingAlgorithm algorithm = new WorkQueueAlgorithm();
+			//SchedulingAlgorithm algorithm = new SufferageAlgorithm();
+			//SchedulingAlgorithm algorithm = new MinMinAlgorithm();
+			//SchedulingAlgorithm algorithm = new MinMaxAlgorithm();
+			//SchedulingAlgorithm algorithm = new MaxMinAlgorithm();
+			SchedulingAlgorithm algorithm = new LJFR_SJFRAlgorithm();
 			
 			OnlineScheduler scheduler = new OnlineScheduler(datacenters,broker,vmList,cloudletList,algorithm);
 

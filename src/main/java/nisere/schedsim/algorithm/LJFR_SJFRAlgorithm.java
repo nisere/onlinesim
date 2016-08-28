@@ -1,14 +1,56 @@
 package nisere.schedsim.algorithm;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.Vm;
 
 public class LJFR_SJFRAlgorithm extends SchedulingAlgorithm {
-	/** Processor workload. */
-	protected double[] workload;
+	/** A map between VM (id) and workload. */
+	private Map<Integer,Double> workloadMap;
+
+	/**
+	 * Gets the workload map.
+	 * @return the map between VM (id) and workload
+	 */
+	public Map<Integer, Double> getWorkloadMap() {
+		if (workloadMap == null) {
+			workloadMap = new HashMap<>();
+		}
+		return workloadMap;
+	}
+
+	/**
+	 * Sets the workload map.
+	 * @param workloadMap a map between VM (id) and workload
+	 */
+	public void setWorkloadMap(Map<Integer, Double> workloadMap) {
+		this.workloadMap = workloadMap;
+	}
+	
+	/**
+	 * Gets the workload of a VM
+	 * @param vmId the id of the VM
+	 * @return the workload of the VM
+	 */
+	public double getWorkload(int vmId) {
+		if (!getWorkloadMap().containsKey(vmId)) {
+			getWorkloadMap().put(vmId, 0.0d);
+		}
+		return getWorkloadMap().get(vmId);
+	}
+	
+	/**
+	 * Sets the workload of a VM
+	 * @param vmId the id of the VM
+	 * @param workload the workload of the VM
+	 */
+	public void setWorkload(int vmId, double workload) {
+		getWorkloadMap().put(vmId, workload);
+	}
 
 	@Override
 	protected void initCloudletScheduledList() {
@@ -20,12 +62,11 @@ public class LJFR_SJFRAlgorithm extends SchedulingAlgorithm {
 	 */
 	public void computeSchedule(List<? extends Cloudlet> cloudletList,
 			List<? extends Vm> vmList) {
-		workload = new double[vmList.size()];
-		//cloudletScheduledList = new ArrayList<Cloudlet>();
-		boolean isNotScheduled = true;
 
-		// first noVms cloudlets are scheduled with MaxMin
+		boolean isNotScheduled = true;
 		int countVm = vmList.size();
+		
+		// first noVms cloudlets are scheduled with MaxMin		
 		while (isNotScheduled && countVm > 0) {
 			countVm--;
 
@@ -43,10 +84,10 @@ public class LJFR_SJFRAlgorithm extends SchedulingAlgorithm {
 				for (Vm vm : vmList) {
 					// find min of Cij = Wi + Eij
 					if (min == -1
-							|| min > workload[vm.getId()]
+							|| min > getWorkload(vm.getId())
 									+ cloudlet.getCloudletLength()
 									/ vm.getMips()) {
-						min = workload[vm.getId()]
+						min = getWorkload(vm.getId())
 								+ cloudlet.getCloudletLength() / vm.getMips();
 						minCloudlet = cloudlet;
 						minVmId = vm.getId();
@@ -61,7 +102,7 @@ public class LJFR_SJFRAlgorithm extends SchedulingAlgorithm {
 			}
 			if (max >= 0) {
 				maxCloudlet.setVmId(maxVmId);
-				workload[maxVmId] = max;
+				setWorkload(maxVmId, max);
 				getCloudletScheduledList().add(maxCloudlet);
 			} else {
 				isNotScheduled = false;
@@ -81,10 +122,10 @@ public class LJFR_SJFRAlgorithm extends SchedulingAlgorithm {
 				for (Vm vm : vmList) {
 					// fin min of Cij = Wi + Eij
 					if (minmin == -1
-							|| minmin > workload[vm.getId()]
+							|| minmin > getWorkload(vm.getId())
 									+ cloudlet.getCloudletLength()
 									/ vm.getMips()) {
-						minmin = workload[vm.getId()]
+						minmin = getWorkload(vm.getId())
 								+ cloudlet.getCloudletLength() / vm.getMips();
 						minminCloudlet = cloudlet;
 						minminVmId = vm.getId();
@@ -93,7 +134,7 @@ public class LJFR_SJFRAlgorithm extends SchedulingAlgorithm {
 			}
 			if (minmin >= 0) {
 				minminCloudlet.setVmId(minminVmId);
-				workload[minminVmId] = minmin;
+				setWorkload(minminVmId, minmin);
 				getCloudletScheduledList().add(minminCloudlet);
 			} else {
 				isNotScheduled = false;
@@ -106,6 +147,7 @@ public class LJFR_SJFRAlgorithm extends SchedulingAlgorithm {
 			Cloudlet maxCloudlet = null;
 			int maxVmId = -1;
 			double max = -1;
+			
 			for (Cloudlet cloudlet : cloudletList) {
 				// if this cloudlet was bound to a VM continue
 				if (cloudlet.getVmId() >= 0) {
@@ -117,10 +159,10 @@ public class LJFR_SJFRAlgorithm extends SchedulingAlgorithm {
 				for (Vm vm : vmList) {
 					// find min of Cij = Wi + Eij
 					if (min == -1
-							|| min > workload[vm.getId()]
+							|| min > getWorkload(vm.getId())
 									+ cloudlet.getCloudletLength()
 									/ vm.getMips()) {
-						min = workload[vm.getId()]
+						min = getWorkload(vm.getId())
 								+ cloudlet.getCloudletLength() / vm.getMips();
 						minCloudlet = cloudlet;
 						minVmId = vm.getId();
@@ -135,7 +177,7 @@ public class LJFR_SJFRAlgorithm extends SchedulingAlgorithm {
 			}
 			if (max >= 0) {
 				maxCloudlet.setVmId(maxVmId);
-				workload[maxVmId] = max;
+				setWorkload(maxVmId, max);
 				getCloudletScheduledList().add(maxCloudlet);
 			} else {
 				isNotScheduled = false;

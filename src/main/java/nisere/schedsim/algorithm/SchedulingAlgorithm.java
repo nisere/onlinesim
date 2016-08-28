@@ -24,11 +24,6 @@ public abstract class SchedulingAlgorithm {
 	public SchedulingAlgorithm() {
 		initCloudletScheduledList();
 	}
-
-//	public synchronized void addCloudletToScheduledList(Cloudlet cloudlet) {
-//		
-//	}
-//	
 	
 	/** Creates the schedule. */
 	public abstract void computeSchedule(List<? extends Cloudlet> cloudletList,
