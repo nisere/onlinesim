@@ -9,10 +9,14 @@ import org.cloudbus.cloudsim.Storage;
 import org.cloudbus.cloudsim.Vm;
 import org.cloudbus.cloudsim.VmAllocationPolicy;
 
+/**
+ * MyDatacenter class adds to the Cloudsim Datacenter a way to define the type of instances
+ * that can be created and their number.
+ * 
+ * @author Alina Chera
+ *
+ */
 public class MyDatacenter extends Datacenter {
-	
-	/** The type of the datacenter: private cloud or public cloud */
-	private int type;
 	
 	/** A list with the VM instances that can be created in this datacenter */
 	private List<? extends Vm> vmInstances;
@@ -34,14 +38,6 @@ public class MyDatacenter extends Datacenter {
 
 	public void setVmInstances(List<? extends Vm> vmInstances) {
 		this.vmInstances = vmInstances;
-	}
-
-	public int getType() {
-		return type;
-	}
-
-	public void setType(int type) {
-		this.type = type;
 	}
 
 	public MyDatacenter(String name, DatacenterCharacteristics characteristics,

@@ -8,6 +8,12 @@ import java.util.Map;
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.Vm;
 
+/**
+ * WorkQueue algorithm
+ * 
+ * @author Alina Chera
+ *
+ */
 public class WorkQueueAlgorithm extends SchedulingAlgorithm {
 	
 	/** A map between VM (id) and workload. */

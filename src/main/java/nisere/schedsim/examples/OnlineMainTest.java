@@ -1,4 +1,4 @@
-package nisere.schedsim;
+package nisere.schedsim.examples;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -6,9 +6,14 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
-import nisere.schedsim.algorithm.SchedulingAlgorithm;
-import nisere.schedsim.algorithm.WorkQueueAlgorithm;
+import nisere.schedsim.MyCloudlet;
+import nisere.schedsim.MyDatacenter;
+import nisere.schedsim.MyDatacenterBroker;
+import nisere.schedsim.MyVm;
+import nisere.schedsim.Scheduler;
+import nisere.schedsim.algorithm.*;
 
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.CloudletSchedulerSpaceShared;
@@ -30,19 +35,29 @@ import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
 
-public class OnlineMain2 {
+/**
+ * This example is used to simulate online arrival of tasks.
+ * It uses Scheduler class and one datacenter.
+ * The datacenter is created using a host for a vm for simulation purposes.
+ * 
+ * @author Alina Chera
+ *
+ */
+public class OnlineMainTest {
 
 	public static void main(String[] args) {
-		int noCloudlets = 512;
-		int noVms = 16;
+		int noCloudlets = 4;
+		int noVms = 2;
 		// generate [minMipsUnif;maxMipsUnif) and multiply with 1000 to get
 		// mips
 		int minMipsUnif = 1;
-		int maxMipsUnif = 11;
+		int maxMipsUnif = 2;
 		// generate length [minLengthUnif;maxLengthUnif)
 		int minLengthUnif = 100000;
-		int maxLengthUnif = 400000;
-		int seed = 9;
+		int maxLengthUnif = 200000;
+		int seed = 1;
+		long delayInterval = 400;
+		int intervals = 2;
 		
 		try {
 			// Initialize the CloudSim package before creating any entities.
@@ -52,19 +67,29 @@ public class OnlineMain2 {
 			CloudSim.init(num_user, calendar, trace_flag);
 			// Datacenters are the resource providers in CloudSim. We need at
 			// list one of them to run a CloudSim simulation
-			Datacenter datacenter0 = createDatacenter("Private", noVms);
+			
+			DatacenterBroker broker = new MyDatacenterBroker("MyBroker");
+			
+			List<MyVm> vmList = createRandomMyVms(broker.getId(),noVms,minMipsUnif, maxMipsUnif, seed);
 
+			List<MyCloudlet> cloudletList = createRandomMyCloudlets(broker.getId(),noCloudlets,minLengthUnif, maxLengthUnif, seed, delayInterval, intervals);
 			
-			HashMap<String,Datacenter> datacenters = new HashMap<>();
-			datacenters.put("Private", datacenter0);
+			Map<String,Datacenter> datacenters = new HashMap<>();
 			
-			DatacenterBroker broker = new DatacenterBroker("MyBroker");
+			Map<Integer,Integer> vmCount = new HashMap<>();
+			for (Vm vm : vmList) {
+				vmCount.put(vm.getId(), 1);
+			}
+			MyDatacenter datacenter3 = createMyDatacenter("Private", vmList, vmCount);
+			datacenters.put("Private", datacenter3);
 			
-			List<Vm> vmList = createRandomVms(broker.getId(),noVms,minMipsUnif, maxMipsUnif, seed);
-			
-			List<Cloudlet> cloudletList = createRandomCloudlets(broker.getId(),noCloudlets,minLengthUnif, maxLengthUnif, seed);
-			
+			//SchedulingAlgorithm algorithm = new NOAlgorithm();
 			SchedulingAlgorithm algorithm = new WorkQueueAlgorithm();
+			//SchedulingAlgorithm algorithm = new SufferageAlgorithm();
+			//SchedulingAlgorithm algorithm = new MinMinAlgorithm();
+			//SchedulingAlgorithm algorithm = new MinMaxAlgorithm();
+			//SchedulingAlgorithm algorithm = new MaxMinAlgorithm();
+			//SchedulingAlgorithm algorithm = new LJFR_SJFRAlgorithm();
 			
 			Scheduler scheduler = new Scheduler(datacenters,broker,vmList,cloudletList,algorithm);
 
@@ -81,79 +106,51 @@ public class OnlineMain2 {
 		}
 	}
 	
-	private static Datacenter createDatacenter(String name, int noHosts) {
-
-		// Here are the steps needed to create a PowerDatacenter:
-		// 1. We need to create a list to store
-		// our machine
-		List<Host> hostList = new ArrayList<Host>();
-
-		// 2. A Machine contains one or more PEs or CPUs/Cores.
-		// In this example, it will have only one core.
-		List<Pe> peList = new ArrayList<Pe>();
-
-		int mips = 10000;
-
-		// 3. Create PEs and add these into a list.
-		peList.add(new Pe(0, new PeProvisionerSimple(mips))); // need to store
-																// Pe id and
-																// MIPS Rating
-
-		// 4. Create Host with its id and list of PEs and add them to the list
-		// of machines
-		int hostId = 0;
-		int ram = 2048; // host memory (MB)
-		long storage = 1000000; // host storage
-		int bw = 10000;
-
-		// add noHosts machines
-		for (int i = 0; i < noHosts; i++) {
-			hostList.add(new Host(hostId++, new RamProvisionerSimple(ram),
-					new BwProvisionerSimple(bw), storage, peList,
-					new VmSchedulerSpaceShared(peList))); // This is our machine
-		}
-
-		// 5. Create a DatacenterCharacteristics object that stores the
-		// properties of a data center: architecture, OS, list of
-		// Machines, allocation policy: time- or space-shared, time zone
-		// and its price (G$/Pe time unit).
+	private static MyDatacenter createMyDatacenter(String name, List<? extends Vm> vmList, 
+			Map<Integer,Integer> vmCount) throws Exception {
+		MyDatacenter datacenter;
+	
+		// Create a DatacenterCharacteristics object
 		String arch = "x86"; // system architecture
 		String os = "Linux"; // operating system
 		String vmm = "Xen";
 		double time_zone = 10.0; // time zone this resource located
 		double cost = 3.0; // the cost of using processing in this resource
 		double costPerMem = 0.05; // the cost of using memory in this resource
-		double costPerStorage = 0.001; // the cost of using storage in this
-										// resource
+		double costPerStorage = 0.001; // the cost of using storage in this resource
 		double costPerBw = 0.0; // the cost of using bw in this resource
-		LinkedList<Storage> storageList = new LinkedList<Storage>(); // we are
-																		// not
-																		// adding
-																		// SAN
-																		// devices
-																		// by
-																		// now
+		LinkedList<Storage> storageList = new LinkedList<Storage>(); // we are not adding SAN devices
 
+		List<Host> hostList = new ArrayList<Host>();
+		int hostId = 0;
+		// for each vm type check how many must be created;
+		// for each vm create a host
+		for (Vm vm : vmList ) {
+			if (vmCount.containsKey(vm.getId())) {
+				int n = vmCount.get(vm.getId());
+				List<Pe> peList = new ArrayList<Pe>();
+				peList.add(new Pe(0, new PeProvisionerSimple(vm.getMips())));
+				for (int i = 0; i < n; i++) {
+					hostList.add(new Host(hostId++, new RamProvisionerSimple(vm.getRam()),
+							new BwProvisionerSimple(vm.getBw()), vm.getSize(), 
+							peList,	new VmSchedulerSpaceShared(peList)));					
+				}
+			}
+		}
+		
 		DatacenterCharacteristics characteristics = new DatacenterCharacteristics(
 				arch, os, vmm, hostList, time_zone, cost, costPerMem,
 				costPerStorage, costPerBw);
-
-		// 6. Finally, we need to create a PowerDatacenter object.
-		Datacenter datacenter = null;
-		try {
-			datacenter = new Datacenter(name, characteristics,
-					new VmAllocationPolicySimple(hostList), storageList, 0);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
+		
+		datacenter = new MyDatacenter(name, characteristics, new VmAllocationPolicySimple(hostList), 
+				storageList, 0, vmList, vmCount);
+		
 		return datacenter;
 	}
 	
-	private static List<Vm> createRandomVms(int brokerId, int noVms, int minMipsUnif, int maxMipsUnif,
+	private static List<MyVm> createRandomMyVms(int brokerId, int noVms, int minMipsUnif, int maxMipsUnif,
 			int seed) {
-		// Fourth step: Create virtual machines
-		List<Vm> vmlist = new ArrayList<Vm>();
+		List<MyVm> vmlist = new ArrayList<>();
 
 		// VM description
 		int vmid = 0;
@@ -163,6 +160,9 @@ public class OnlineMain2 {
 		long bw = 1000;
 		int pesNumber = 1; // number of cpus
 		String vmm = "Xen"; // VMM name
+		int timeInterval = 0;
+		double costPerTimeInterval = 0;
+		int datacenterId = -1;
 
 		UniformDistr mipsUnif = new UniformDistr(minMipsUnif, maxMipsUnif,
 				seed);
@@ -170,16 +170,15 @@ public class OnlineMain2 {
 		// add noVms VMs
 		for (int i = 0; i < noVms; i++) {
 			int mult = (int) mipsUnif.sample();
-			vmlist.add(new Vm(vmid++, brokerId, mips * mult, pesNumber,
-					ram, bw, size, vmm, new CloudletSchedulerSpaceShared()));
+			vmlist.add(new MyVm(vmid++, brokerId, mips * mult, pesNumber,
+					ram, bw, size, vmm, new CloudletSchedulerSpaceShared(), timeInterval, costPerTimeInterval, datacenterId));
 		}
 		return vmlist;
 	}
 	
-	private static List<Cloudlet> createRandomCloudlets(int brokerId, int noCloudlets, int minLengthUnif, int maxLengthUnif,
-			int seed) {
-		// Fifth step: Create Cloudlets
-		List<Cloudlet> cloudletList = new ArrayList<Cloudlet>();
+	private static List<MyCloudlet> createRandomMyCloudlets(int brokerId, int noCloudlets, int minLengthUnif, int maxLengthUnif,
+			int seed, long delayInterval, int intervals) {
+		List<MyCloudlet> cloudletList = new ArrayList<>();
 
 		// Cloudlet properties
 		int id = 0;
@@ -188,18 +187,22 @@ public class OnlineMain2 {
 		long fileSize = 0;
 		long outputSize = 0;
 		UtilizationModel utilizationModel = new UtilizationModelFull();
+		int deadline = 0;
 
 		UniformDistr lengthUnif = new UniformDistr(minLengthUnif,
 				maxLengthUnif, seed);
 
-		// add noCloudlets cloudlets
-		for (int i = 0; i < noCloudlets; i++) {
-			int randomLength = (int) lengthUnif.sample();
-			Cloudlet cloudlet = new Cloudlet(id++, randomLength, pesNumber,
-					fileSize, outputSize, utilizationModel,
-					utilizationModel, utilizationModel);
-			cloudlet.setUserId(brokerId);
-			cloudletList.add(cloudlet);
+		// add noCloudlets*intervals cloudlets
+		for (int j = 0; j < intervals; j++) {
+			for (int i = 0; i < noCloudlets; i++) {
+				int randomLength = (int) lengthUnif.sample();
+				long delay = j*delayInterval;
+				MyCloudlet cloudlet = new MyCloudlet(id++, randomLength, pesNumber,
+						fileSize, outputSize, utilizationModel,
+						utilizationModel, utilizationModel, deadline, delay);
+				cloudlet.setUserId(brokerId);
+				cloudletList.add(cloudlet);
+			}
 		}
 		return cloudletList;
 	}

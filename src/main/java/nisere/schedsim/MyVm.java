@@ -3,6 +3,12 @@ package nisere.schedsim;
 import org.cloudbus.cloudsim.CloudletScheduler;
 import org.cloudbus.cloudsim.Vm;
 
+/**
+ * MyVm class adds to the Cloudsim Vm class a cost per instance and a connection to a datacenter.
+ * 
+ * @author Alina Chera
+ *
+ */
 public class MyVm extends Vm {
 
 	/**

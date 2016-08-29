@@ -5,6 +5,12 @@ import java.util.List;
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.Vm;
 
+/**
+ * Abstract class used for scheduling algorithms
+ * 
+ * @author Alina Chera
+ *
+ */
 public abstract class SchedulingAlgorithm {
 
 	/** List of scheduled cloudlets. */

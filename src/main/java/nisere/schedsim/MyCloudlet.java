@@ -3,6 +3,13 @@ package nisere.schedsim;
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.UtilizationModel;
 
+/**
+ * MyCloudlet adds to the Cloudsim Cloudlet a deadline to simulate deadline constrained tasks
+ * and a delay to simulate online arrival.
+ * 
+ * @author Alina Chera
+ *
+ */
 public class MyCloudlet extends Cloudlet {
 	/**
 	 * The cloudlet deadline. The amount of time in hours before the cloudlet

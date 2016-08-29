@@ -8,6 +8,12 @@ import java.util.Map;
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.Vm;
 
+/**
+ * MaxMin algorithm
+ * 
+ * @author Alina Chera
+ *
+ */
 public class MaxMinAlgorithm extends SchedulingAlgorithm {
 	/** A map between VM (id) and workload. */
 	private Map<Integer,Double> workloadMap;

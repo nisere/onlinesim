@@ -1,11 +1,3 @@
-/*
- * Title:        CloudSim Toolkit
- * Description:  CloudSim (Cloud Simulation) Toolkit for Modeling and Simulation of Clouds
- * Licence:      GPL - http://www.gnu.org/copyleft/gpl.html
- *
- * Copyright (c) 2009-2012, The University of Melbourne, Australia
- */
-
 package nisere.schedsim;
 
 import java.util.ArrayList;
@@ -20,6 +12,13 @@ import org.cloudbus.cloudsim.core.CloudSimTags;
 import org.cloudbus.cloudsim.core.SimEvent;
 import org.cloudbus.cloudsim.lists.VmList;
 
+/**
+ * MyDatacenterBroker class adds to the DatacenterBroker the possibility to process
+ * delayed cloudlets in order to simulate online arrival of tasks.
+ * 
+ * @author Alina Chera
+ *
+ */
 public class MyDatacenterBroker extends DatacenterBroker {
 	public static final int CLOUDLET_DELAY = 999;
 

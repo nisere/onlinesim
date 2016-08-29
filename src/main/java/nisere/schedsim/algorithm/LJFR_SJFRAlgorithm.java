@@ -8,6 +8,12 @@ import java.util.Map;
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.Vm;
 
+/**
+ * LJFR_SJFR algorithm
+ * 
+ * @author Alina Chera
+ *
+ */
 public class LJFR_SJFRAlgorithm extends SchedulingAlgorithm {
 	/** A map between VM (id) and workload. */
 	private Map<Integer,Double> workloadMap;

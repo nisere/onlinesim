@@ -1,22 +1,23 @@
-package nisere.schedsim;
+package nisere.schedsim.examples;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import nisere.schedsim.MyCloudlet;
+import nisere.schedsim.MyDatacenterBroker;
+import nisere.schedsim.MyVm;
+import nisere.schedsim.Scheduler;
 import nisere.schedsim.algorithm.NOAlgorithm;
 import nisere.schedsim.algorithm.SchedulingAlgorithm;
-import nisere.schedsim.algorithm.WorkQueueAlgorithm;
 
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.CloudletSchedulerSpaceShared;
 import org.cloudbus.cloudsim.Datacenter;
-import org.cloudbus.cloudsim.DatacenterBroker;
 import org.cloudbus.cloudsim.DatacenterCharacteristics;
 import org.cloudbus.cloudsim.Host;
 import org.cloudbus.cloudsim.Log;
@@ -24,7 +25,6 @@ import org.cloudbus.cloudsim.Pe;
 import org.cloudbus.cloudsim.Storage;
 import org.cloudbus.cloudsim.UtilizationModel;
 import org.cloudbus.cloudsim.UtilizationModelFull;
-import org.cloudbus.cloudsim.Vm;
 import org.cloudbus.cloudsim.VmAllocationPolicySimple;
 import org.cloudbus.cloudsim.VmSchedulerSpaceShared;
 import org.cloudbus.cloudsim.core.CloudSim;
@@ -33,6 +33,13 @@ import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
 
+/**
+ * This example is used to test scheduling on more datacenters.
+ * It uses Scheduler class to simulate online arrival of tasks.
+ * 
+ * @author Alina Chera
+ *
+ */
 public class OnlineMain4 {
 
 	public static void main(String[] args) {
@@ -46,7 +53,7 @@ public class OnlineMain4 {
 		int minLengthUnif = 100000;
 		int maxLengthUnif = 200000;
 		int seed = 9;
-		long delayInterval = 0;
+		long delayInterval = 400;
 		int intervals = 2;
 		
 		try {
@@ -82,7 +89,7 @@ public class OnlineMain4 {
 			
 			SchedulingAlgorithm algorithm = new NOAlgorithm();
 			
-			OnlineScheduler scheduler = new OnlineScheduler(datacenters,broker,vmList,cloudletList,algorithm);
+			Scheduler scheduler = new Scheduler(datacenters,broker,vmList,cloudletList,algorithm);
 
 			scheduler.prepareSimulation();
 
@@ -118,7 +125,7 @@ public class OnlineMain4 {
 		// 4. Create Host with its id and list of PEs and add them to the list
 		// of machines
 		int hostId = 0;
-		int ram = 2048; // host memory (MB)
+		int ram = 2048; // host memory
 		long storage = 1000000; // host storage
 		int bw = 10000;
 
@@ -173,8 +180,8 @@ public class OnlineMain4 {
 		// VM description
 		int vmid = 0;
 		int mips = 1000;
-		long size = 10000; // image size (MB)
-		int ram = 512; // vm memory (MB)
+		long size = 10000; // image size
+		int ram = 512; // vm memory
 		long bw = 1000;
 		int pesNumber = 1; // number of cpus
 		String vmm = "Xen"; // VMM name

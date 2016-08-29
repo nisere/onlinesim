@@ -6,6 +6,12 @@ import java.util.List;
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.Vm;
 
+/**
+ * No algorithm, it leaves the list of cloudlets unscheduled.
+ * 
+ * @author Alina Chera
+ *
+ */
 public class NOAlgorithm extends SchedulingAlgorithm {
 
 	@Override
