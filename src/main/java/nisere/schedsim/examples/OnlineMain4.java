@@ -205,14 +205,12 @@ public class OnlineMain4 {
 		for (int i = 0; i < noVms; i++) {
 			int mult = (int) mipsUnif.sample();
 			vmlist.add(new MyVm(vmid++, brokerId, mips * mult, pesNumber,
-					ram, bw, size, vmm, new CloudletSchedulerSpaceShared(), timeInterval, costPerTimeInterval,
-					3));
+					ram, bw, size, vmm, new CloudletSchedulerSpaceShared(), 3));
 		}
 		for (int i = 0; i < noVms; i++) {
 			int mult = (int) mipsUnif.sample();
 			vmlist.add(new MyVm(vmid++, brokerId, mips * mult, pesNumber,
-					ram, bw, size, vmm, new CloudletSchedulerSpaceShared(), timeInterval, costPerTimeInterval,
-					2));
+					ram, bw, size, vmm, new CloudletSchedulerSpaceShared(), 2));
 		}
 		
 		return vmlist;

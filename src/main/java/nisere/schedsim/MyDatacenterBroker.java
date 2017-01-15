@@ -9,6 +9,7 @@ import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.Vm;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.CloudSimTags;
+import org.cloudbus.cloudsim.core.SimEntity;
 import org.cloudbus.cloudsim.core.SimEvent;
 import org.cloudbus.cloudsim.lists.VmList;
 
@@ -20,8 +21,19 @@ import org.cloudbus.cloudsim.lists.VmList;
  *
  */
 public class MyDatacenterBroker extends DatacenterBroker {
+	/**
+	 * A constant indicating the CLOUDLET_DELAY event.
+	 * This event is used to delay submition of a specific cloudlet
+	 * to a later moment.
+	 */
 	public static final int CLOUDLET_DELAY = 999;
 
+	/**
+	 * Creates a new MyDatacenterBroker object.
+	 * 
+	 * @param name the name of the broker
+	 * @throws Exception 
+	 */
 	public MyDatacenterBroker(String name) throws Exception {
 		super(name);
 	}
@@ -107,7 +119,7 @@ public class MyDatacenterBroker extends DatacenterBroker {
 				continue;
 			
 			int otherId = datacenterId;
-			if ((vm instanceof MyVm) && ( ((MyVm)vm).getDatacenterId() != -1 )) {
+			if ((vm instanceof MyVm) && ( ((MyVm)vm).getDatacenterId() >= 0 )) {
 				otherId = ((MyVm)vm).getDatacenterId();
 			}
 			Log.printLine(CloudSim.clock() + ": " + getName() +

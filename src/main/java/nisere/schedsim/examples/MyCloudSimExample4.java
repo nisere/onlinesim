@@ -89,17 +89,17 @@ public class MyCloudSimExample4 {
 
 			// create two VMs
 			MyVm vm1 = new MyVm(vmid, brokerId, mips, pesNumber, ram, bw, size,
-					vmm, new CloudletSchedulerTimeShared(), timeInterval, costPerTimeInterval1, datacenterId);
+					vmm, new CloudletSchedulerTimeShared(), datacenterId);
 			vm1.setDatacenterId(datacenter1.getId());
 
 			vmid++;
 			MyVm vm2 = new MyVm(vmid, brokerId, mips, pesNumber, ram, bw, size,
-					vmm, new CloudletSchedulerTimeShared(), timeInterval, costPerTimeInterval2, datacenterId);
+					vmm, new CloudletSchedulerTimeShared(), datacenterId);
 			vm2.setDatacenterId(datacenter0.getId());
 			
 			vmid++;
 			MyVm vm3 = new MyVm(vmid, brokerId, mips, pesNumber, ram, bw, size,
-					vmm, new CloudletSchedulerTimeShared(), timeInterval, costPerTimeInterval2, datacenterId);
+					vmm, new CloudletSchedulerTimeShared(), datacenterId);
 			//vm3.setDatacenterId(datacenter1.getId());
 
 			// add the VMs to the vmList
@@ -303,13 +303,13 @@ public class MyCloudSimExample4 {
 						+ indent + indent
 						+ dft.format(cloudlet.getFinishTime()));
 
-				vm = VmList.getById(vmList, cloudlet.getVmId());
-				double intervals = cloudlet.getActualCPUTime()
-						/ vm.getTimeInterval();
-				if ((int) intervals != intervals) {
-					intervals = (int) intervals + 1;
-				}
-				cost += intervals * vm.getCostPerTimeInterval();
+//				vm = VmList.getById(vmList, cloudlet.getVmId());
+//				double intervals = cloudlet.getActualCPUTime()
+//						/ vm.getTimeInterval();
+//				if ((int) intervals != intervals) {
+//					intervals = (int) intervals + 1;
+//				}
+//				cost += intervals * vm.getCostPerTimeInterval();
 			}
 		}
 		Log.printLine("Cost: " + dft.format(cost));

@@ -143,7 +143,7 @@ public class OnlineMainTest {
 				costPerStorage, costPerBw);
 		
 		datacenter = new MyDatacenter(name, characteristics, new VmAllocationPolicySimple(hostList), 
-				storageList, 0, vmList, vmCount);
+				storageList, 0, vmList, vmCount, new HashMap<Integer,Double>(),1);
 		
 		return datacenter;
 	}
@@ -171,7 +171,7 @@ public class OnlineMainTest {
 		for (int i = 0; i < noVms; i++) {
 			int mult = (int) mipsUnif.sample();
 			vmlist.add(new MyVm(vmid++, brokerId, mips * mult, pesNumber,
-					ram, bw, size, vmm, new CloudletSchedulerSpaceShared(), timeInterval, costPerTimeInterval, datacenterId));
+					ram, bw, size, vmm, new CloudletSchedulerSpaceShared(), datacenterId));
 		}
 		return vmlist;
 	}

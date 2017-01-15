@@ -12,18 +12,8 @@ import org.cloudbus.cloudsim.Vm;
 public class MyVm extends Vm {
 
 	/**
-	 * The unit of time (in seconds) for which the cost is applied.
-	 */
-	private int timeInterval;
-
-	/**
-	 * The cost per unit of time for using this VM.
-	 */
-	private double costPerTimeInterval;
-
-	/**
 	 * The datacenter id where this VM is assigned.
-	 * A value of -1 means no assignment.
+	 * A negative value means no assignment.
 	 */
 	private int datacenterId;
 
@@ -49,31 +39,18 @@ public class MyVm extends Vm {
 	 *            the virtual machine monitor that manages this VM
 	 * @param cloudletScheduler
 	 *            the cloudlet scheduler policy for cloudlets scheduling
-	 * @param timeInterval
-	 * 			  the time interval for which the cost is applied (in seconds)
-	 * @param costPerTimeInterval
-	 * 			  the cost per time interval
+	 * @param datacenterId
+	 *            the id of the datacenter assigned to the VM
 	 */
 	public MyVm(final int id, final int userId, final double mips,
 			final int numberOfPes, final int ram, final long bw,
 			final long size, final String vmm,
 			final CloudletScheduler cloudletScheduler,			 
-			final int timeInterval, final double costPerTimeInterval, final int datacenterId) {
+			final int datacenterId) {
 		super(id, userId, mips, numberOfPes, ram, bw, size, vmm,
 				cloudletScheduler);
 
-		this.timeInterval = Math.max(0, timeInterval);
-		this.costPerTimeInterval = Math.max(0, costPerTimeInterval);
 		this.datacenterId = datacenterId;
-	}
-	
-	/**
-	 * Gets the cost of this VM applied per interval of time.
-	 * 
-	 * @return the cost of this VM applied per interval of time
-	 */
-	public double getCostPerTimeInterval() {
-		return costPerTimeInterval;
 	}
 
 	/**
@@ -86,33 +63,6 @@ public class MyVm extends Vm {
 	}
 
 	/**
-	 * Gets the interval of time for which the cost of this VM is applied.
-	 * 
-	 * @return the interval of time for which the cost of this VM is applied (in
-	 *         seconds)
-	 */
-	public int getTimeInterval() {
-		return timeInterval;
-	}
-
-	/**
-	 * Sets the cost of this VM applied per interval of time.
-	 * 
-	 * @param cost
-	 *            the cost of this VM applied per interval of time; must be >= 0
-	 * @return <code>true</code> if it is successful, <code>false</code>
-	 *         otherwise
-	 */
-	public boolean setCostPerTimeInterval(double cost) {
-		boolean success = false;
-		if (cost >= 0) {
-			costPerTimeInterval = cost;
-			success = true;
-		}
-		return success;
-	}
-
-	/**
 	 * Sets the id of the datacenter to which this VM belongs.
 	 * 
 	 * @param id
@@ -122,21 +72,4 @@ public class MyVm extends Vm {
 		datacenterId = id;
 	}
 
-	/**
-	 * Sets the interval of time for which the cost of this VM is applied.
-	 * 
-	 * @param seconds
-	 *            the interval of time for which the cost of this VM is applied
-	 *            (in seconds); must be >= 0
-	 * @return <code>true</code> if it is successful, <code>false</code>
-	 *         otherwise
-	 */
-	public boolean setTimeInterval(int seconds) {
-		boolean success = false;
-		if (seconds >= 0) {
-			timeInterval = seconds;
-			success = true;
-		}
-		return success;
-	}
 }
