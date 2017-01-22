@@ -67,18 +67,23 @@ public class OnlineMain4 {
 			Datacenter datacenter2 = createDatacenter("Private", noVms);
 			Datacenter datacenter3 = createDatacenter("Public", noVms);
 
+//			
+//			HashMap<String,Datacenter> datacenters = new HashMap<>();
+//			datacenters.put("Private", datacenter2);
+//			datacenters.put("Public", datacenter3);
 			
-			HashMap<String,Datacenter> datacenters = new HashMap<>();
-			datacenters.put("Private", datacenter2);
-			datacenters.put("Public", datacenter3);
+			List<Datacenter> datacenters = new ArrayList<>();
+			datacenters.add(datacenter2);
+			datacenters.add(datacenter3);
+			
 			
 			//-----------
 			int[] datacenterIds = new int[datacenters.size()];
-			int i = 0;
-			for(Map.Entry<String, Datacenter> entry : datacenters.entrySet()){
-			    //System.out.printf("Key : %s and Value: %s %n", entry.getKey(), entry.getValue());
-				datacenterIds[i++] = entry.getValue().getId();
-			}
+//			int i = 0;
+//			for(Map.Entry<String, Datacenter> entry : datacenters.entrySet()){
+//			    //System.out.printf("Key : %s and Value: %s %n", entry.getKey(), entry.getValue());
+//				datacenterIds[i++] = entry.getValue().getId();
+//			}
 			//-----------
 			
 			MyDatacenterBroker broker = new MyDatacenterBroker("MyBroker");
@@ -205,12 +210,12 @@ public class OnlineMain4 {
 		for (int i = 0; i < noVms; i++) {
 			int mult = (int) mipsUnif.sample();
 			vmlist.add(new MyVm(vmid++, brokerId, mips * mult, pesNumber,
-					ram, bw, size, vmm, new CloudletSchedulerSpaceShared(), 3));
+					ram, bw, size, vmm, new CloudletSchedulerSpaceShared(), 3, -1));
 		}
 		for (int i = 0; i < noVms; i++) {
 			int mult = (int) mipsUnif.sample();
 			vmlist.add(new MyVm(vmid++, brokerId, mips * mult, pesNumber,
-					ram, bw, size, vmm, new CloudletSchedulerSpaceShared(), 2));
+					ram, bw, size, vmm, new CloudletSchedulerSpaceShared(), 2, -1));
 		}
 		
 		return vmlist;

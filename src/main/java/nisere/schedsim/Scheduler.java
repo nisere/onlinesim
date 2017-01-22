@@ -23,8 +23,9 @@ import org.cloudbus.cloudsim.Vm;
  */
 public class Scheduler {
 	
-	/** A map between the names of datacenters and the datacenters */
-	private Map<String,? extends Datacenter> datacenters;
+	///** A map between the names of datacenters and the datacenters */
+	//private Map<String,? extends Datacenter> datacenters;
+	private List<? extends Datacenter> datacenters;
 	/** The datacenter broker */
 	private DatacenterBroker broker;
 	/** The VM list for all datacenters */
@@ -43,7 +44,7 @@ public class Scheduler {
 	 * @param algorithm the scheduling algorithm
 	 * @throws Exception
 	 */
-	public Scheduler(Map<String,Datacenter> datacenters,
+	public Scheduler(List<? extends Datacenter> datacenters,
 			DatacenterBroker broker,
 			List<? extends Vm> vmList,
 			List<? extends Cloudlet> cloudletList,
@@ -127,13 +128,13 @@ public class Scheduler {
 		return (List<T>)cloudletList;
 	}
 
-	/**
-	 * Gets the map of datcenters.
-	 * @return the map of datacenters casted to the real type
-	 */
-	public <T extends Datacenter> Map<String,T> getDatacenters() {
-		return (Map<String,T>)datacenters;
-	}
+//	/**
+//	 * Gets the map of datcenters.
+//	 * @return the map of datacenters casted to the real type
+//	 */
+//	public <T extends Datacenter> Map<String,T> getDatacenters() {
+//		return (Map<String,T>)datacenters;
+//	}
 
 	/**
 	 * Gets the VM list.
@@ -167,13 +168,13 @@ public class Scheduler {
 		this.cloudletList = cloudletList;
 	}
 
-	/**
-	 * Sets the datacenters map.
-	 * @param datacenters the datacenters map
-	 */
-	public void setDatacenters(Map<String,Datacenter> datacenters) {
-		this.datacenters = datacenters;
-	}
+//	/**
+//	 * Sets the datacenters map.
+//	 * @param datacenters the datacenters map
+//	 */
+//	public void setDatacenters(Map<String,Datacenter> datacenters) {
+//		this.datacenters = datacenters;
+//	}
 
 	/**
 	 * Sets the VM list.

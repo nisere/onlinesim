@@ -16,6 +16,11 @@ public class MyVm extends Vm {
 	 * A negative value means no assignment.
 	 */
 	private int datacenterId;
+	
+	/**
+	 * The id of the instance type. It must be unique for a datacenter.
+	 */
+	private int typeId;
 
 	/**
 	 * Creates a new MyVm object.
@@ -41,16 +46,19 @@ public class MyVm extends Vm {
 	 *            the cloudlet scheduler policy for cloudlets scheduling
 	 * @param datacenterId
 	 *            the id of the datacenter assigned to the VM
+	 * @param typeId
+	 *            the id of the instance type, unique per datacenter
 	 */
 	public MyVm(final int id, final int userId, final double mips,
 			final int numberOfPes, final int ram, final long bw,
 			final long size, final String vmm,
 			final CloudletScheduler cloudletScheduler,			 
-			final int datacenterId) {
+			final int datacenterId, final int typeId) {
 		super(id, userId, mips, numberOfPes, ram, bw, size, vmm,
 				cloudletScheduler);
 
 		this.datacenterId = datacenterId;
+		this.typeId = typeId;
 	}
 
 	/**
@@ -65,11 +73,27 @@ public class MyVm extends Vm {
 	/**
 	 * Sets the id of the datacenter to which this VM belongs.
 	 * 
-	 * @param id
-	 *            the id of the datacenter to which this VM belongs
+	 * @param id the id of the datacenter to which this VM belongs
 	 */
 	public void setDatacenterId(int id) {
 		datacenterId = id;
 	}
 
+	/**
+	 * Gets the id of the instance type
+	 * 
+	 * @return the id of the instance type
+	 */
+	public int getTypeId() {
+		return typeId;
+	}
+
+	/**
+	 * Sets the id of the instance type. It must be unique per datacenter.
+	 * 
+	 * @param id the id of the instance type
+	 */
+	public void setTypeId(int id) {
+		typeId = id;
+	}
 }

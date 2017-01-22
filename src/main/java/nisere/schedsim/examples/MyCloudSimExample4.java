@@ -89,17 +89,17 @@ public class MyCloudSimExample4 {
 
 			// create two VMs
 			MyVm vm1 = new MyVm(vmid, brokerId, mips, pesNumber, ram, bw, size,
-					vmm, new CloudletSchedulerTimeShared(), datacenterId);
+					vmm, new CloudletSchedulerTimeShared(), datacenterId, -1);
 			vm1.setDatacenterId(datacenter1.getId());
 
 			vmid++;
 			MyVm vm2 = new MyVm(vmid, brokerId, mips, pesNumber, ram, bw, size,
-					vmm, new CloudletSchedulerTimeShared(), datacenterId);
+					vmm, new CloudletSchedulerTimeShared(), datacenterId, -1);
 			vm2.setDatacenterId(datacenter0.getId());
 			
 			vmid++;
 			MyVm vm3 = new MyVm(vmid, brokerId, mips, pesNumber, ram, bw, size,
-					vmm, new CloudletSchedulerTimeShared(), datacenterId);
+					vmm, new CloudletSchedulerTimeShared(), datacenterId, -1);
 			//vm3.setDatacenterId(datacenter1.getId());
 
 			// add the VMs to the vmList

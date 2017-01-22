@@ -11,7 +11,7 @@ import org.cloudbus.cloudsim.VmAllocationPolicy;
 
 /**
  * MyDatacenter class adds to the Cloudsim Datacenter a way to define the type of instances
- * that can be created and their number.
+ * that can be created, their number and their price.
  * 
  * @author Alina Chera
  *
@@ -19,27 +19,26 @@ import org.cloudbus.cloudsim.VmAllocationPolicy;
 public class MyDatacenter extends Datacenter {
 	
 	/** 
-	 *  A list with the VM instances that can be created in this datacenter.
-	 *  To be treated like a VM type.
+	 *  A list with the VM types that can be created in this datacenter.
 	 */
-	private List<? extends Vm> vmInstances;
+	private List<? extends Vm> vmTypes;
 	
 	/** 
-	 * A mapping between VM instances (id) and how many can be generated. 
+	 * A mapping between VM types (id) and how many can be generated. 
 	 * If a certain VM type is not present that means that
 	 * an infinite amount of VM of that type can be created.
 	 */
 	private Map<Integer,Integer> vmCount;
 	
 	/**
-	 * A mapping between VM instances (id) and the cost of using them
+	 * A mapping between VM types (id) and the price of using them
 	 * applied per timeInterval.
-	 * If a certain VM is missing that means there is no cost.
+	 * If a certain VM is missing that means there is no price.
 	 */
-	private Map<Integer,Double> vmCost;
+	private Map<Integer,Double> vmPrice;
 	
 	/**
-	 * The time interval for which the cost is applied, in seconds.
+	 * The time interval for which the price is applied, in seconds.
 	 * Must be >= 1.
 	 */
 	private int timeInterval;
@@ -57,84 +56,83 @@ public class MyDatacenter extends Datacenter {
 	 * 			the allocation policy of VMs to hosts
      * @param schedulingInterval 
      * 			the scheduling delay to process each datacenter received event
-     * @param vmInstances
-     * 			a list with the VM instances that can be created in this datacenter;
-     * 			to be treated like types
+     * @param vmTypes
+     * 			a list with the VM types that can be created in this datacenter
      * @param vmCount
-     * 			a mapping between VM instances (id) and how many can be generated;
+     * 			a mapping between VM types (id) and how many can be generated;
      * 			if a VM is absent that means an infinite amount of that type
-     * @param vmCost
-     * 			a mapping between VM instances (id) and the usage cost per timeInterval;
-     * 			if a certain VM is missing that means there is no cost
+     * @param vmPrice
+     * 			a mapping between VM types (id) and the usage price per timeInterval;
+     * 			if a certain VM is missing that means there is no price
      * @param timeInterval
-     * 			the time interval for which the cost is applied (seconds, >= 1)
+     * 			the time interval for which the price is applied (seconds, >= 1)
 	 * @throws Exception 
 	 */
 	public MyDatacenter(String name, DatacenterCharacteristics characteristics,
 			VmAllocationPolicy vmAllocationPolicy, List<Storage> storageList,
-			double schedulingInterval, List<? extends Vm> vmInstances,
-			Map<Integer,Integer> vmCount, Map<Integer,Double> vmCost, 
+			double schedulingInterval, List<? extends Vm> vmTypes,
+			Map<Integer,Integer> vmCount, Map<Integer,Double> vmPrice, 
 			int timeInterval) throws Exception {
 		super(name, characteristics, vmAllocationPolicy, storageList,
 				schedulingInterval);
-		this.vmInstances = vmInstances;
+		this.vmTypes = vmTypes;
 		this.vmCount = vmCount;
-		this.vmCost = vmCost;
+		this.vmPrice = vmPrice;
 		this.timeInterval = Math.min(timeInterval, 1);
 	}
 
 
 	/**
-	 * Gets the list of VM instances that can be created in this datacenter.
-	 * @return the list of VM instances
+	 * Gets the list of VM types that can be created in this datacenter.
+	 * @return the list of VM types
 	 */
-	public <T extends Vm> List<T> getVmInstances() {
-		return (List<T>)vmInstances;
+	public <T extends Vm> List<T> getVmTypes() {
+		return (List<T>)vmTypes;
 	}
 
 	/**
-	 * Sets the list of VM instances that can be created in this datacenter.
-	 * @param vmInstances the list of VM instances
+	 * Sets the list of VM types that can be created in this datacenter.
+	 * @param vmTypes the list of VM types
 	 */
-	public void setVmInstances(List<? extends Vm> vmInstances) {
-		this.vmInstances = vmInstances;
+	public void setVmTypes(List<? extends Vm> vmTypes) {
+		this.vmTypes = vmTypes;
 	}
 	
 	/**
-	 * Gets the mapping between VM instances (id) and how many can be generated.
-	 * @return the map between the VM instance and its maximum number
+	 * Gets the mapping between VM types (id) and how many can be generated.
+	 * @return the map between the VM type and its maximum number
 	 */
 	public Map<Integer, Integer> getVmCount() {
 		return vmCount;
 	}
 	
 	/**
-	 * Sets the mapping between VM instances (id) and how many can be generated.
-	 * @param vmCount the map between the VM instance and its maximum number
+	 * Sets the mapping between VM types (id) and how many can be generated.
+	 * @param vmCount the map between the VM type and its maximum number
 	 */
 	public void setVmCount(Map<Integer, Integer> vmCount) {
 		this.vmCount = vmCount;
 	}
 
 	/**
-	 * Gets the mapping between VM instances (id) and the cost of VM.
-	 * @return the map between the VM instance and the cost
+	 * Gets the mapping between VM types (id) and the price of VM.
+	 * @return the map between the VM type and the price
 	 */
-	public Map<Integer,Double> getVmCost() {
-		return vmCost;
+	public Map<Integer,Double> getVmPrice() {
+		return vmPrice;
 	}
 
 	/**
-	 * Sets the mapping between VM instances (id) and the cost of VM.
-	 * @param vmCost the map between the VM instance and the cost
+	 * Sets the mapping between VM types (id) and the price of VM.
+	 * @param vmPrice the map between the VM type and the price
 	 */
-	public void setVmCost(Map<Integer,Double> vmCost) {
-		this.vmCost = vmCost;
+	public void setVmPrice(Map<Integer,Double> vmPrice) {
+		this.vmPrice = vmPrice;
 	}
 
 
 	/**
-	 * Gets the time interval for which the cost is applied.
+	 * Gets the time interval for which the price is applied.
 	 * @return time interval
 	 */
 	public int getTimeInterval() {

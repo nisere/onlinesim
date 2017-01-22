@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import nisere.schedsim.MyDatacenter;
 import nisere.schedsim.Scheduler;
 import nisere.schedsim.algorithm.*;
 
@@ -63,8 +64,10 @@ public class OnlineMain2 {
 			Datacenter datacenter0 = createDatacenter("Private", noVms);
 
 			
-			HashMap<String,Datacenter> datacenters = new HashMap<>();
-			datacenters.put("Private", datacenter0);
+			//HashMap<String,Datacenter> datacenters = new HashMap<>();
+			//datacenters.put("Private", datacenter0);
+			List<Datacenter> datacenters = new ArrayList<>();
+			datacenters.add(datacenter0);
 			
 			DatacenterBroker broker = new DatacenterBroker("MyBroker");
 			

@@ -74,14 +74,16 @@ public class OnlineMainTest {
 
 			List<MyCloudlet> cloudletList = createRandomMyCloudlets(broker.getId(),noCloudlets,minLengthUnif, maxLengthUnif, seed, delayInterval, intervals);
 			
-			Map<String,Datacenter> datacenters = new HashMap<>();
+			//Map<String,Datacenter> datacenters = new HashMap<>();
 			
 			Map<Integer,Integer> vmCount = new HashMap<>();
 			for (Vm vm : vmList) {
 				vmCount.put(vm.getId(), 1);
 			}
 			MyDatacenter datacenter3 = createMyDatacenter("Private", vmList, vmCount);
-			datacenters.put("Private", datacenter3);
+//			datacenters.put("Private", datacenter3);
+			List<MyDatacenter> datacenters = new ArrayList<>();
+			datacenters.add(datacenter3);
 			
 			//SchedulingAlgorithm algorithm = new NOAlgorithm();
 			SchedulingAlgorithm algorithm = new WorkQueueAlgorithm();
@@ -171,7 +173,7 @@ public class OnlineMainTest {
 		for (int i = 0; i < noVms; i++) {
 			int mult = (int) mipsUnif.sample();
 			vmlist.add(new MyVm(vmid++, brokerId, mips * mult, pesNumber,
-					ram, bw, size, vmm, new CloudletSchedulerSpaceShared(), datacenterId));
+					ram, bw, size, vmm, new CloudletSchedulerSpaceShared(), datacenterId, -1));
 		}
 		return vmlist;
 	}
