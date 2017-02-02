@@ -19,9 +19,14 @@ public class MyCloudlet extends Cloudlet {
 
 	/**
 	 * The delay from the start of the simulation when this cloudlet was
-	 * received. The delay of the cloudlet is in seconds.
+	 * processed. The delay of the cloudlet is in seconds.
 	 */
 	private long delay;
+	
+	/**
+	 * The arrival time of the cloudlet, in seconds.
+	 */
+	private long arrivalTime;
 
 	/**
 	 * Allocates a MyCloudlet object.
@@ -38,8 +43,8 @@ public class MyCloudlet extends Cloudlet {
 	 *            the size of this cloudlet when finished (in bytes) >= 1
 	 * @param deadline
 	 *            the deadline of this cloudlet >= 0
-	 * @param delay
-	 *            the delay when this cloudlet is received >= 0
+	 * @param arrivalTime
+	 *            the arrival time of this cloudlet >= 0
 	 * @param utilizationModelCpu
 	 *            the utilization model of the CPU
 	 * @param utilizationModelRam
@@ -53,13 +58,13 @@ public class MyCloudlet extends Cloudlet {
 			final UtilizationModel utilizationModelCpu,
 			final UtilizationModel utilizationModelRam,
 			final UtilizationModel utilizationModelBw,
-			final int deadline, final long delay) {
+			final int deadline, final long arrivalTime) {
 		super(cloudletId, cloudletLength, Math.max(1, pesNumber),
 				cloudletFileSize, cloudletOutputSize, utilizationModelCpu,
 				utilizationModelRam, utilizationModelBw);
 
 		this.deadline = Math.max(0, deadline);
-		this.delay = Math.max(0, delay);
+		this.arrivalTime = Math.max(0, arrivalTime);
 	}
 
 	/**
@@ -79,11 +84,20 @@ public class MyCloudlet extends Cloudlet {
 	public long getDelay() {
 		return delay;
 	}
+	
+	/**
+	 * Gets the arrival time of this cloudlet.
+	 * 
+	 * @return the arrival time of this cloudlet (in seconds)
+	 */
+	public long getArrivalTime() {
+		return arrivalTime;
+	}
 
 	/**
 	 * Sets the deadline of this cloudlet.
 	 * 
-	 * @param hours
+	 * @param deadline
 	 *            the deadline of this cloudlet (in hours)
 	 * @return <code>true</code> if it is successful, <code>false</code>
 	 *         otherwise
@@ -100,7 +114,7 @@ public class MyCloudlet extends Cloudlet {
 	/**
 	 * Sets the delay of this cloudlet.
 	 * 
-	 * @param hours
+	 * @param delay
 	 *            the delay of this cloudlet (in seconds)
 	 * @return <code>true</code> if it is successful, <code>false</code>
 	 *         otherwise
@@ -114,4 +128,20 @@ public class MyCloudlet extends Cloudlet {
 		return success;
 	}
 
+	/**
+	 * Sets the arrival time of this cloudlet.
+	 * 
+	 * @param arrivalTime
+	 *            the arrival time of this cloudlet (in seconds)
+	 * @return <code>true</code> if it is successful, <code>false</code>
+	 *         otherwise
+	 */
+	public boolean setArrivalTime(final long arrivalTime) {
+		boolean success = false;
+		if (delay >= 0) {
+			this.arrivalTime = arrivalTime;
+			success = true;
+		}
+		return success;
+	}
 }

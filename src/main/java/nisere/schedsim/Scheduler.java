@@ -34,7 +34,10 @@ public class Scheduler {
 	private List<? extends Cloudlet> cloudletList;
 	/** The scheduling algorithm */
 	private SchedulingAlgorithm algorithm;
-	
+	/** The scheduling interval (in seconds, positive) */
+	private int schedulingInterval;
+
+
 	/**
 	 * Creates a Scheduler object.
 	 * @param datacenters the mapping of datacenters
@@ -42,18 +45,21 @@ public class Scheduler {
 	 * @param vmList the VM list
 	 * @param cloudletList the cloudlet list
 	 * @param algorithm the scheduling algorithm
+	 * @param schedulingInterval the scheduling interval in seconds
 	 * @throws Exception
 	 */
 	public Scheduler(List<? extends Datacenter> datacenters,
 			DatacenterBroker broker,
 			List<? extends Vm> vmList,
 			List<? extends Cloudlet> cloudletList,
-			SchedulingAlgorithm algorithm) throws Exception {
+			SchedulingAlgorithm algorithm,
+			int schedulingInterval) throws Exception {
 		this.datacenters = datacenters;
 		this.broker = broker;
 		this.vmList = vmList;
 		this.cloudletList = cloudletList;		
 		this.algorithm = algorithm;	
+		this.schedulingInterval = Math.max(0, schedulingInterval);
 	}
 
 	/**
@@ -76,20 +82,24 @@ public class Scheduler {
 	 */
 	protected List<Cloudlet> getScheduledCloudlets(List<? extends Cloudlet> cloudlets, 
 			List<? extends Vm> vms) {
-		long delay = 0;
+		long delay = getSchedulingInterval();
 		List<Cloudlet> list = new LinkedList<>();
 		for (Cloudlet cloudlet : cloudlets) {
-			if ((cloudlet instanceof MyCloudlet) && ( ((MyCloudlet) cloudlet).getDelay() > delay )) {
+			if ((cloudlet instanceof MyCloudlet) && ( ((MyCloudlet) cloudlet).getArrivalTime() > delay )) {
 				// this is the first of the next batch;
 				// schedule the batch then reset the list and add this cloudlet
 				getAlgorithm().prepare(delay);
 				getAlgorithm().computeSchedule(list, vms);
 				list = new LinkedList<>();
-				list.add(cloudlet);
-				delay = ((MyCloudlet) cloudlet).getDelay();
-			} else {
-				list.add(cloudlet);
+				while (((MyCloudlet) cloudlet).getArrivalTime() > delay) {
+					delay += getSchedulingInterval();
+				}
 			}
+			// update delay to take into account the scheduling interval
+			if (cloudlet instanceof MyCloudlet) {
+				((MyCloudlet) cloudlet).setDelay(delay);
+			}
+			list.add(cloudlet);
 		}
 		getAlgorithm().prepare(delay);
 		getAlgorithm().computeSchedule(list, vms);
@@ -142,6 +152,28 @@ public class Scheduler {
 	 */
 	public <T extends Vm> List<T> getVmList() {
 		return (List<T>)vmList;
+	}
+	
+	/**
+	 * Gets the scheduling interval.
+	 * @return the scheduling interval
+	 */
+	public int getSchedulingInterval() {
+		return schedulingInterval;
+	}
+
+	/**
+	 * Sets the scheduling interval
+	 * @param schedulingInterval (in seconds, must be positive)
+	 * @return true if successful, false if not
+	 */
+	public boolean setSchedulingInterval(int schedulingInterval) {
+		boolean ret = false;
+		if (schedulingInterval >= 0) {
+			this.schedulingInterval = schedulingInterval;
+			ret = true;
+		}
+		return true;
 	}
 	
 	/**

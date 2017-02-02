@@ -53,6 +53,7 @@ public class OnlineMain4 {
 		int minLengthUnif = 100000;
 		int maxLengthUnif = 200000;
 		int seed = 9;
+		int schedulingInterval = 400;
 		long delayInterval = 400;
 		int intervals = 2;
 		
@@ -94,7 +95,7 @@ public class OnlineMain4 {
 			
 			SchedulingAlgorithm algorithm = new NOAlgorithm();
 			
-			Scheduler scheduler = new Scheduler(datacenters,broker,vmList,cloudletList,algorithm);
+			Scheduler scheduler = new Scheduler(datacenters,broker,vmList,cloudletList,algorithm,schedulingInterval);
 
 			scheduler.prepareSimulation();
 

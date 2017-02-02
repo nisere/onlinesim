@@ -38,7 +38,7 @@ import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
 
 /**
- * MyCloudsimExample class shows how to use schedsim extension.
+ * Example class shows how to use schedsim extension.
  * It creates a private cloud and a public cloud 
  * and sets their characteristics accordingly.
  * It shows how to create the cloudlets to simulate online arrival.
@@ -59,12 +59,14 @@ public class Example {
 	static int maxLengthUnif = 200000;
 	static int seed = 1;
 	static int vmId = 0; // used to create VM types
-	static long delayInterval = 400;
-	static int intervals = 2;
+	static int schedulingInterval = 200; // in seconds
+	// generate delay [minDelayUnif;maxDelayUnif)
+	static int minDelayUnif = 0;
+	static int maxDelayUnif = 500;
 	
 	public static void main(String[] args) {
 
-		Log.printLine("Starting Example...");
+		Log.printLine("Starting simulation...");
 		try {
 			/* Initialize the simulation. */
 			CloudSim.init(1, Calendar.getInstance(), false);
@@ -156,18 +158,18 @@ public class Example {
 //			datacenters.put("Public2", datacenter2);
 			List<MyDatacenter> datacenters = new ArrayList<>();
 			datacenters.add(datacenter0);
-			datacenters.add(datacenter1);
-			datacenters.add(datacenter2);
+			//datacenters.add(datacenter1);
+			//datacenters.add(datacenter2);
 			
 			/* Create the VM list. */
 			List<MyVm> vmList = populateVmList(datacenters);
 
 			/* Create the Cloudlet list. */
-			List<MyCloudlet> cloudletList = createRandomMyCloudlets(broker.getId(),noCloudlets,minLengthUnif, maxLengthUnif, seed, delayInterval, intervals);
+			List<MyCloudlet> cloudletList = createRandomMyCloudlets(broker.getId(),noCloudlets,minLengthUnif, maxLengthUnif, seed, minDelayUnif, maxDelayUnif);
 			
 			/* Choose the scheduling algorithm. */
-			SchedulingAlgorithm algorithm = new NOAlgorithm();
-			//SchedulingAlgorithm algorithm = new WorkQueueAlgorithm();
+			//SchedulingAlgorithm algorithm = new NOAlgorithm();
+			SchedulingAlgorithm algorithm = new WorkQueueAlgorithm();
 			//SchedulingAlgorithm algorithm = new SufferageAlgorithm();
 			//SchedulingAlgorithm algorithm = new MinMinAlgorithm();
 			//SchedulingAlgorithm algorithm = new MinMaxAlgorithm();
@@ -175,7 +177,7 @@ public class Example {
 			//SchedulingAlgorithm algorithm = new LJFR_SJFRAlgorithm();
 			
 			/* Create a scheduler. */
-			Scheduler scheduler = new Scheduler(datacenters,broker,vmList,cloudletList,algorithm);
+			Scheduler scheduler = new Scheduler(datacenters,broker,vmList,cloudletList,algorithm,schedulingInterval);
 
 			/* Make the necessary preparations before starting the simulation. 
 			 * This is the step where the algorithm is run. 
@@ -188,10 +190,14 @@ public class Example {
 			/* Stop simulation. */
 			CloudSim.stopSimulation();
 
-			/* Print the results. */
-			printResult(scheduler.getFinishedCloudlets());
+			/* Print the results. */		
+			Map<Integer,String> dcNames = new HashMap<>();
+			for (Datacenter dc : datacenters) {
+				dcNames.put(dc.getId(), dc.getName());
+			}
+			printResult(scheduler.getFinishedCloudlets(),dcNames);
 			
-			Log.printLine("MyCloudsimExample finished!");
+			Log.printLine("Simulation finished!");
 		} catch (Exception e) {
 			e.printStackTrace();
 			Log.printLine("The simulation has been terminated due to an unexpected error");
@@ -282,7 +288,7 @@ public class Example {
 	}
 	
 	private static List<MyCloudlet> createRandomMyCloudlets(int brokerId, int noCloudlets, int minLengthUnif, int maxLengthUnif,
-			int seed, long delayInterval, int intervals) {
+			int seed, int minDelayUnif, int maxDelayUnif) {
 		List<MyCloudlet> cloudletList = new ArrayList<>();
 
 		// Cloudlet properties
@@ -293,27 +299,29 @@ public class Example {
 		long outputSize = 0;
 		UtilizationModel utilizationModel = new UtilizationModelFull();
 		int deadline = 0;
+		long delay = 0; // in seconds
 
 		UniformDistr lengthUnif = new UniformDistr(minLengthUnif,
 				maxLengthUnif, seed);
+		UniformDistr delayUnif = new UniformDistr(minDelayUnif,
+				maxDelayUnif, seed);
 
 		// add noCloudlets*intervals cloudlets
-		for (int j = 0; j < intervals; j++) {
-			for (int i = 0; i < noCloudlets; i++) {
-				int randomLength = (int) lengthUnif.sample();
-				long delay = j*delayInterval;
-				MyCloudlet cloudlet = new MyCloudlet(id++, randomLength, pesNumber,
-						fileSize, outputSize, utilizationModel,
-						utilizationModel, utilizationModel, deadline, delay);
-				cloudlet.setUserId(brokerId);
-				cloudletList.add(cloudlet);
-			}
+		for (int i = 0; i < noCloudlets; i++) {
+			int randomLength = (int) lengthUnif.sample();
+			delay += (long) delayUnif.sample();
+			MyCloudlet cloudlet = new MyCloudlet(id++, randomLength, pesNumber,
+					fileSize, outputSize, utilizationModel,
+					utilizationModel, utilizationModel, deadline, delay);
+			cloudlet.setUserId(brokerId);
+			cloudletList.add(cloudlet);
 		}
+		
 		return cloudletList;
 	}
 	
 	/** Prints the results */
-	private static void printResult(List<Cloudlet> list) {
+	private static void printResult(List<Cloudlet> list,Map<Integer,String> dcNames) {
 		int size = list.size();
 		Cloudlet cloudlet;
 		double flowtime = 0;
@@ -323,8 +331,8 @@ public class Example {
 		Log.printLine();
 		Log.printLine("========== OUTPUT ==========");
 		Log.printLine("Cloudlet ID" + indent + "STATUS" + indent
-				+ "Data center ID" + indent + "VM ID" + indent + "Time"
-				+ indent + "Start Time" + indent + "Finish Time");
+				+ "  Datacenter  " + indent + "  VM ID" + indent + indent + "Time"
+				+ indent + "Start Time" + indent + "Finish Time" + indent + "Arrival" + indent + "Delay");
 
 		int[] counter = new int[13];
 		int index = 0;
@@ -337,13 +345,15 @@ public class Example {
 			if (cloudlet.getStatus() == Cloudlet.SUCCESS) {
 				Log.print("SUCCESS");
 
-				Log.printLine(indent + indent + cloudlet.getResourceId()
+				Log.printLine(indent + indent + dcNames.get(cloudlet.getResourceId())
 						+ indent + indent + indent + cloudlet.getVmId()
 						+ indent + indent
 						+ dft.format(cloudlet.getActualCPUTime()) + indent
 						+ indent + dft.format(cloudlet.getExecStartTime())
 						+ indent + indent
-						+ dft.format(cloudlet.getFinishTime()));
+						+ dft.format(cloudlet.getFinishTime())
+						+ indent + indent + dft.format(((MyCloudlet)cloudlet).getArrivalTime())
+						+ indent + indent + dft.format(((MyCloudlet)cloudlet).getDelay()));
 
 				flowtime += cloudlet.getFinishTime();
 
