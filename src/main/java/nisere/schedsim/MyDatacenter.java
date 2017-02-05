@@ -78,7 +78,21 @@ public class MyDatacenter extends Datacenter {
 		this.vmTypes = vmTypes;
 		this.vmCount = vmCount;
 		this.vmPrice = vmPrice;
-		this.timeInterval = Math.min(timeInterval, 1);
+		this.timeInterval = Math.max(timeInterval, 1);
+	}
+	
+	/**
+	 * Gets cost per time interval for a vm type
+	 * @param vmType the vm type id
+	 * @return cost per time interval
+	 */
+	public double getCostPerTimeInterval(int vmType) {
+		double cost = 0;
+		if (vmPrice.containsKey(vmType)) {
+			cost = vmPrice.get(vmType);
+		}
+		
+		return cost;
 	}
 
 
@@ -133,7 +147,7 @@ public class MyDatacenter extends Datacenter {
 
 	/**
 	 * Gets the time interval for which the price is applied.
-	 * @return time interval
+	 * @return time interval in seconds
 	 */
 	public int getTimeInterval() {
 		return timeInterval;
@@ -142,7 +156,7 @@ public class MyDatacenter extends Datacenter {
 
 	/**
 	 * Sets the time interval. Must be >= 1.
-	 * @param timeInterval time interval
+	 * @param timeInterval time interval in seconds
 	 * @return true if successful, false if not
 	 */
 	public boolean setTimeInterval(int timeInterval) {

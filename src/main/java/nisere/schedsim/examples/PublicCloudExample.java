@@ -48,7 +48,7 @@ import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
  * @author Alina Chera
  *
  */
-public class Example {
+public class PublicCloudExample {
 	static int noCloudlets = 4; // used to create random Cloudlets
 	static int noVms = 2; // used to create random VMs
 	// generate [minMipsUnif;maxMipsUnif) and multiply with 1000 to get mips
@@ -157,9 +157,9 @@ public class Example {
 //			datacenters.put("Public1", datacenter1);
 //			datacenters.put("Public2", datacenter2);
 			List<MyDatacenter> datacenters = new ArrayList<>();
-			datacenters.add(datacenter0);
+			//datacenters.add(datacenter0);
 			datacenters.add(datacenter1);
-			datacenters.add(datacenter2);
+			//datacenters.add(datacenter2);
 			
 			/* Create the VM list. */
 			List<MyVm> vmList = populateVmList(datacenters);
@@ -168,8 +168,8 @@ public class Example {
 			List<MyCloudlet> cloudletList = createRandomMyCloudlets(broker.getId(),noCloudlets,minLengthUnif, maxLengthUnif, seed, minDelayUnif, maxDelayUnif);
 			
 			/* Choose the scheduling algorithm. */
-			SchedulingAlgorithm algorithm = new NOAlgorithm();
-			//SchedulingAlgorithm algorithm = new WorkQueueAlgorithm();
+			//SchedulingAlgorithm algorithm = new NOAlgorithm();
+			SchedulingAlgorithm algorithm = new WorkQueueAlgorithm();
 			//SchedulingAlgorithm algorithm = new SufferageAlgorithm();
 			//SchedulingAlgorithm algorithm = new MinMinAlgorithm();
 			//SchedulingAlgorithm algorithm = new MinMaxAlgorithm();
@@ -191,11 +191,11 @@ public class Example {
 			CloudSim.stopSimulation();
 
 			/* Print the results. */		
-			Map<Integer,String> dcNames = new HashMap<>();
+			Map<Integer,MyDatacenter> dcMap = new HashMap<>();
 			for (Datacenter dc : datacenters) {
-				dcNames.put(dc.getId(), dc.getName());
+				dcMap.put(dc.getId(), (MyDatacenter)dc);
 			}
-			printResult(scheduler.getFinishedCloudlets(),dcNames);
+			printResult(scheduler.getFinishedCloudlets(),dcMap,vmList);
 			
 			Log.printLine("Simulation finished!");
 		} catch (Exception e) {
@@ -321,18 +321,18 @@ public class Example {
 	}
 	
 	/** Prints the results */
-	private static void printResult(List<Cloudlet> list,Map<Integer,String> dcNames) {
+	private static void printResult(List<Cloudlet> list,Map<Integer,MyDatacenter> dcMap,List<MyVm> vmList) {
 		int size = list.size();
 		Cloudlet cloudlet;
 		double flowtime = 0;
-		//double cost = 0;
+		double cost = 0;
 
 		String indent = "    ";
 		Log.printLine();
 		Log.printLine("========== OUTPUT ==========");
 		Log.printLine("Cloudlet ID" + indent + "STATUS" + indent
 				+ "  Datacenter  " + indent + "  VM ID" + indent + indent + "Time"
-				+ indent + "Start Time" + indent + "Finish Time" + indent + "Arrival" + indent + "Delay");
+				+ indent + "Start Time" + indent + "Finish Time" + indent + "Arrival" + indent + "Delay" + indent + "VM Cost");
 
 		int[] counter = new int[13];
 		int index = 0;
@@ -344,8 +344,11 @@ public class Example {
 
 			if (cloudlet.getStatus() == Cloudlet.SUCCESS) {
 				Log.print("SUCCESS");
+				
+				MyVm vm = VmList.getById(vmList, cloudlet.getVmId());
+				MyDatacenter dc = dcMap.get(vm.getDatacenterId());
 
-				Log.printLine(indent + indent + dcNames.get(cloudlet.getResourceId())
+				Log.printLine(indent + indent + dc.getName()
 						+ indent + indent + indent + cloudlet.getVmId()
 						+ indent + indent
 						+ dft.format(cloudlet.getActualCPUTime()) + indent
@@ -353,7 +356,8 @@ public class Example {
 						+ indent + indent
 						+ dft.format(cloudlet.getFinishTime())
 						+ indent + indent + dft.format(((MyCloudlet)cloudlet).getArrivalTime())
-						+ indent + indent + dft.format(((MyCloudlet)cloudlet).getDelay()));
+						+ indent + indent + dft.format(((MyCloudlet)cloudlet).getDelay())
+						+ indent + indent + dft.format(dc.getCostPerTimeInterval(vm.getTypeId())));
 
 				flowtime += cloudlet.getFinishTime();
 
@@ -363,16 +367,24 @@ public class Example {
 					index++;
 					counter[index] = counter[index - 1] + 1;
 				}
+
+				double intervals = cloudlet.getActualCPUTime()
+						/ dc.getTimeInterval();
+				if ((int) intervals != intervals) {
+					intervals = (int) intervals + 1;
+				}
+				cost += intervals * dc.getCostPerTimeInterval(vm.getTypeId());
 			}
 		}
 
 		Log.printLine();
 		Log.printLine("Flowtime: " + dft.format(flowtime));
-		Log.printLine();
+		Log.printLine("Finished after " + step + ",2x" + step + "...");
 		for (int i = 0; i < 13; i++) {
 			Log.print(counter[i] + ",");
 		}
 		Log.printLine();
+		Log.printLine("Cost: " + cost);
 	}
 
 }
