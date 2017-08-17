@@ -13,8 +13,19 @@ import org.cloudbus.cloudsim.Vm;
  */
 public abstract class SchedulingAlgorithm {
 
+	/** Cost of the execution of cloudlets */
+	double cost;
+
 	/** List of scheduled cloudlets. */
 	private List<? extends Cloudlet> cloudletScheduledList;
+	
+	public double getCost() {
+		return cost;
+	}
+
+	public void setCost(double cost) {
+		this.cost = cost;
+	}
 
 	/**
 	 * Gets the list of scheduled cloudlets

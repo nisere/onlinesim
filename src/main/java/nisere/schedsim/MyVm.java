@@ -21,6 +21,12 @@ public class MyVm extends Vm {
 	 * The id of the instance type. It must be unique for a datacenter.
 	 */
 	private int typeId;
+	
+	/** Uptime of this VM */
+	private double uptime;
+	
+	/** Cost of using this VM */
+	private double cost;
 
 	/**
 	 * Creates a new MyVm object.
@@ -59,6 +65,8 @@ public class MyVm extends Vm {
 
 		this.datacenterId = datacenterId;
 		this.typeId = typeId;
+		setUptime(0.0);
+		setCost(0.0);
 	}
 
 	/**
@@ -95,5 +103,21 @@ public class MyVm extends Vm {
 	 */
 	public void setTypeId(int id) {
 		typeId = id;
+	}
+
+	public double getUptime() {
+		return uptime;
+	}
+
+	public void setUptime(double time) {
+		this.uptime = time;
+	}
+
+	public double getCost() {
+		return cost;
+	}
+
+	public void setCost(double cost) {
+		this.cost = cost;
 	}
 }

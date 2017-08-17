@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -326,12 +327,13 @@ public class PublicCloudExample {
 		Cloudlet cloudlet;
 		double flowtime = 0;
 		double cost = 0;
+		HashSet<MyVm> vmUsed = new HashSet<>();
 
 		String indent = "    ";
 		Log.printLine();
 		Log.printLine("========== OUTPUT ==========");
 		Log.printLine("Cloudlet ID" + indent + "STATUS" + indent
-				+ "  Datacenter  " + indent + "  VM ID" + indent + indent + "Time"
+				+ "  Datacenter  " + indent + "  VM ID" + "  VM TypeId " + "Time"
 				+ indent + "Start Time" + indent + "Finish Time" + indent + "Arrival" + indent + "Delay" + indent + "VM Cost");
 
 		int[] counter = new int[13];
@@ -347,17 +349,8 @@ public class PublicCloudExample {
 				
 				MyVm vm = VmList.getById(vmList, cloudlet.getVmId());
 				MyDatacenter dc = dcMap.get(vm.getDatacenterId());
+				vm.setUptime(cloudlet.getFinishTime());
 
-				Log.printLine(indent + indent + dc.getName()
-						+ indent + indent + indent + cloudlet.getVmId()
-						+ indent + indent
-						+ dft.format(cloudlet.getActualCPUTime()) + indent
-						+ indent + dft.format(cloudlet.getExecStartTime())
-						+ indent + indent
-						+ dft.format(cloudlet.getFinishTime())
-						+ indent + indent + dft.format(((MyCloudlet)cloudlet).getArrivalTime())
-						+ indent + indent + dft.format(((MyCloudlet)cloudlet).getDelay())
-						+ indent + indent + dft.format(dc.getCostPerTimeInterval(vm.getTypeId())));
 
 				flowtime += cloudlet.getFinishTime();
 
@@ -368,13 +361,28 @@ public class PublicCloudExample {
 					counter[index] = counter[index - 1] + 1;
 				}
 
-				double intervals = cloudlet.getActualCPUTime()
-						/ dc.getTimeInterval();
-				if ((int) intervals != intervals) {
-					intervals = (int) intervals + 1;
-				}
-				cost += intervals * dc.getCostPerTimeInterval(vm.getTypeId());
+				double intervals = Math.ceil(1.0*vm.getUptime()/dc.getTimeInterval());
+				vm.setCost(intervals * dc.getCostPerTimeInterval(vm.getTypeId()));
+				
+				vmUsed.add(vm);
+				
+				Log.printLine(indent + indent + dc.getName()
+						+ indent + indent + indent + cloudlet.getVmId()
+						+ indent + indent + vm.getTypeId() + indent
+						+ dft.format(cloudlet.getActualCPUTime()) + indent
+						+ indent + dft.format(cloudlet.getExecStartTime())
+						+ indent + indent
+						+ dft.format(cloudlet.getFinishTime())
+						+ indent + indent + dft.format(((MyCloudlet)cloudlet).getArrivalTime())
+						+ indent + indent + dft.format(((MyCloudlet)cloudlet).getDelay())
+						+ indent + indent + dft.format(dc.getCostPerTimeInterval(vm.getTypeId()))
+						+ indent + dft.format(vm.getCost()));
+
 			}
+		}
+		
+		for (MyVm vm : vmUsed) {
+			cost += vm.getCost();
 		}
 
 		Log.printLine();
