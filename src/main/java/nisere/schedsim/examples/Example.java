@@ -82,11 +82,11 @@ public class Example {
 			List<MyVm> vmTypes0 = createRandomMyVms(broker.getId(), noVms, minMipsUnif, maxMipsUnif, seed);
 			
 			/* Set count and price */
-			HashMap<Integer,Integer> vmCount0 = new HashMap<>();
-			HashMap<Integer,Double> vmPrice0 = new HashMap<>();
+			HashMap<String,Integer> vmCount0 = new HashMap<>();
+			HashMap<String,Double> vmPrice0 = new HashMap<>();
 			for (MyVm vm : vmTypes0) {
-				vmCount0.put(vm.getTypeId(), 1);
-				vmPrice0.put(vm.getTypeId(), 0.0);
+				vmCount0.put(vm.getIdentifier(), 1);
+				vmPrice0.put(vm.getIdentifier(), 0.0);
 			}
 
 			/* Create the datacenter. */
@@ -97,9 +97,9 @@ public class Example {
 			/* Create a public cloud. */
 			
 			/* Create custom VM types. */
-			MyVm vm1 = new MyVm(-1, broker.getId(), 1000, 1, 1024, 1000, 10000, "Xen", new CloudletSchedulerSpaceShared(), -1, vmId++);
-			MyVm vm2 = new MyVm(-1, broker.getId(), 2000, 1, 1024, 1000, 10000, "Xen", new CloudletSchedulerSpaceShared(), -1, vmId++);
-			MyVm vm3 = new MyVm(-1, broker.getId(), 3000, 1, 1024, 1000, 10000, "Xen", new CloudletSchedulerSpaceShared(), -1, vmId++);
+			MyVm vm1 = new MyVm(-1, broker.getId(), 1000, 1, 1024, 1000, 10000, "Xen", new CloudletSchedulerSpaceShared(), -1, Integer.toString(vmId++));
+			MyVm vm2 = new MyVm(-1, broker.getId(), 2000, 1, 1024, 1000, 10000, "Xen", new CloudletSchedulerSpaceShared(), -1, Integer.toString(vmId++));
+			MyVm vm3 = new MyVm(-1, broker.getId(), 3000, 1, 1024, 1000, 10000, "Xen", new CloudletSchedulerSpaceShared(), -1, Integer.toString(vmId++));
 			
 			ArrayList<MyVm> vmTypes1 = new ArrayList<>();
 			vmTypes1.add(vm1);
@@ -107,16 +107,16 @@ public class Example {
 			vmTypes1.add(vm3);
 			
 			/* Simulate infinite instances for public cloud */
-			HashMap<Integer,Integer> vmCount1 = new HashMap<>();
+			HashMap<String,Integer> vmCount1 = new HashMap<>();
 			for (MyVm vm : vmTypes1) {
-				vmCount1.put(vm.getTypeId(), noCloudlets);
+				vmCount1.put(vm.getIdentifier(), noCloudlets);
 			}
 			
 			/* Add price to VM types */
-			HashMap<Integer,Double> vmPrice1 = new HashMap<>();
-			vmPrice1.put(vm1.getTypeId(), 1.0);
-			vmPrice1.put(vm2.getTypeId(), 1.5);
-			vmPrice1.put(vm3.getTypeId(), 2.5);
+			HashMap<String,Double> vmPrice1 = new HashMap<>();
+			vmPrice1.put(vm1.getIdentifier(), 1.0);
+			vmPrice1.put(vm2.getIdentifier(), 1.5);
+			vmPrice1.put(vm3.getIdentifier(), 2.5);
 			
 			/* Create the datacenter. */
 			MyDatacenter datacenter1 = createMyDatacenter("Public1", vmTypes1, vmCount1, vmPrice1, 3600);
@@ -126,8 +126,8 @@ public class Example {
 			/* Create another public cloud. */
 			
 			/* Create custom VM types. */
-			MyVm vm4 = new MyVm(-1, broker.getId(), 1500, 1, 1024, 512, 5000, "Xen", new CloudletSchedulerSpaceShared(), -1, vmId++);
-			MyVm vm5 = new MyVm(-1, broker.getId(), 2500, 1, 1024, 512, 5000, "Xen", new CloudletSchedulerSpaceShared(), -1, vmId++);
+			MyVm vm4 = new MyVm(-1, broker.getId(), 1500, 1, 1024, 512, 5000, "Xen", new CloudletSchedulerSpaceShared(), -1, Integer.toString(vmId++));
+			MyVm vm5 = new MyVm(-1, broker.getId(), 2500, 1, 1024, 512, 5000, "Xen", new CloudletSchedulerSpaceShared(), -1, Integer.toString(vmId++));
 		
 			ArrayList<MyVm> vmTypes2 = new ArrayList<>();
 			vmTypes2.add(vm1);
@@ -135,16 +135,16 @@ public class Example {
 			vmTypes2.add(vm5);
 			
 			/* Simulate infinite instances for public cloud */
-			HashMap<Integer,Integer> vmCount2 = new HashMap<>();
+			HashMap<String,Integer> vmCount2 = new HashMap<>();
 			for (MyVm vm : vmTypes2) {
-				vmCount2.put(vm.getTypeId(), noCloudlets);
+				vmCount2.put(vm.getIdentifier(), noCloudlets);
 			}
 			
 			/* Add price to VM types */
-			HashMap<Integer,Double> vmPrice2 = new HashMap<>();
-			vmPrice2.put(vm1.getTypeId(), 0.9);
-			vmPrice2.put(vm4.getTypeId(), 1.5);
-			vmPrice2.put(vm5.getTypeId(), 2.0);
+			HashMap<String,Double> vmPrice2 = new HashMap<>();
+			vmPrice2.put(vm1.getIdentifier(), 0.9);
+			vmPrice2.put(vm4.getIdentifier(), 1.5);
+			vmPrice2.put(vm5.getIdentifier(), 2.0);
 			
 			/* Create the datacenter. */
 			MyDatacenter datacenter2 = createMyDatacenter("Public2", vmTypes2, vmCount2, vmPrice2, 3600);
@@ -205,7 +205,7 @@ public class Example {
 	}
 	
 	private static MyDatacenter createMyDatacenter(String name, List<MyVm> vmTypes, 
-			Map<Integer,Integer> vmCount, Map<Integer,Double> vmPrice, int timeInterval) throws Exception {
+			Map<String,Integer> vmCount, Map<String,Double> vmPrice, int timeInterval) throws Exception {
 		MyDatacenter datacenter;
 	
 		// Create a DatacenterCharacteristics object
@@ -224,7 +224,7 @@ public class Example {
 		// for each vm type check how many must be created;
 		// for each vm create a host
 		for (MyVm vm : vmTypes ) {
-			int n = vmCount.get(vm.getTypeId());
+			int n = vmCount.get(vm.getIdentifier());
 			List<Pe> peList = new ArrayList<Pe>();
 			peList.add(new Pe(0, new PeProvisionerSimple(vm.getMips())));
 			for (int i = 0; i < n; i++) {
@@ -250,10 +250,10 @@ public class Example {
 		
 		for (MyDatacenter dc : datacenters) {
 			for (Vm vm : dc.getVmTypes()) {
-				for (int i = 0; i < dc.getVmCount().get( ((MyVm)vm).getTypeId() ); i++) {
+				for (int i = 0; i < dc.getVmCount().get( ((MyVm)vm).getIdentifier() ); i++) {
 					vmlist.add(new MyVm(vmid++, vm.getUserId(), vm.getMips(), vm.getNumberOfPes(),
 							vm.getRam(), vm.getBw(), vm.getSize(), vm.getVmm(), 
-							new CloudletSchedulerSpaceShared(), dc.getId(), ((MyVm)vm).getTypeId()));
+							new CloudletSchedulerSpaceShared(), dc.getId(), ((MyVm)vm).getIdentifier()));
 				}
 			}
 		}
@@ -282,7 +282,7 @@ public class Example {
 		for (int i = 0; i < noVms; i++) {
 			int mult = (int) mipsUnif.sample();
 			vmlist.add(new MyVm(-1, brokerId, mips * mult, pesNumber,
-					ram, bw, size, vmm, new CloudletSchedulerSpaceShared(), datacenterId, vmId++));
+					ram, bw, size, vmm, new CloudletSchedulerSpaceShared(), datacenterId, Integer.toString(vmId++)));
 		}
 		return vmlist;
 	}

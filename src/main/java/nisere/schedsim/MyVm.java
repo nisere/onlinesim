@@ -18,9 +18,12 @@ public class MyVm extends Vm {
 	private int datacenterId;
 	
 	/**
-	 * The id of the instance type. It must be unique for a datacenter.
+	 * The identifier of the instance type. It must be unique for a datacenter.
 	 */
-	private int typeId;
+	private String identifier;
+	
+	/** Start time of this VM */
+	private double startTime;
 	
 	/** Uptime of this VM */
 	private double uptime;
@@ -59,12 +62,13 @@ public class MyVm extends Vm {
 			final int numberOfPes, final int ram, final long bw,
 			final long size, final String vmm,
 			final CloudletScheduler cloudletScheduler,			 
-			final int datacenterId, final int typeId) {
+			final int datacenterId, final String identifier) {
 		super(id, userId, mips, numberOfPes, ram, bw, size, vmm,
 				cloudletScheduler);
 
 		this.datacenterId = datacenterId;
-		this.typeId = typeId;
+		setIdentifier(identifier);
+		setStartTime(0.0);
 		setUptime(0.0);
 		setCost(0.0);
 	}
@@ -87,22 +91,20 @@ public class MyVm extends Vm {
 		datacenterId = id;
 	}
 
-	/**
-	 * Gets the id of the instance type
-	 * 
-	 * @return the id of the instance type
-	 */
-	public int getTypeId() {
-		return typeId;
+	public String getIdentifier() {
+		return identifier;
 	}
 
-	/**
-	 * Sets the id of the instance type. It must be unique per datacenter.
-	 * 
-	 * @param id the id of the instance type
-	 */
-	public void setTypeId(int id) {
-		typeId = id;
+	public void setIdentifier(String identifier) {
+		this.identifier = identifier;
+	}
+
+	public double getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(double startTime) {
+		this.startTime = startTime;
 	}
 
 	public double getUptime() {

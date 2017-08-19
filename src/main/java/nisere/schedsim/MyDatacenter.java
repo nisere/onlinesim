@@ -24,18 +24,18 @@ public class MyDatacenter extends Datacenter {
 	private List<? extends Vm> vmTypes;
 	
 	/** 
-	 * A mapping between VM types (id) and how many can be generated. 
+	 * A mapping between VM types (identifier) and how many can be generated. 
 	 * If a certain VM type is not present that means that
 	 * an infinite amount of VM of that type can be created.
 	 */
-	private Map<Integer,Integer> vmCount;
+	private Map<String,Integer> vmCount;
 	
 	/**
-	 * A mapping between VM types (id) and the price of using them
+	 * A mapping between VM types (identifier) and the price of using them
 	 * applied per timeInterval.
 	 * If a certain VM is missing that means there is no price.
 	 */
-	private Map<Integer,Double> vmPrice;
+	private Map<String,Double> vmPrice;
 	
 	/**
 	 * The time interval for which the price is applied, in seconds.
@@ -71,7 +71,7 @@ public class MyDatacenter extends Datacenter {
 	public MyDatacenter(String name, DatacenterCharacteristics characteristics,
 			VmAllocationPolicy vmAllocationPolicy, List<Storage> storageList,
 			double schedulingInterval, List<? extends Vm> vmTypes,
-			Map<Integer,Integer> vmCount, Map<Integer,Double> vmPrice, 
+			Map<String,Integer> vmCount, Map<String,Double> vmPrice, 
 			int timeInterval) throws Exception {
 		super(name, characteristics, vmAllocationPolicy, storageList,
 				schedulingInterval);
@@ -86,7 +86,7 @@ public class MyDatacenter extends Datacenter {
 	 * @param vmType the vm type id
 	 * @return cost per time interval
 	 */
-	public double getCostPerTimeInterval(int vmType) {
+	public double getCostPerTimeInterval(String vmType) {
 		double cost = 0;
 		if (vmPrice.containsKey(vmType)) {
 			cost = vmPrice.get(vmType);
@@ -116,7 +116,7 @@ public class MyDatacenter extends Datacenter {
 	 * Gets the mapping between VM types (id) and how many can be generated.
 	 * @return the map between the VM type and its maximum number
 	 */
-	public Map<Integer, Integer> getVmCount() {
+	public Map<String, Integer> getVmCount() {
 		return vmCount;
 	}
 	
@@ -124,7 +124,7 @@ public class MyDatacenter extends Datacenter {
 	 * Sets the mapping between VM types (id) and how many can be generated.
 	 * @param vmCount the map between the VM type and its maximum number
 	 */
-	public void setVmCount(Map<Integer, Integer> vmCount) {
+	public void setVmCount(Map<String, Integer> vmCount) {
 		this.vmCount = vmCount;
 	}
 
@@ -132,7 +132,7 @@ public class MyDatacenter extends Datacenter {
 	 * Gets the mapping between VM types (id) and the price of VM.
 	 * @return the map between the VM type and the price
 	 */
-	public Map<Integer,Double> getVmPrice() {
+	public Map<String,Double> getVmPrice() {
 		return vmPrice;
 	}
 
@@ -140,7 +140,7 @@ public class MyDatacenter extends Datacenter {
 	 * Sets the mapping between VM types (id) and the price of VM.
 	 * @param vmPrice the map between the VM type and the price
 	 */
-	public void setVmPrice(Map<Integer,Double> vmPrice) {
+	public void setVmPrice(Map<String,Double> vmPrice) {
 		this.vmPrice = vmPrice;
 	}
 

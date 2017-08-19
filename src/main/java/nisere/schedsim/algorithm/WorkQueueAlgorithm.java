@@ -83,22 +83,22 @@ public class WorkQueueAlgorithm extends SchedulingAlgorithm {
 			}
 
 			double min = -1;
-			int minVmId = -1;
+			Vm minvm = null;
 			for (Vm vm : vmList) {
 				// find VM with min workload
 				if (min == -1 || min > getWorkload(vm.getId())) {
 					min = getWorkload(vm.getId());
-					minVmId = vm.getId();
+					minvm = vm;
 				}
 			}
 
 			if (min >= 0) {
 				// schedule cloudlet on VM with min workload
-				cloudlet.setVmId(minVmId);
+				cloudlet.setVmId(minvm.getId());
 				getCloudletScheduledList().add(cloudlet);
-				double newWorkload = getWorkload(minVmId) + cloudlet.getCloudletLength() 
-						/ vmList.get(minVmId).getMips();
-				setWorkload(minVmId, newWorkload);
+				double newWorkload = getWorkload(minvm.getId()) + cloudlet.getCloudletLength() 
+						/ minvm.getMips();
+				setWorkload(minvm.getId(), newWorkload);
 			} else {
 				isNotScheduled = false;
 			}
