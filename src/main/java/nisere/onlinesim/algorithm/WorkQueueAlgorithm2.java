@@ -1,14 +1,17 @@
-package nisere.schedsim.algorithm;
+package nisere.onlinesim.algorithm;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.cloudbus.cloudsim.Cloudlet;
+import org.cloudbus.cloudsim.CloudletSchedulerSpaceShared;
 import org.cloudbus.cloudsim.Vm;
 
-import nisere.schedsim.VmType;
+import nisere.onlinesim.MyVm;
+import nisere.onlinesim.VmType;
 
 /**
  * WorkQueue algorithm
@@ -16,7 +19,7 @@ import nisere.schedsim.VmType;
  * @author Alina Chera
  *
  */
-public class WorkQueueAlgorithm extends SchedulingAlgorithm {
+public class WorkQueueAlgorithm2 extends SchedulingAlgorithm {
 	
 	/** A map between VM (id) and workload. */
 	private Map<Integer,Double> workloadMap;
@@ -86,11 +89,26 @@ public class WorkQueueAlgorithm extends SchedulingAlgorithm {
 
 			double min = -1;
 			Vm minvm = null;
-			for (Vm vm : vmList) {
-				// find VM with min workload
-				if (min == -1 || min > getWorkload(vm.getId())) {
-					min = getWorkload(vm.getId());
+			
+			for (VmType type : vmTypes) {
+				// create a new VM if possible with workload 0
+				if (type.getCount() > 0) {
+					type.setCount(type.getCount()-1);
+					MyVm vm = MyVm.copy(type.getVm());
+					((ArrayList<Vm>)vmList).add(vm);
+					min = 0.0;
 					minvm = vm;
+					break;
+				}
+			}
+			
+			if (min < 0) {
+				for (Vm vm : vmList) {
+					// find VM with min workload
+					if (min == -1 || min > getWorkload(vm.getId())) {
+						min = getWorkload(vm.getId());
+						minvm = vm;
+					}
 				}
 			}
 

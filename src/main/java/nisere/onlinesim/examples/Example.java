@@ -1,22 +1,11 @@
-package nisere.schedsim.examples;
+package nisere.onlinesim.examples;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-
-import nisere.schedsim.MyCloudlet;
-import nisere.schedsim.MyDatacenterBroker;
-import nisere.schedsim.MyVm;
-import nisere.schedsim.Scheduler;
-import nisere.schedsim.VmType;
-import nisere.schedsim.algorithm.NOAlgorithm;
-import nisere.schedsim.algorithm.SchedulingAlgorithm;
-import nisere.schedsim.algorithm.WorkQueueAlgorithm;
 
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.CloudletSchedulerSpaceShared;
@@ -28,7 +17,6 @@ import org.cloudbus.cloudsim.Pe;
 import org.cloudbus.cloudsim.Storage;
 import org.cloudbus.cloudsim.UtilizationModel;
 import org.cloudbus.cloudsim.UtilizationModelFull;
-import org.cloudbus.cloudsim.Vm;
 import org.cloudbus.cloudsim.VmAllocationPolicySimple;
 import org.cloudbus.cloudsim.VmSchedulerSpaceShared;
 import org.cloudbus.cloudsim.core.CloudSim;
@@ -37,6 +25,14 @@ import org.cloudbus.cloudsim.lists.VmList;
 import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
+
+import nisere.onlinesim.MyCloudlet;
+import nisere.onlinesim.MyDatacenterBroker;
+import nisere.onlinesim.MyVm;
+import nisere.onlinesim.Scheduler;
+import nisere.onlinesim.VmType;
+import nisere.onlinesim.algorithm.NOAlgorithm;
+import nisere.onlinesim.algorithm.SchedulingAlgorithm;
 
 /**
  * Example class shows how to use schedsim extension. It creates a private cloud

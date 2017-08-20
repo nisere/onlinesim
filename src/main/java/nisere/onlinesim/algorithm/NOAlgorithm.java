@@ -1,4 +1,4 @@
-package nisere.schedsim.algorithm;
+package nisere.onlinesim.algorithm;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.Vm;
 
-import nisere.schedsim.VmType;
+import nisere.onlinesim.VmType;
 
 /**
  * No algorithm, it leaves the list of cloudlets unscheduled.

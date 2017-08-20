@@ -1,26 +1,23 @@
-package nisere.schedsim.algorithm;
+package nisere.onlinesim.algorithm;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.cloudbus.cloudsim.Cloudlet;
-import org.cloudbus.cloudsim.CloudletSchedulerSpaceShared;
 import org.cloudbus.cloudsim.Vm;
 
-import nisere.schedsim.MyVm;
-import nisere.schedsim.VmType;
+import nisere.onlinesim.VmType;
 
 /**
- * WorkQueue algorithm
+ * Sufferage algorithm
  * 
  * @author Alina Chera
  *
  */
-public class WorkQueueAlgorithm2 extends SchedulingAlgorithm {
-	
+public class SufferageAlgorithm extends SchedulingAlgorithm {
+
 	/** A map between VM (id) and workload. */
 	private Map<Integer,Double> workloadMap;
 
@@ -63,62 +60,66 @@ public class WorkQueueAlgorithm2 extends SchedulingAlgorithm {
 	public void setWorkload(int vmId, double workload) {
 		getWorkloadMap().put(vmId, workload);
 	}
-
+	
 	@Override
 	protected void initCloudletScheduledList() {
 		setCloudletScheduledList(new LinkedList<Cloudlet>());
 	}
-	
+
 	/**
-	 * Creates the schedule with WorkQueue algorithm.
+	 * Creates the schedule with Sufferage algorithm.
 	 */
 	public void computeSchedule(List<? extends Cloudlet> cloudletList,
 			List<? extends Vm> vmList, List<? extends VmType> vmTypes) {
-		
 		boolean isNotScheduled = true;
-		int randomId = 0;
-		
-		while (isNotScheduled && randomId < cloudletList.size()) {
-			// select cloudlet randomly - skipped; instead take in order
-			Cloudlet cloudlet = cloudletList.get(randomId++);
-
-			// if this cloudlet was bound to a VM continue
-			if (cloudlet.getVmId() >= 0) {
-				continue;
-			}
-
-			double min = -1;
-			Vm minvm = null;
-			
-			for (VmType type : vmTypes) {
-				// create a new VM if possible with workload 0
-				if (type.getCount() > 0) {
-					type.setCount(type.getCount()-1);
-					MyVm vm = MyVm.copy(type.getVm());
-					((ArrayList<Vm>)vmList).add(vm);
-					min = 0.0;
-					minvm = vm;
-					break;
+		while (isNotScheduled) {
+			Cloudlet maxCloudlet = null;
+			int maxVmId = -1;
+			double maxSuffer = -1;
+			double maxC = -1;
+			for (Cloudlet cloudlet : cloudletList) {
+				// if this cloudlet was bound to a VM continue
+				if (cloudlet.getVmId() >= 0) {
+					continue;
 				}
-			}
-			
-			if (min < 0) {
+				Cloudlet minCloudlet = null;
+				int minVmId = -1;
+				double firstMin = -1;
+				double secondMin = -1;
 				for (Vm vm : vmList) {
-					// find VM with min workload
-					if (min == -1 || min > getWorkload(vm.getId())) {
-						min = getWorkload(vm.getId());
-						minvm = vm;
+					double oldFirstMin = -1;
+					double cij = getWorkload(vm.getId())
+							+ cloudlet.getCloudletLength() / vm.getMips();
+					// find first and second min of Cij = Wi + Eij, Cxj and Ckj
+					if (firstMin == -1 || firstMin > cij) {
+						oldFirstMin = firstMin;
+						firstMin = cij;
+						minCloudlet = cloudlet;
+						minVmId = vm.getId();
+						if (secondMin == -1 || oldFirstMin < secondMin) {
+							secondMin = oldFirstMin;
+						}
+					} else if (secondMin == -1 || secondMin > cij) {
+						secondMin = cij;
 					}
 				}
+				// find max of Sufferxj = Ckj - Cxj, where Cxj = first min of
+				// Cij and Ckj = second min of Cij found above
+				if (secondMin < 0) {
+					secondMin = firstMin;
+				}
+				if (firstMin >= 0
+						&& (maxSuffer == -1 || maxSuffer < secondMin - firstMin)) {
+					maxSuffer = secondMin - firstMin;
+					maxC = firstMin;
+					maxCloudlet = minCloudlet;
+					maxVmId = minVmId;
+				}
 			}
-
-			if (min >= 0) {
-				// schedule cloudlet on VM with min workload
-				cloudlet.setVmId(minvm.getId());
-				getCloudletScheduledList().add(cloudlet);
-				double newWorkload = getWorkload(minvm.getId()) + cloudlet.getCloudletLength() 
-						/ minvm.getMips();
-				setWorkload(minvm.getId(), newWorkload);
+			if (maxSuffer >= 0) {
+				maxCloudlet.setVmId(maxVmId);
+				setWorkload(maxVmId,maxC);
+				getCloudletScheduledList().add(maxCloudlet);
 			} else {
 				isNotScheduled = false;
 			}

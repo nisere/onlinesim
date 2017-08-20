@@ -1,4 +1,4 @@
-package nisere.schedsim.algorithm;
+package nisere.onlinesim.algorithm;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -8,7 +8,7 @@ import java.util.Map;
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.Vm;
 
-import nisere.schedsim.VmType;
+import nisere.onlinesim.VmType;
 
 /**
  * MinMin algorithm

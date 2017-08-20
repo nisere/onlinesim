@@ -1,11 +1,11 @@
-package nisere.schedsim.algorithm;
+package nisere.onlinesim.algorithm;
 
 import java.util.List;
 
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.Vm;
 
-import nisere.schedsim.VmType;
+import nisere.onlinesim.VmType;
 
 /**
  * Abstract class used for scheduling algorithms

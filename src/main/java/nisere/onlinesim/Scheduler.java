@@ -1,16 +1,13 @@
-package nisere.schedsim;
+package nisere.onlinesim;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-
-import nisere.schedsim.algorithm.SchedulingAlgorithm;
 
 import org.cloudbus.cloudsim.Cloudlet;
-import org.cloudbus.cloudsim.Datacenter;
 import org.cloudbus.cloudsim.DatacenterBroker;
 import org.cloudbus.cloudsim.Vm;
+
+import nisere.onlinesim.algorithm.SchedulingAlgorithm;
 
 /**
  * Scheduler is a helper class that puts together datacenters, a datacenter broker, 

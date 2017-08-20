@@ -1,4 +1,4 @@
-package nisere.schedsim;
+package nisere.onlinesim;
 
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.UtilizationModel;

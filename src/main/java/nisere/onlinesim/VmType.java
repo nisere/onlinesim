@@ -1,7 +1,6 @@
-package nisere.schedsim;
+package nisere.onlinesim;
 
 import org.cloudbus.cloudsim.Datacenter;
-import org.cloudbus.cloudsim.Vm;
 
 public class VmType {
 	/** The datacenter to which this VM type belongs */
