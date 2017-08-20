@@ -5,9 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.cloudbus.cloudsim.Cloudlet;
-import org.cloudbus.cloudsim.Vm;
-
+import nisere.onlinesim.OnlineCloudlet;
+import nisere.onlinesim.OnlineVm;
 import nisere.onlinesim.VmType;
 
 /**
@@ -62,29 +61,29 @@ public class MaxMinAlgorithm extends SchedulingAlgorithm {
 
 	@Override
 	protected void initCloudletScheduledList() {
-		setCloudletScheduledList(new LinkedList<Cloudlet>());
+		setCloudletScheduledList(new LinkedList<OnlineCloudlet>());
 	}
 	
 	/**
 	 * Creates the schedule with MaxMin algorithm.
 	 */
-	public void computeSchedule(List<? extends Cloudlet> cloudletList,
-			List<? extends Vm> vmList, List<? extends VmType> vmTypes) {
+	public void computeSchedule(List<? extends OnlineCloudlet> cloudletList,
+			List<? extends OnlineVm> vmList, List<? extends VmType> vmTypes) {
 
 		boolean isNotScheduled = true;
 		while (isNotScheduled) {
-			Cloudlet maxCloudlet = null;
+			OnlineCloudlet maxCloudlet = null;
 			int maxVmId = -1;
 			double max = -1;
-			for (Cloudlet cloudlet : cloudletList) {
+			for (OnlineCloudlet cloudlet : cloudletList) {
 				// if this cloudlet was bound to a VM continue
 				if (cloudlet.getVmId() >= 0) {
 					continue;
 				}
-				Cloudlet minCloudlet = null;
+				OnlineCloudlet minCloudlet = null;
 				int minVmId = -1;
 				double min = -1;
-				for (Vm vm : vmList) {
+				for (OnlineVm vm : vmList) {
 					// find min of Cij = Wi + Eij
 					if (min == -1
 							|| min > getWorkload(vm.getId())

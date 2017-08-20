@@ -1,15 +1,11 @@
 package nisere.onlinesim.algorithm;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.cloudbus.cloudsim.Cloudlet;
-import org.cloudbus.cloudsim.CloudletSchedulerSpaceShared;
-import org.cloudbus.cloudsim.Vm;
-
+import nisere.onlinesim.OnlineCloudlet;
 import nisere.onlinesim.OnlineVm;
 import nisere.onlinesim.VmType;
 
@@ -66,21 +62,21 @@ public class WorkQueueAlgorithm2 extends SchedulingAlgorithm {
 
 	@Override
 	protected void initCloudletScheduledList() {
-		setCloudletScheduledList(new LinkedList<Cloudlet>());
+		setCloudletScheduledList(new LinkedList<OnlineCloudlet>());
 	}
 	
 	/**
 	 * Creates the schedule with WorkQueue algorithm.
 	 */
-	public void computeSchedule(List<? extends Cloudlet> cloudletList,
-			List<? extends Vm> vmList, List<? extends VmType> vmTypes) {
+	public void computeSchedule(List<? extends OnlineCloudlet> cloudletList,
+			List<? extends OnlineVm> vmList, List<? extends VmType> vmTypes) {
 		
 		boolean isNotScheduled = true;
 		int randomId = 0;
 		
 		while (isNotScheduled && randomId < cloudletList.size()) {
 			// select cloudlet randomly - skipped; instead take in order
-			Cloudlet cloudlet = cloudletList.get(randomId++);
+			OnlineCloudlet cloudlet = cloudletList.get(randomId++);
 
 			// if this cloudlet was bound to a VM continue
 			if (cloudlet.getVmId() >= 0) {
@@ -88,14 +84,14 @@ public class WorkQueueAlgorithm2 extends SchedulingAlgorithm {
 			}
 
 			double min = -1;
-			Vm minvm = null;
+			OnlineVm minvm = null;
 			
 			for (VmType type : vmTypes) {
 				// create a new VM if possible with workload 0
 				if (type.getCount() > 0) {
 					type.setCount(type.getCount()-1);
 					OnlineVm vm = OnlineVm.copy(type.getVm());
-					((ArrayList<Vm>)vmList).add(vm);
+					((List<OnlineVm>)vmList).add(vm);
 					min = 0.0;
 					minvm = vm;
 					break;
@@ -103,7 +99,7 @@ public class WorkQueueAlgorithm2 extends SchedulingAlgorithm {
 			}
 			
 			if (min < 0) {
-				for (Vm vm : vmList) {
+				for (OnlineVm vm : vmList) {
 					// find VM with min workload
 					if (min == -1 || min > getWorkload(vm.getId())) {
 						min = getWorkload(vm.getId());

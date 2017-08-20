@@ -3,10 +3,6 @@ package nisere.onlinesim;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.cloudbus.cloudsim.Cloudlet;
-import org.cloudbus.cloudsim.DatacenterBroker;
-import org.cloudbus.cloudsim.Vm;
-
 import nisere.onlinesim.algorithm.SchedulingAlgorithm;
 
 /**
@@ -25,13 +21,13 @@ public class Scheduler {
 	private List<? extends VmType> vmTypes;
 	
 	/** The datacenter broker */
-	private DatacenterBroker broker;
+	private OnlineDatacenterBroker broker;
 	
 	/** The VM list for all datacenters */
-	private List<? extends Vm> vmList;
+	private List<? extends OnlineVm> vmList;
 	
 	/** The cloudlet list */
-	private List<? extends Cloudlet> cloudletList;
+	private List<? extends OnlineCloudlet> cloudletList;
 	
 	/** The scheduling algorithm */
 	private SchedulingAlgorithm algorithm;
@@ -51,9 +47,9 @@ public class Scheduler {
 	 * @throws Exception
 	 */
 	public Scheduler(List<? extends VmType> vmTypes,
-			DatacenterBroker broker,
-			List<? extends Vm> vmList,
-			List<? extends Cloudlet> cloudletList,
+			OnlineDatacenterBroker broker,
+			List<? extends OnlineVm> vmList,
+			List<? extends OnlineCloudlet> cloudletList,
 			SchedulingAlgorithm algorithm,
 			int schedulingInterval) throws Exception {
 		this.vmTypes = vmTypes;
@@ -68,7 +64,7 @@ public class Scheduler {
 	 * This method takes the cloudlets, schedules them and sends them to the broker.
 	 */
 	public void prepareSimulation() {
-		List<Cloudlet> scheduledCloudlets = getScheduledCloudlets(getCloudletList(), getVmList(), getVmTypes());
+		List<OnlineCloudlet> scheduledCloudlets = getScheduledCloudlets(getCloudletList(), getVmList(), getVmTypes());
 		getBroker().submitVmList(getVmList());
 		getBroker().submitCloudletList(scheduledCloudlets);
 	}
@@ -82,25 +78,27 @@ public class Scheduler {
 	 * 
 	 * @return a list with scheduled cloudlets
 	 */
-	protected List<Cloudlet> getScheduledCloudlets(List<? extends Cloudlet> cloudlets, 
-			List<? extends Vm> vms, List<? extends VmType> types) {
+	protected <T extends OnlineCloudlet> List<T> getScheduledCloudlets(List<? extends OnlineCloudlet> cloudlets, 
+			List<? extends OnlineVm> vms, List<? extends VmType> types) {
+		
 		long delay = getSchedulingInterval();
-		List<Cloudlet> list = new LinkedList<>();
-		for (Cloudlet cloudlet : cloudlets) {
-			if ((cloudlet instanceof OnlineCloudlet) && ( ((OnlineCloudlet) cloudlet).getArrivalTime() > delay )) {
+		List<OnlineCloudlet> list = new LinkedList<>();
+		
+		for (OnlineCloudlet cloudlet : cloudlets) {
+			if (cloudlet.getArrivalTime() > delay) {
 				// this is the first of the next batch;
 				// schedule the batch then reset the list and add this cloudlet
 				getAlgorithm().prepare(delay);
 				getAlgorithm().computeSchedule(list, vms, types);
 				list = new LinkedList<>();
-				while (((OnlineCloudlet) cloudlet).getArrivalTime() > delay) {
+				while (cloudlet.getArrivalTime() > delay) {
 					delay += getSchedulingInterval();
 				}
 			}
+			
 			// update delay to take into account the scheduling interval
-			if (cloudlet instanceof OnlineCloudlet) {
-				((OnlineCloudlet) cloudlet).setDelay(delay);
-			}
+			cloudlet.setDelay(delay);
+			
 			list.add(cloudlet);
 		}
 		getAlgorithm().prepare(delay);
@@ -112,37 +110,16 @@ public class Scheduler {
 	 * Gets finished cloudlets.
 	 * @return a list with the finished cloudlets
 	 */
-	public List<Cloudlet> getFinishedCloudlets() {
+	public  <T extends OnlineCloudlet> List<T> getFinishedCloudlets() {
 		return getBroker().getCloudletReceivedList();
 	}
-	
-//	/**
-//	 * Gets the map of datcenters.
-//	 * @return the map of datacenters casted to the real type
-//	 */
-//	public <T extends Datacenter> List<? extends T> getDatacenters() {
-//		return (List<? extends T>)datacenters;
-//	}
-//
-//	/**
-//	 * @return the datacenters
-//	 */
-//	public List<? extends Datacenter> getDatacenters() {
-//		return datacenters;
-//	}
-//
-//	/**
-//	 * @param datacenters the datacenters to set
-//	 */
-//	public void setDatacenters(List<? extends Datacenter> datacenters) {
-//		this.datacenters = datacenters;
-//	}
-//	
+
 	/**
 	 * @return the vmTypes
 	 */
-	public List<? extends VmType> getVmTypes() {
-		return vmTypes;
+	@SuppressWarnings("unchecked")
+	public <T extends VmType> List<T> getVmTypes() {
+		return (List<T>)vmTypes;
 	}
 
 	/**
@@ -157,7 +134,7 @@ public class Scheduler {
 	 * Gets the datacenter broker.
 	 * @return the datacenter broker
 	 */
-	public DatacenterBroker getBroker() {
+	public OnlineDatacenterBroker getBroker() {
 		return broker;
 	}
 	
@@ -165,7 +142,7 @@ public class Scheduler {
 	 * Sets the datacenter broker.
 	 * @param broker the datacenter broker
 	 */
-	public void setBroker(DatacenterBroker broker) {
+	public void setBroker(OnlineDatacenterBroker broker) {
 		this.broker = broker;
 	}
 	
@@ -173,7 +150,8 @@ public class Scheduler {
 	 * Gets the VM list.
 	 * @return the VM list casted to the real type
 	 */
-	public <T extends Vm> List<T> getVmList() {
+	@SuppressWarnings("unchecked")
+	public <T extends OnlineVm> List<T> getVmList() {
 		return (List<T>)vmList;
 	}
 
@@ -181,7 +159,7 @@ public class Scheduler {
 	 * Sets the VM list.
 	 * @param vmList the VM list
 	 */
-	public void setVmList(List<? extends Vm> vmList) {
+	public void setVmList(List<? extends OnlineVm> vmList) {
 		this.vmList = vmList;
 	}
 	
@@ -189,7 +167,8 @@ public class Scheduler {
 	 * Gets the cloudlet list.
 	 * @return the cloudlet list casted to the real type
 	 */
-	public <T extends Cloudlet> List<T> getCloudletList() {
+	@SuppressWarnings("unchecked")
+	public <T extends OnlineCloudlet> List<T> getCloudletList() {
 		return (List<T>)cloudletList;
 	}
 
@@ -197,7 +176,7 @@ public class Scheduler {
 	 * Sets the cloudlet list.
 	 * @param cloudletList the cloudlet list
 	 */
-	public void setCloudletList(List<? extends Cloudlet> cloudletList) {
+	public void setCloudletList(List<? extends OnlineCloudlet> cloudletList) {
 		this.cloudletList = cloudletList;
 	}
 
@@ -236,7 +215,7 @@ public class Scheduler {
 			this.schedulingInterval = schedulingInterval;
 			ret = true;
 		}
-		return true;
+		return ret;
 	}
 
 }

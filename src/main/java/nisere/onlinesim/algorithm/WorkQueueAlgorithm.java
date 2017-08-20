@@ -5,9 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.cloudbus.cloudsim.Cloudlet;
-import org.cloudbus.cloudsim.Vm;
-
+import nisere.onlinesim.OnlineCloudlet;
+import nisere.onlinesim.OnlineVm;
 import nisere.onlinesim.VmType;
 
 /**
@@ -63,21 +62,21 @@ public class WorkQueueAlgorithm extends SchedulingAlgorithm {
 
 	@Override
 	protected void initCloudletScheduledList() {
-		setCloudletScheduledList(new LinkedList<Cloudlet>());
+		setCloudletScheduledList(new LinkedList<OnlineCloudlet>());
 	}
 	
 	/**
 	 * Creates the schedule with WorkQueue algorithm.
 	 */
-	public void computeSchedule(List<? extends Cloudlet> cloudletList,
-			List<? extends Vm> vmList, List<? extends VmType> vmTypes) {
+	public void computeSchedule(List<? extends OnlineCloudlet> cloudletList,
+			List<? extends OnlineVm> vmList, List<? extends VmType> vmTypes) {
 		
 		boolean isNotScheduled = true;
 		int randomId = 0;
 		
 		while (isNotScheduled && randomId < cloudletList.size()) {
 			// select cloudlet randomly - skipped; instead take in order
-			Cloudlet cloudlet = cloudletList.get(randomId++);
+			OnlineCloudlet cloudlet = cloudletList.get(randomId++);
 
 			// if this cloudlet was bound to a VM continue
 			if (cloudlet.getVmId() >= 0) {
@@ -85,8 +84,8 @@ public class WorkQueueAlgorithm extends SchedulingAlgorithm {
 			}
 
 			double min = -1;
-			Vm minvm = null;
-			for (Vm vm : vmList) {
+			OnlineVm minvm = null;
+			for (OnlineVm vm : vmList) {
 				// find VM with min workload
 				if (min == -1 || min > getWorkload(vm.getId())) {
 					min = getWorkload(vm.getId());

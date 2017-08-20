@@ -58,11 +58,11 @@ public class OnlineDatacenterBroker extends DatacenterBroker {
 	@Override
 	protected void submitCloudlets() {
 		int vmIndex = 0;
-		List<Cloudlet> successfullySubmitted = new ArrayList<Cloudlet>();
-		List<Cloudlet> cloudletList = getCloudletList();
-		for (Cloudlet cloudlet : cloudletList) {
-			if ((cloudlet instanceof OnlineCloudlet) && (CloudSim.clock() < ((OnlineCloudlet)cloudlet).getDelay())) {
-				send(getName(), ((OnlineCloudlet)cloudlet).getDelay(), CLOUDLET_DELAY);
+		List<OnlineCloudlet> successfullySubmitted = new ArrayList<>();
+		List<OnlineCloudlet> cloudletList = getCloudletList();
+		for (OnlineCloudlet cloudlet : cloudletList) {
+			if (CloudSim.clock() < cloudlet.getDelay()) {
+				send(getName(), cloudlet.getDelay(), CLOUDLET_DELAY);
 				break;
 			}
 			Vm vm;
@@ -111,15 +111,16 @@ public class OnlineDatacenterBroker extends DatacenterBroker {
 		// except when a different datacenter is already assigned to the VM;
 		// in this case send the VM directly to the assigned datacenter
 		int requestedVms = 0;
-		for (Vm vm : getVmList()) {
+		List<OnlineVm> vmList = getVmList();
+		for (OnlineVm vm : vmList) {
 			// if VM was previously assigned to a different datacenter ignore it
 			if (getVmsToDatacentersMap().containsKey(vm.getId()) 
 					&& (getVmsToDatacentersMap().get(vm.getId()) != datacenterId) )
 				continue;
 			
 			int otherId = datacenterId;
-			if ((vm instanceof OnlineVm) && ( ((OnlineVm)vm).getDatacenterId() >= 0 )) {
-				otherId = ((OnlineVm)vm).getDatacenterId();
+			if (vm.getDatacenterId() >= 0) {
+				otherId = vm.getDatacenterId();
 			}
 			Log.printLine(CloudSim.clock() + ": " + getName() +
 					": Trying to Create VM #" + vm.getId()

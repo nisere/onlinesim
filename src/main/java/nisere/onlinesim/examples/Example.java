@@ -278,9 +278,9 @@ public class Example {
 		return cloudletList;
 	}
 
-	public static void printResult(List<Cloudlet> list,List<OnlineVm> vmList) {
+	public static void printResult(List<OnlineCloudlet> list,List<OnlineVm> vmList) {
 		int size = list.size();
-		Cloudlet cloudlet;
+		OnlineCloudlet cloudlet;
 		double flowtime = 0;
 		double cost = 0;
 		HashSet<OnlineVm> vmUsed = new HashSet<>();

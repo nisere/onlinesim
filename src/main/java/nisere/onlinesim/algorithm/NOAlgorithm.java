@@ -3,9 +3,8 @@ package nisere.onlinesim.algorithm;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.cloudbus.cloudsim.Cloudlet;
-import org.cloudbus.cloudsim.Vm;
-
+import nisere.onlinesim.OnlineCloudlet;
+import nisere.onlinesim.OnlineVm;
 import nisere.onlinesim.VmType;
 
 /**
@@ -18,12 +17,12 @@ public class NOAlgorithm extends SchedulingAlgorithm {
 
 	@Override
 	protected void initCloudletScheduledList() {
-		setCloudletScheduledList(new LinkedList<Cloudlet>());	
+		setCloudletScheduledList(new LinkedList<OnlineCloudlet>());	
 	}
 
 	@Override
-	public void computeSchedule(List<? extends Cloudlet> cloudletList,
-			List<? extends Vm> vmList, List<? extends VmType> vmTypes) {
+	public void computeSchedule(List<? extends OnlineCloudlet> cloudletList,
+			List<? extends OnlineVm> vmList, List<? extends VmType> vmTypes) {
 		getCloudletScheduledList().addAll(cloudletList);
 	}
 
