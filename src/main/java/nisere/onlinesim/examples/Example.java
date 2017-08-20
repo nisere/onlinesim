@@ -253,7 +253,6 @@ public class Example {
 		List<OnlineCloudlet> cloudletList = new ArrayList<>();
 
 		// Cloudlet properties
-		int id = 0;
 		int pesNumber = 1;
 		// long length = 250000;
 		long fileSize = 0;
@@ -269,7 +268,7 @@ public class Example {
 		for (int i = 0; i < noCloudlets; i++) {
 			int randomLength = (int) lengthUnif.sample();
 			delay += (long) delayUnif.sample();
-			OnlineCloudlet cloudlet = new OnlineCloudlet(id++, randomLength, pesNumber, fileSize, outputSize, utilizationModel,
+			OnlineCloudlet cloudlet = new OnlineCloudlet(randomLength, pesNumber, fileSize, outputSize, utilizationModel,
 					utilizationModel, utilizationModel, deadline, delay);
 			cloudlet.setUserId(brokerId);
 			cloudletList.add(cloudlet);

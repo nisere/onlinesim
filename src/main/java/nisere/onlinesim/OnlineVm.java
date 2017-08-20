@@ -56,7 +56,7 @@ public class OnlineVm extends Vm {
 			final int numberOfPes, final int ram, final long bw,
 			final long size, final String vmm,
 			final CloudletScheduler cloudletScheduler) {
-		super(lastId++, userId, mips, numberOfPes, ram, bw, size, vmm,
+		super(++lastId, userId, mips, numberOfPes, ram, bw, size, vmm,
 				cloudletScheduler);
 
 		setDatacenterId(-1);

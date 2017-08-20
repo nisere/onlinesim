@@ -11,6 +11,9 @@ import org.cloudbus.cloudsim.UtilizationModel;
  *
  */
 public class OnlineCloudlet extends Cloudlet {
+	/** Last id assigned to an object of this class */
+	public static int lastId = 0;
+	
 	/**
 	 * The cloudlet deadline. The amount of time in hours before the cloudlet
 	 * must be completed. A value of 0 means there is no deadline.
@@ -31,8 +34,6 @@ public class OnlineCloudlet extends Cloudlet {
 	/**
 	 * Allocates a OnlineCloudlet object.
 	 * 
-	 * @param cloudletId
-	 *            the ID of this cloudlet
 	 * @param cloudletLength
 	 *            the size of this cloudlet (in MI) >= 1
 	 * @param pesNumber
@@ -52,14 +53,14 @@ public class OnlineCloudlet extends Cloudlet {
 	 * @param utilizationModelBw
 	 *            the utilization model of the bandwidth
 	 */
-	public OnlineCloudlet(final int cloudletId, final long cloudletLength,
+	public OnlineCloudlet(final long cloudletLength,
 			final int pesNumber, final long cloudletFileSize,
 			final long cloudletOutputSize,
 			final UtilizationModel utilizationModelCpu,
 			final UtilizationModel utilizationModelRam,
 			final UtilizationModel utilizationModelBw,
 			final int deadline, final long arrivalTime) {
-		super(cloudletId, cloudletLength, Math.max(1, pesNumber),
+		super(++lastId, cloudletLength, Math.max(1, pesNumber),
 				cloudletFileSize, cloudletOutputSize, utilizationModelCpu,
 				utilizationModelRam, utilizationModelBw);
 
