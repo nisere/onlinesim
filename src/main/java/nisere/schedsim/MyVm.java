@@ -10,6 +10,8 @@ import org.cloudbus.cloudsim.Vm;
  *
  */
 public class MyVm extends Vm {
+	/** Last id assigned to an object of this class */
+	public static int lastId = 0;
 
 	/**
 	 * The datacenter id where this VM is assigned.
@@ -17,10 +19,8 @@ public class MyVm extends Vm {
 	 */
 	private int datacenterId;
 	
-	/**
-	 * The identifier of the instance type. It must be unique for a datacenter.
-	 */
-	private String identifier;
+	/** The instance type */
+	private VmType vmType;
 	
 	/** Start time of this VM */
 	private double startTime;
@@ -34,8 +34,40 @@ public class MyVm extends Vm {
 	/**
 	 * Creates a new MyVm object.
 	 * 
-	 * @param id
-	 *            the id of this VM
+	 * @param userId
+	 *            the id of this VM's owner
+	 * @param mips
+	 *            the mips of this VM
+	 * @param numberOfPes
+	 *            the number of CPUs of this VM
+	 * @param ram
+	 *            the amount of RAM (in MB)
+	 * @param bw
+	 *            the amount of bandwidth (in Mbps)
+	 * @param size
+	 *            the size the VM image size (the amount of storage it will use,
+	 *            at least initially) (in MB)
+	 * @param vmm
+	 *            the virtual machine monitor that manages this VM
+	 * @param cloudletScheduler
+	 *            the cloudlet scheduler policy for cloudlets scheduling
+	 */
+	public MyVm(final int userId, final double mips,
+			final int numberOfPes, final int ram, final long bw,
+			final long size, final String vmm,
+			final CloudletScheduler cloudletScheduler) {
+		super(lastId++, userId, mips, numberOfPes, ram, bw, size, vmm,
+				cloudletScheduler);
+
+		setDatacenterId(-1);
+		setStartTime(0.0);
+		setUptime(0.0);
+		setCost(0.0);
+	}
+	
+	/**
+	 * Creates a new MyVm object.
+	 * 
 	 * @param userId
 	 *            the id of this VM's owner
 	 * @param mips
@@ -55,22 +87,29 @@ public class MyVm extends Vm {
 	 *            the cloudlet scheduler policy for cloudlets scheduling
 	 * @param datacenterId
 	 *            the id of the datacenter assigned to the VM
-	 * @param typeId
-	 *            the id of the instance type, unique per datacenter
 	 */
-	public MyVm(final int id, final int userId, final double mips,
+	public MyVm(final int userId, final double mips,
 			final int numberOfPes, final int ram, final long bw,
 			final long size, final String vmm,
-			final CloudletScheduler cloudletScheduler,			 
-			final int datacenterId, final String identifier) {
-		super(id, userId, mips, numberOfPes, ram, bw, size, vmm,
+			final CloudletScheduler cloudletScheduler,
+			int datacenterId) {
+		this(userId, mips, numberOfPes, ram, bw, size, vmm,
 				cloudletScheduler);
 
-		this.datacenterId = datacenterId;
-		setIdentifier(identifier);
-		setStartTime(0.0);
-		setUptime(0.0);
-		setCost(0.0);
+		setDatacenterId(datacenterId);
+	}
+	
+	/**
+	 * Creates a copy of a VM
+	 * @param vm the VM to be copied
+	 * @return the copy of the VM
+	 */
+	public static MyVm copy(MyVm vm) {
+		MyVm vm2 = new MyVm(vm.getUserId(), vm.getMips(), vm.getNumberOfPes(), vm.getRam(), vm.getBw(),
+				vm.getSize(), vm.getVmm(), vm.getCloudletScheduler());
+		vm2.setDatacenterId(vm.getDatacenterId());
+		vm2.setVmType(vm.getVmType());
+		return vm2;
 	}
 
 	/**
@@ -91,12 +130,12 @@ public class MyVm extends Vm {
 		datacenterId = id;
 	}
 
-	public String getIdentifier() {
-		return identifier;
+	public VmType getVmType() {
+		return vmType;
 	}
 
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
+	public void setVmType(VmType vmType) {
+		this.vmType = vmType;
 	}
 
 	public double getStartTime() {

@@ -8,6 +8,8 @@ import java.util.Map;
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.Vm;
 
+import nisere.schedsim.VmType;
+
 /**
  * Sufferage algorithm
  * 
@@ -68,7 +70,7 @@ public class SufferageAlgorithm extends SchedulingAlgorithm {
 	 * Creates the schedule with Sufferage algorithm.
 	 */
 	public void computeSchedule(List<? extends Cloudlet> cloudletList,
-			List<? extends Vm> vmList) {
+			List<? extends Vm> vmList, List<? extends VmType> vmTypes) {
 		boolean isNotScheduled = true;
 		while (isNotScheduled) {
 			Cloudlet maxCloudlet = null;

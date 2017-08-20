@@ -10,10 +10,10 @@ import java.util.List;
 import java.util.Map;
 
 import nisere.schedsim.MyCloudlet;
-import nisere.schedsim.MyDatacenter;
 import nisere.schedsim.MyDatacenterBroker;
 import nisere.schedsim.MyVm;
 import nisere.schedsim.Scheduler;
+import nisere.schedsim.VmType;
 import nisere.schedsim.algorithm.NOAlgorithm;
 import nisere.schedsim.algorithm.SchedulingAlgorithm;
 import nisere.schedsim.algorithm.WorkQueueAlgorithm;
@@ -49,23 +49,23 @@ import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
  * @author Alina Chera
  *
  */
-public class PublicCloudExample {
-	static int noCloudlets = 4; // used to create random Cloudlets
-	static int noVms = 2; // used to create random VMs
-	// generate [minMipsUnif;maxMipsUnif) and multiply with 1000 to get mips
-	static int minMipsUnif = 1;
-	static int maxMipsUnif = 2;
-	// generate length [minLengthUnif;maxLengthUnif)
-	static int minLengthUnif = 100000;
-	static int maxLengthUnif = 200000;
-	static int seed = 1;
-	static int vmId = 0; // used to create VM types
-	static int schedulingInterval = 200; // in seconds
-	// generate delay [minDelayUnif;maxDelayUnif)
-	static int minDelayUnif = 0;
-	static int maxDelayUnif = 500;
+public class PublicCloudExample extends Example {
 	
 	public static void main(String[] args) {
+		int noCloudlets = 4; // used to create random Cloudlets
+		int noVms = 2; // used to create random VMs
+		// generate [minMipsUnif;maxMipsUnif) and multiply with 1000 to get mips
+		int minMipsUnif = 1;
+		int maxMipsUnif = 2;
+		// generate length [minLengthUnif;maxLengthUnif)
+		int minLengthUnif = 100000;
+		int maxLengthUnif = 200000;
+		int seed = 1;
+		int vmId = 0; // used to create VM types
+		int schedulingInterval = 200; // in seconds
+		// generate arrival time [minArrivalUnif;maxArrivalUnif)
+		int minArrivalUnif = 0;
+		int maxArrivalUnif = 500;
 
 		Log.printLine("Starting simulation...");
 		try {
@@ -77,96 +77,47 @@ public class PublicCloudExample {
 
 			/*------------------------------------------*/
 			
-			/* Create a private cloud. */
-			
-			/* Create random VM types. */
-			List<MyVm> vmTypes0 = createRandomMyVms(broker.getId(), noVms, minMipsUnif, maxMipsUnif, seed);
-			
-			/* Set count and price */
-			HashMap<String,Integer> vmCount0 = new HashMap<>();
-			HashMap<String,Double> vmPrice0 = new HashMap<>();
-			for (MyVm vm : vmTypes0) {
-				vmCount0.put(vm.getIdentifier(), 1);
-				vmPrice0.put(vm.getIdentifier(), 0.0);
-			}
+			/* Create a public cloud. */
+
+			/* Create custom VM types. */
+			MyVm vm1 = new MyVm(broker.getId(), 1000, 1, 1024, 1000, 10000, "Xen", new CloudletSchedulerSpaceShared());
+			MyVm vm2 = new MyVm(broker.getId(), 2000, 1, 1024, 1000, 10000, "Xen", new CloudletSchedulerSpaceShared());
+			MyVm vm3 = new MyVm(broker.getId(), 3000, 1, 1024, 1000, 10000, "Xen", new CloudletSchedulerSpaceShared());
+
+			ArrayList<VmType> vmTypes1 = new ArrayList<>();
+			vmTypes1.add(new VmType(vm1, noCloudlets, 1.0, 3600, "PB1_1.0"));
+			vmTypes1.add(new VmType(vm2, noCloudlets, 1.5, 3600, "PB1_1.5"));
+			vmTypes1.add(new VmType(vm3, noCloudlets, 2.5, 3600, "PB1_2.5"));
 
 			/* Create the datacenter. */
-			MyDatacenter datacenter0 = createMyDatacenter("Private", vmTypes0, vmCount0, vmPrice0, 1);
-			
-			/*------------------------------------------*/
-			
-			/* Create a public cloud. */
-			
-			/* Create custom VM types. */
-			MyVm vm1 = new MyVm(-1, broker.getId(), 1000, 1, 1024, 1000, 10000, "Xen", new CloudletSchedulerSpaceShared(), -1, Integer.toString(vmId++));
-			MyVm vm2 = new MyVm(-1, broker.getId(), 2000, 1, 1024, 1000, 10000, "Xen", new CloudletSchedulerSpaceShared(), -1, Integer.toString(vmId++));
-			MyVm vm3 = new MyVm(-1, broker.getId(), 3000, 1, 1024, 1000, 10000, "Xen", new CloudletSchedulerSpaceShared(), -1, Integer.toString(vmId++));
-			
-			ArrayList<MyVm> vmTypes1 = new ArrayList<>();
-			vmTypes1.add(vm1);
-			vmTypes1.add(vm2);
-			vmTypes1.add(vm3);
-			
-			/* Simulate infinite instances for public cloud */
-			HashMap<String,Integer> vmCount1 = new HashMap<>();
-			for (MyVm vm : vmTypes1) {
-				vmCount1.put(vm.getIdentifier(), noCloudlets);
-			}
-			
-			/* Add price to VM types */
-			HashMap<String,Double> vmPrice1 = new HashMap<>();
-			vmPrice1.put(vm1.getIdentifier(), 1.0);
-			vmPrice1.put(vm2.getIdentifier(), 1.5);
-			vmPrice1.put(vm3.getIdentifier(), 2.5);
-			
-			/* Create the datacenter. */
-			MyDatacenter datacenter1 = createMyDatacenter("Public1", vmTypes1, vmCount1, vmPrice1, 3600);
-			
+			Datacenter datacenter1 = createDatacenter("Public1", vmTypes1);
+
 			/*------------------------------------------*/
 
 			/* Create another public cloud. */
-			
+
 			/* Create custom VM types. */
-			MyVm vm4 = new MyVm(-1, broker.getId(), 1500, 1, 1024, 512, 5000, "Xen", new CloudletSchedulerSpaceShared(), -1, Integer.toString(vmId++));
-			MyVm vm5 = new MyVm(-1, broker.getId(), 2500, 1, 1024, 512, 5000, "Xen", new CloudletSchedulerSpaceShared(), -1, Integer.toString(vmId++));
-		
-			ArrayList<MyVm> vmTypes2 = new ArrayList<>();
-			vmTypes2.add(vm1);
-			vmTypes2.add(vm4);
-			vmTypes2.add(vm5);
-			
-			/* Simulate infinite instances for public cloud */
-			HashMap<String,Integer> vmCount2 = new HashMap<>();
-			for (MyVm vm : vmTypes2) {
-				vmCount2.put(vm.getIdentifier(), noCloudlets);
-			}
-			
-			/* Add price to VM types */
-			HashMap<String,Double> vmPrice2 = new HashMap<>();
-			vmPrice2.put(vm1.getIdentifier(), 0.9);
-			vmPrice2.put(vm4.getIdentifier(), 1.5);
-			vmPrice2.put(vm5.getIdentifier(), 2.0);
-			
+			MyVm vm4 = new MyVm(broker.getId(), 1500, 1, 1024, 512, 5000, "Xen", new CloudletSchedulerSpaceShared());
+			MyVm vm5 = new MyVm(broker.getId(), 2500, 1, 1024, 512, 5000, "Xen", new CloudletSchedulerSpaceShared());
+
+			ArrayList<VmType> vmTypes2 = new ArrayList<>();
+			vmTypes2.add(new VmType(vm1, noCloudlets, 0.9, 3600, "PB2_0.9"));
+			vmTypes2.add(new VmType(vm4, noCloudlets, 1.5, 3600, "PB2_1.5"));
+			vmTypes2.add(new VmType(vm5, noCloudlets, 2.0, 3600, "PB2_2.0"));
+
 			/* Create the datacenter. */
-			MyDatacenter datacenter2 = createMyDatacenter("Public2", vmTypes2, vmCount2, vmPrice2, 3600);
+			Datacenter datacenter2 = createDatacenter("Public2", vmTypes2);
 			
 			/*------------------------------------------*/
 			
-			/* Create the datacenter list. */
-//			Map<String,Datacenter> datacenters = new HashMap<>();
-//			datacenters.put("Private", datacenter0);
-//			datacenters.put("Public1", datacenter1);
-//			datacenters.put("Public2", datacenter2);
-			List<MyDatacenter> datacenters = new ArrayList<>();
-			//datacenters.add(datacenter0);
-			datacenters.add(datacenter1);
-			//datacenters.add(datacenter2);
-			
 			/* Create the VM list. */
-			List<MyVm> vmList = populateVmList(datacenters);
+			List<VmType> vmTypes = new ArrayList<>();
+			vmTypes.addAll(vmTypes1);
+			//vmTypes.addAll(vmTypes2);
+			List<MyVm> vmList = populateVmList(vmTypes);
 
 			/* Create the Cloudlet list. */
-			List<MyCloudlet> cloudletList = createRandomMyCloudlets(broker.getId(),noCloudlets,minLengthUnif, maxLengthUnif, seed, minDelayUnif, maxDelayUnif);
+			List<MyCloudlet> cloudletList = createRandomMyCloudlets(broker.getId(),noCloudlets,minLengthUnif, maxLengthUnif, seed, minArrivalUnif, maxArrivalUnif);
 			
 			/* Choose the scheduling algorithm. */
 			//SchedulingAlgorithm algorithm = new NOAlgorithm();
@@ -178,7 +129,7 @@ public class PublicCloudExample {
 			//SchedulingAlgorithm algorithm = new LJFR_SJFRAlgorithm();
 			
 			/* Create a scheduler. */
-			Scheduler scheduler = new Scheduler(datacenters,broker,vmList,cloudletList,algorithm,schedulingInterval);
+			Scheduler scheduler = new Scheduler(vmTypes,broker,vmList,cloudletList,algorithm,schedulingInterval);
 
 			/* Make the necessary preparations before starting the simulation. 
 			 * This is the step where the algorithm is run. 
@@ -192,11 +143,7 @@ public class PublicCloudExample {
 			CloudSim.stopSimulation();
 
 			/* Print the results. */		
-			Map<Integer,MyDatacenter> dcMap = new HashMap<>();
-			for (Datacenter dc : datacenters) {
-				dcMap.put(dc.getId(), (MyDatacenter)dc);
-			}
-			printResult(scheduler.getFinishedCloudlets(),dcMap,vmList);
+			printResult(scheduler.getFinishedCloudlets(),vmList);
 			
 			Log.printLine("Simulation finished!");
 		} catch (Exception e) {
@@ -204,195 +151,7 @@ public class PublicCloudExample {
 			Log.printLine("The simulation has been terminated due to an unexpected error");
 		}
 	}
-	
-	private static MyDatacenter createMyDatacenter(String name, List<MyVm> vmTypes, 
-			Map<String,Integer> vmCount, Map<String,Double> vmPrice, int timeInterval) throws Exception {
-		MyDatacenter datacenter;
-	
-		// Create a DatacenterCharacteristics object
-		String arch = "x86"; // system architecture
-		String os = "Linux"; // operating system
-		String vmm = "Xen";
-		double time_zone = 10.0; // time zone this resource located
-		double cost = 3.0; // the cost of using processing in this resource
-		double costPerMem = 0.05; // the cost of using memory in this resource
-		double costPerStorage = 0.001; // the cost of using storage in this resource
-		double costPerBw = 0.0; // the cost of using bw in this resource
-		LinkedList<Storage> storageList = new LinkedList<Storage>(); // we are not adding SAN devices
+		/** Prints the results */
 
-		ArrayList<Host> hostList = new ArrayList<>();
-		int hostId = 0;
-		// for each vm type check how many must be created;
-		// for each vm create a host
-		for (MyVm vm : vmTypes ) {
-			int n = vmCount.get(vm.getIdentifier());
-			List<Pe> peList = new ArrayList<Pe>();
-			peList.add(new Pe(0, new PeProvisionerSimple(vm.getMips())));
-			for (int i = 0; i < n; i++) {
-				hostList.add(new Host(hostId++, new RamProvisionerSimple(vm.getRam()),
-						new BwProvisionerSimple(vm.getBw()), vm.getSize(), 
-						peList,	new VmSchedulerSpaceShared(peList)));					
-			}
-		}
-		
-		DatacenterCharacteristics characteristics = new DatacenterCharacteristics(
-				arch, os, vmm, hostList, time_zone, cost, costPerMem,
-				costPerStorage, costPerBw);
-		
-		datacenter = new MyDatacenter(name, characteristics, new VmAllocationPolicySimple(hostList), 
-				storageList, 0, vmTypes, vmCount, vmPrice, timeInterval);
-		
-		return datacenter;
-	}
-	
-	private static List<MyVm> populateVmList(List<MyDatacenter> datacenters) {
-		List<MyVm> vmlist = new ArrayList<>();
-		int vmid = 0;
-		
-		for (MyDatacenter dc : datacenters) {
-			for (Vm vm : dc.getVmTypes()) {
-				for (int i = 0; i < dc.getVmCount().get( ((MyVm)vm).getIdentifier() ); i++) {
-					vmlist.add(new MyVm(vmId++, vm.getUserId(), vm.getMips(), vm.getNumberOfPes(),
-							vm.getRam(), vm.getBw(), vm.getSize(), vm.getVmm(), 
-							new CloudletSchedulerSpaceShared(), dc.getId(), ((MyVm)vm).getIdentifier()));
-				}
-			}
-		}
-		
-		
-		return vmlist;
-	}
-	
-	private static List<MyVm> createRandomMyVms(int brokerId, int noVms, int minMipsUnif, int maxMipsUnif,
-			int seed) {
-		List<MyVm> vmlist = new ArrayList<>();
-
-		// VM description
-		int mips = 1000;
-		long size = 10000; // image size (MB)
-		int ram = 1024; // vm memory (MB)
-		long bw = 1000;
-		int pesNumber = 1; // number of cpus
-		String vmm = "Xen"; // VMM name
-		int datacenterId = -1;
-
-		UniformDistr mipsUnif = new UniformDistr(minMipsUnif, maxMipsUnif,
-				seed);
-
-		// add noVms VMs
-		for (int i = 0; i < noVms; i++) {
-			int mult = (int) mipsUnif.sample();
-			vmlist.add(new MyVm(-1, brokerId, mips * mult, pesNumber,
-					ram, bw, size, vmm, new CloudletSchedulerSpaceShared(), datacenterId, Integer.toString(vmId++)));
-		}
-		return vmlist;
-	}
-	
-	private static List<MyCloudlet> createRandomMyCloudlets(int brokerId, int noCloudlets, int minLengthUnif, int maxLengthUnif,
-			int seed, int minDelayUnif, int maxDelayUnif) {
-		List<MyCloudlet> cloudletList = new ArrayList<>();
-
-		// Cloudlet properties
-		int id = 0;
-		int pesNumber = 1;
-		//long length = 250000;
-		long fileSize = 0;
-		long outputSize = 0;
-		UtilizationModel utilizationModel = new UtilizationModelFull();
-		int deadline = 0;
-		long delay = 0; // in seconds
-
-		UniformDistr lengthUnif = new UniformDistr(minLengthUnif,
-				maxLengthUnif, seed);
-		UniformDistr delayUnif = new UniformDistr(minDelayUnif,
-				maxDelayUnif, seed);
-
-		// add noCloudlets*intervals cloudlets
-		for (int i = 0; i < noCloudlets; i++) {
-			int randomLength = (int) lengthUnif.sample();
-			delay += (long) delayUnif.sample();
-			MyCloudlet cloudlet = new MyCloudlet(id++, randomLength, pesNumber,
-					fileSize, outputSize, utilizationModel,
-					utilizationModel, utilizationModel, deadline, delay);
-			cloudlet.setUserId(brokerId);
-			cloudletList.add(cloudlet);
-		}
-		
-		return cloudletList;
-	}
-	
-	/** Prints the results */
-	private static void printResult(List<Cloudlet> list,Map<Integer,MyDatacenter> dcMap,List<MyVm> vmList) {
-		int size = list.size();
-		Cloudlet cloudlet;
-		double flowtime = 0;
-		double cost = 0;
-		HashSet<MyVm> vmUsed = new HashSet<>();
-
-		String indent = "    ";
-		Log.printLine();
-		Log.printLine("========== OUTPUT ==========");
-		Log.printLine("Cloudlet ID" + indent + "STATUS" + indent
-				+ "  Datacenter  " + indent + "  VM ID" + "  VM Type " + "Time"
-				+ indent + "Start Time" + indent + "Finish Time" + indent + "Arrival" + indent + "Delay" + indent + "VM Cost");
-
-		int[] counter = new int[13];
-		int index = 0;
-		int step = 1000;
-		DecimalFormat dft = new DecimalFormat("###.##");
-		for (int i = 0; i < size; i++) {
-			cloudlet = list.get(i);
-			Log.print(indent + cloudlet.getCloudletId() + indent + indent);
-
-			if (cloudlet.getStatus() == Cloudlet.SUCCESS) {
-				Log.print("SUCCESS");
-				
-				MyVm vm = VmList.getById(vmList, cloudlet.getVmId());
-				MyDatacenter dc = dcMap.get(vm.getDatacenterId());
-				vm.setUptime(cloudlet.getFinishTime());
-
-
-				flowtime += cloudlet.getFinishTime();
-
-				if (cloudlet.getFinishTime() <= step * (index + 1)) {
-					counter[index]++;
-				} else {
-					index++;
-					counter[index] = counter[index - 1] + 1;
-				}
-
-				double intervals = Math.ceil(1.0*vm.getUptime()/dc.getTimeInterval());
-				vm.setCost(intervals * dc.getCostPerTimeInterval(vm.getIdentifier()));
-				
-				vmUsed.add(vm);
-				
-				Log.printLine(indent + indent + dc.getName()
-						+ indent + indent + indent + cloudlet.getVmId()
-						+ indent + indent + vm.getIdentifier() + indent
-						+ dft.format(cloudlet.getActualCPUTime()) + indent
-						+ indent + dft.format(cloudlet.getExecStartTime())
-						+ indent + indent
-						+ dft.format(cloudlet.getFinishTime())
-						+ indent + indent + dft.format(((MyCloudlet)cloudlet).getArrivalTime())
-						+ indent + indent + dft.format(((MyCloudlet)cloudlet).getDelay())
-						+ indent + indent + dft.format(dc.getCostPerTimeInterval(vm.getIdentifier()))
-						+ indent + dft.format(vm.getCost()));
-
-			}
-		}
-		
-		for (MyVm vm : vmUsed) {
-			cost += vm.getCost();
-		}
-
-		Log.printLine();
-		Log.printLine("Flowtime: " + dft.format(flowtime));
-		Log.printLine("Finished after " + step + ",2x" + step + "...");
-		for (int i = 0; i < 13; i++) {
-			Log.print(counter[i] + ",");
-		}
-		Log.printLine();
-		Log.printLine("Cost: " + cost);
-	}
 
 }

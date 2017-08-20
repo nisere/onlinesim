@@ -8,6 +8,8 @@ import java.util.Map;
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.Vm;
 
+import nisere.schedsim.VmType;
+
 /**
  * MinMin algorithm
  * 
@@ -67,7 +69,7 @@ public class MinMinAlgorithm extends SchedulingAlgorithm {
 	 * Creates the schedule with MinMin algorithm.
 	 */
 	public void computeSchedule(List<? extends Cloudlet> cloudletList,
-			List<? extends Vm> vmList) {
+			List<? extends Vm> vmList, List<? extends VmType> vmTypes) {
 		
 		boolean isNotScheduled = true;
 		
@@ -81,7 +83,7 @@ public class MinMinAlgorithm extends SchedulingAlgorithm {
 					continue;
 				}
 				for (Vm vm : vmList) {
-					// fin min of Cij = Wi + Eij
+					// find min of Cij = Wi + Eij
 					if (min == -1
 							|| min > getWorkload(vm.getId())
 									+ cloudlet.getCloudletLength()

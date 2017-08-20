@@ -8,6 +8,8 @@ import java.util.Map;
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.Vm;
 
+import nisere.schedsim.VmType;
+
 /**
  * WorkQueue algorithm
  * 
@@ -68,7 +70,7 @@ public class WorkQueueAlgorithm extends SchedulingAlgorithm {
 	 * Creates the schedule with WorkQueue algorithm.
 	 */
 	public void computeSchedule(List<? extends Cloudlet> cloudletList,
-			List<? extends Vm> vmList) {
+			List<? extends Vm> vmList, List<? extends VmType> vmTypes) {
 		
 		boolean isNotScheduled = true;
 		int randomId = 0;

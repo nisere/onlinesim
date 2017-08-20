@@ -8,6 +8,8 @@ import java.util.Map;
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.Vm;
 
+import nisere.schedsim.VmType;
+
 /**
  * MaxMin algorithm
  * 
@@ -67,7 +69,7 @@ public class MaxMinAlgorithm extends SchedulingAlgorithm {
 	 * Creates the schedule with MaxMin algorithm.
 	 */
 	public void computeSchedule(List<? extends Cloudlet> cloudletList,
-			List<? extends Vm> vmList) {
+			List<? extends Vm> vmList, List<? extends VmType> vmTypes) {
 
 		boolean isNotScheduled = true;
 		while (isNotScheduled) {

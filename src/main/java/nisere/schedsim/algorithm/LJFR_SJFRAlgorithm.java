@@ -8,6 +8,8 @@ import java.util.Map;
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.Vm;
 
+import nisere.schedsim.VmType;
+
 /**
  * LJFR_SJFR algorithm
  * 
@@ -67,7 +69,7 @@ public class LJFR_SJFRAlgorithm extends SchedulingAlgorithm {
 	 * Creates the schedule with LJFR_SJFR algorithm.
 	 */
 	public void computeSchedule(List<? extends Cloudlet> cloudletList,
-			List<? extends Vm> vmList) {
+			List<? extends Vm> vmList, List<? extends VmType> vmTypes) {
 
 		boolean isNotScheduled = true;
 		int countVm = vmList.size();

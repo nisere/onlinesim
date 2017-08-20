@@ -1,22 +1,25 @@
 package nisere.schedsim.algorithm;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.cloudbus.cloudsim.Cloudlet;
+import org.cloudbus.cloudsim.CloudletSchedulerSpaceShared;
 import org.cloudbus.cloudsim.Vm;
 
+import nisere.schedsim.MyVm;
 import nisere.schedsim.VmType;
 
 /**
- * MinMax algorithm
+ * WorkQueue algorithm
  * 
  * @author Alina Chera
  *
  */
-public class MinMaxAlgorithm extends SchedulingAlgorithm {
+public class WorkQueueAlgorithm2 extends SchedulingAlgorithm {
 	
 	/** A map between VM (id) and workload. */
 	private Map<Integer,Double> workloadMap;
@@ -65,73 +68,62 @@ public class MinMaxAlgorithm extends SchedulingAlgorithm {
 	protected void initCloudletScheduledList() {
 		setCloudletScheduledList(new LinkedList<Cloudlet>());
 	}
-
+	
 	/**
-	 * Creates the schedule with MinMax algorithm.
+	 * Creates the schedule with WorkQueue algorithm.
 	 */
 	public void computeSchedule(List<? extends Cloudlet> cloudletList,
 			List<? extends Vm> vmList, List<? extends VmType> vmTypes) {
-
-		boolean isNotScheduled = true;
 		
-		while (isNotScheduled) {
-			Cloudlet maxCloudlet = null;
-			int maxVmId = -1;
-			double max = -1;
-			double maxC = -1;
-			for (Cloudlet cloudlet : cloudletList) {
-				// if this cloudlet was bound to a VM continue
-				if (cloudlet.getVmId() >= 0) {
-					continue;
-				}
-				Cloudlet minCloudlet = null;
-				int minVmId = -1;
-				double minC = -1;
-				double minCE = -1;
-				double minE = -1;
-				for (Vm vm : vmList) {
-					// find min of Cij = Wi + Eij; min of Eij
-					if (minC == -1
-							|| minC > getWorkload(vm.getId())
-									+ cloudlet.getCloudletLength()
-									/ vm.getMips()) {
-						minC = getWorkload(vm.getId())
-								+ cloudlet.getCloudletLength() / vm.getMips();
-						minCE = cloudlet.getCloudletLength() / vm.getMips();
-						minCloudlet = cloudlet;
-						minVmId = vm.getId();
-					}
-					if (minE == -1
-							|| minE > cloudlet.getCloudletLength()
-									/ vm.getMips()) {
-						minE = cloudlet.getCloudletLength() / vm.getMips();
-					}
-				}
-				// //find max of Kxj = Cxj/Ehj, where Cxj = min of Cij and Ehj =
-				// min of Eij found above
-				// find max of Kxj = Exj/Ehj, where Cxj = min of Cij and Exj =
-				// the corresponding exec time of Cxj and Ehj = min of Eij found
-				// above
-				if (minCE >= 0 && minE >= 0
-				// && (max == -1 || max < minCE/minE)) {
-						&& (max == -1 || max < minE / minCE)) {
-					// max = minCE/minE;
-					max = minE / minCE;
-					maxC = minC;
-					maxCloudlet = minCloudlet;
-					maxVmId = minVmId;
+		boolean isNotScheduled = true;
+		int randomId = 0;
+		
+		while (isNotScheduled && randomId < cloudletList.size()) {
+			// select cloudlet randomly - skipped; instead take in order
+			Cloudlet cloudlet = cloudletList.get(randomId++);
+
+			// if this cloudlet was bound to a VM continue
+			if (cloudlet.getVmId() >= 0) {
+				continue;
+			}
+
+			double min = -1;
+			Vm minvm = null;
+			
+			for (VmType type : vmTypes) {
+				// create a new VM if possible with workload 0
+				if (type.getCount() > 0) {
+					type.setCount(type.getCount()-1);
+					MyVm vm = MyVm.copy(type.getVm());
+					((ArrayList<Vm>)vmList).add(vm);
+					min = 0.0;
+					minvm = vm;
+					break;
 				}
 			}
-			if (max >= 0) {
-				maxCloudlet.setVmId(maxVmId);
-				setWorkload(maxVmId,maxC);
-				getCloudletScheduledList().add(maxCloudlet);
+			
+			if (min < 0) {
+				for (Vm vm : vmList) {
+					// find VM with min workload
+					if (min == -1 || min > getWorkload(vm.getId())) {
+						min = getWorkload(vm.getId());
+						minvm = vm;
+					}
+				}
+			}
+
+			if (min >= 0) {
+				// schedule cloudlet on VM with min workload
+				cloudlet.setVmId(minvm.getId());
+				getCloudletScheduledList().add(cloudlet);
+				double newWorkload = getWorkload(minvm.getId()) + cloudlet.getCloudletLength() 
+						/ minvm.getMips();
+				setWorkload(minvm.getId(), newWorkload);
 			} else {
 				isNotScheduled = false;
 			}
 		}
 	}
-	
 	
 	/** 
 	 * This method is used to reset the workload taking into account

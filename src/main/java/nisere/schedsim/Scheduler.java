@@ -1,5 +1,6 @@
 package nisere.schedsim;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -22,18 +23,22 @@ import org.cloudbus.cloudsim.Vm;
  *
  */
 public class Scheduler {
+
+	/** The VM type list for all datacenters */
+	private List<? extends VmType> vmTypes;
 	
-	///** A map between the names of datacenters and the datacenters */
-	//private Map<String,? extends Datacenter> datacenters;
-	private List<? extends Datacenter> datacenters;
 	/** The datacenter broker */
 	private DatacenterBroker broker;
+	
 	/** The VM list for all datacenters */
 	private List<? extends Vm> vmList;
+	
 	/** The cloudlet list */
 	private List<? extends Cloudlet> cloudletList;
+	
 	/** The scheduling algorithm */
 	private SchedulingAlgorithm algorithm;
+	
 	/** The scheduling interval (in seconds, positive) */
 	private int schedulingInterval;
 
@@ -48,13 +53,13 @@ public class Scheduler {
 	 * @param schedulingInterval the scheduling interval in seconds
 	 * @throws Exception
 	 */
-	public Scheduler(List<? extends Datacenter> datacenters,
+	public Scheduler(List<? extends VmType> vmTypes,
 			DatacenterBroker broker,
 			List<? extends Vm> vmList,
 			List<? extends Cloudlet> cloudletList,
 			SchedulingAlgorithm algorithm,
 			int schedulingInterval) throws Exception {
-		this.datacenters = datacenters;
+		this.vmTypes = vmTypes;
 		this.broker = broker;
 		this.vmList = vmList;
 		this.cloudletList = cloudletList;		
@@ -66,7 +71,7 @@ public class Scheduler {
 	 * This method takes the cloudlets, schedules them and sends them to the broker.
 	 */
 	public void prepareSimulation() {
-		List<Cloudlet> scheduledCloudlets = getScheduledCloudlets(getCloudletList(), getVmList());
+		List<Cloudlet> scheduledCloudlets = getScheduledCloudlets(getCloudletList(), getVmList(), getVmTypes());
 		getBroker().submitVmList(getVmList());
 		getBroker().submitCloudletList(scheduledCloudlets);
 	}
@@ -81,7 +86,7 @@ public class Scheduler {
 	 * @return a list with scheduled cloudlets
 	 */
 	protected List<Cloudlet> getScheduledCloudlets(List<? extends Cloudlet> cloudlets, 
-			List<? extends Vm> vms) {
+			List<? extends Vm> vms, List<? extends VmType> types) {
 		long delay = getSchedulingInterval();
 		List<Cloudlet> list = new LinkedList<>();
 		for (Cloudlet cloudlet : cloudlets) {
@@ -89,7 +94,7 @@ public class Scheduler {
 				// this is the first of the next batch;
 				// schedule the batch then reset the list and add this cloudlet
 				getAlgorithm().prepare(delay);
-				getAlgorithm().computeSchedule(list, vms);
+				getAlgorithm().computeSchedule(list, vms, types);
 				list = new LinkedList<>();
 				while (((MyCloudlet) cloudlet).getArrivalTime() > delay) {
 					delay += getSchedulingInterval();
@@ -102,7 +107,7 @@ public class Scheduler {
 			list.add(cloudlet);
 		}
 		getAlgorithm().prepare(delay);
-		getAlgorithm().computeSchedule(list, vms);
+		getAlgorithm().computeSchedule(list, vms, types);
 		return getAlgorithm().getCloudletScheduledList();
 	}
 
@@ -114,6 +119,91 @@ public class Scheduler {
 		return getBroker().getCloudletReceivedList();
 	}
 	
+//	/**
+//	 * Gets the map of datcenters.
+//	 * @return the map of datacenters casted to the real type
+//	 */
+//	public <T extends Datacenter> List<? extends T> getDatacenters() {
+//		return (List<? extends T>)datacenters;
+//	}
+//
+//	/**
+//	 * @return the datacenters
+//	 */
+//	public List<? extends Datacenter> getDatacenters() {
+//		return datacenters;
+//	}
+//
+//	/**
+//	 * @param datacenters the datacenters to set
+//	 */
+//	public void setDatacenters(List<? extends Datacenter> datacenters) {
+//		this.datacenters = datacenters;
+//	}
+//	
+	/**
+	 * @return the vmTypes
+	 */
+	public List<? extends VmType> getVmTypes() {
+		return vmTypes;
+	}
+
+	/**
+	 * @param vmTypes the vmTypes to set
+	 */
+	public void setVmTypes(List<? extends VmType> vmTypes) {
+		this.vmTypes = vmTypes;
+	}
+
+
+	/**
+	 * Gets the datacenter broker.
+	 * @return the datacenter broker
+	 */
+	public DatacenterBroker getBroker() {
+		return broker;
+	}
+	
+	/**
+	 * Sets the datacenter broker.
+	 * @param broker the datacenter broker
+	 */
+	public void setBroker(DatacenterBroker broker) {
+		this.broker = broker;
+	}
+	
+	/**
+	 * Gets the VM list.
+	 * @return the VM list casted to the real type
+	 */
+	public <T extends Vm> List<T> getVmList() {
+		return (List<T>)vmList;
+	}
+
+	/**
+	 * Sets the VM list.
+	 * @param vmList the VM list
+	 */
+	public void setVmList(List<? extends Vm> vmList) {
+		this.vmList = vmList;
+	}
+	
+	/**
+	 * Gets the cloudlet list.
+	 * @return the cloudlet list casted to the real type
+	 */
+	public <T extends Cloudlet> List<T> getCloudletList() {
+		return (List<T>)cloudletList;
+	}
+
+	/**
+	 * Sets the cloudlet list.
+	 * @param cloudletList the cloudlet list
+	 */
+	public void setCloudletList(List<? extends Cloudlet> cloudletList) {
+		this.cloudletList = cloudletList;
+	}
+
 	/**
 	 * Gets the scheduling algorithm.
 	 * @return the scheduling algorithm
@@ -123,35 +213,11 @@ public class Scheduler {
 	}
 
 	/**
-	 * Gets the datacenter broker.
-	 * @return the datacenter broker
+	 * Sets the scheduling algorithm.
+	 * @param algorithm the scheduling algorithm
 	 */
-	public DatacenterBroker getBroker() {
-		return broker;
-	}
-
-	/**
-	 * Gets the cloudlet list.
-	 * @return the cloudlet list casted to the real type
-	 */
-	public <T extends Cloudlet> List<T> getCloudletList() {
-		return (List<T>)cloudletList;
-	}
-
-//	/**
-//	 * Gets the map of datcenters.
-//	 * @return the map of datacenters casted to the real type
-//	 */
-//	public <T extends Datacenter> Map<String,T> getDatacenters() {
-//		return (Map<String,T>)datacenters;
-//	}
-
-	/**
-	 * Gets the VM list.
-	 * @return the VM list casted to the real type
-	 */
-	public <T extends Vm> List<T> getVmList() {
-		return (List<T>)vmList;
+	public void setAlgorithm(SchedulingAlgorithm algorithm) {
+		this.algorithm = algorithm;
 	}
 	
 	/**
@@ -161,7 +227,7 @@ public class Scheduler {
 	public int getSchedulingInterval() {
 		return schedulingInterval;
 	}
-
+	
 	/**
 	 * Sets the scheduling interval
 	 * @param schedulingInterval (in seconds, must be positive)
@@ -175,44 +241,5 @@ public class Scheduler {
 		}
 		return true;
 	}
-	
-	/**
-	 * Sets the scheduling algorithm.
-	 * @param algorithm the scheduling algorithm
-	 */
-	public void setAlgorithm(SchedulingAlgorithm algorithm) {
-		this.algorithm = algorithm;
-	}
 
-	/**
-	 * Sets the datacenter broker.
-	 * @param broker the datacenter broker
-	 */
-	public void setBroker(DatacenterBroker broker) {
-		this.broker = broker;
-	}
-
-	/**
-	 * Sets the cloudlet list.
-	 * @param cloudletList the cloudlet list
-	 */
-	public void setCloudletList(List<? extends Cloudlet> cloudletList) {
-		this.cloudletList = cloudletList;
-	}
-
-//	/**
-//	 * Sets the datacenters map.
-//	 * @param datacenters the datacenters map
-//	 */
-//	public void setDatacenters(Map<String,Datacenter> datacenters) {
-//		this.datacenters = datacenters;
-//	}
-
-	/**
-	 * Sets the VM list.
-	 * @param vmList the VM list
-	 */
-	public void setVmList(List<? extends Vm> vmList) {
-		this.vmList = vmList;
-	}
 }
