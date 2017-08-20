@@ -10,7 +10,7 @@ import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.CloudletSchedulerSpaceShared;
 import org.cloudbus.cloudsim.Vm;
 
-import nisere.onlinesim.MyVm;
+import nisere.onlinesim.OnlineVm;
 import nisere.onlinesim.VmType;
 
 /**
@@ -94,7 +94,7 @@ public class WorkQueueAlgorithm2 extends SchedulingAlgorithm {
 				// create a new VM if possible with workload 0
 				if (type.getCount() > 0) {
 					type.setCount(type.getCount()-1);
-					MyVm vm = MyVm.copy(type.getVm());
+					OnlineVm vm = OnlineVm.copy(type.getVm());
 					((ArrayList<Vm>)vmList).add(vm);
 					min = 0.0;
 					minvm = vm;

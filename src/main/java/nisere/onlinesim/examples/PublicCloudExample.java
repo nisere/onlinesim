@@ -9,16 +9,16 @@ import org.cloudbus.cloudsim.Datacenter;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
 
-import nisere.onlinesim.MyCloudlet;
-import nisere.onlinesim.MyDatacenterBroker;
-import nisere.onlinesim.MyVm;
+import nisere.onlinesim.OnlineCloudlet;
+import nisere.onlinesim.OnlineDatacenterBroker;
+import nisere.onlinesim.OnlineVm;
 import nisere.onlinesim.Scheduler;
 import nisere.onlinesim.VmType;
 import nisere.onlinesim.algorithm.SchedulingAlgorithm;
 import nisere.onlinesim.algorithm.WorkQueueAlgorithm;
 
 /**
- * Example class shows how to use schedsim extension.
+ * Example class shows how to use this extension.
  * It creates a private cloud and a public cloud 
  * and sets their characteristics accordingly.
  * It shows how to create the cloudlets to simulate online arrival.
@@ -52,16 +52,16 @@ public class PublicCloudExample extends Example {
 			CloudSim.init(1, Calendar.getInstance(), false);
 			
 			/* Create a broker object. */
-			MyDatacenterBroker broker = new MyDatacenterBroker("Broker");
+			OnlineDatacenterBroker broker = new OnlineDatacenterBroker("Broker");
 
 			/*------------------------------------------*/
 			
 			/* Create a public cloud. */
 
 			/* Create custom VM types. */
-			MyVm vm1 = new MyVm(broker.getId(), 1000, 1, 1024, 1000, 10000, "Xen", new CloudletSchedulerSpaceShared());
-			MyVm vm2 = new MyVm(broker.getId(), 2000, 1, 1024, 1000, 10000, "Xen", new CloudletSchedulerSpaceShared());
-			MyVm vm3 = new MyVm(broker.getId(), 3000, 1, 1024, 1000, 10000, "Xen", new CloudletSchedulerSpaceShared());
+			OnlineVm vm1 = new OnlineVm(broker.getId(), 1000, 1, 1024, 1000, 10000, "Xen", new CloudletSchedulerSpaceShared());
+			OnlineVm vm2 = new OnlineVm(broker.getId(), 2000, 1, 1024, 1000, 10000, "Xen", new CloudletSchedulerSpaceShared());
+			OnlineVm vm3 = new OnlineVm(broker.getId(), 3000, 1, 1024, 1000, 10000, "Xen", new CloudletSchedulerSpaceShared());
 
 			ArrayList<VmType> vmTypes1 = new ArrayList<>();
 			vmTypes1.add(new VmType(vm1, noCloudlets, 1.0, 3600, "PB1_1.0"));
@@ -76,8 +76,8 @@ public class PublicCloudExample extends Example {
 			/* Create another public cloud. */
 
 			/* Create custom VM types. */
-			MyVm vm4 = new MyVm(broker.getId(), 1500, 1, 1024, 512, 5000, "Xen", new CloudletSchedulerSpaceShared());
-			MyVm vm5 = new MyVm(broker.getId(), 2500, 1, 1024, 512, 5000, "Xen", new CloudletSchedulerSpaceShared());
+			OnlineVm vm4 = new OnlineVm(broker.getId(), 1500, 1, 1024, 512, 5000, "Xen", new CloudletSchedulerSpaceShared());
+			OnlineVm vm5 = new OnlineVm(broker.getId(), 2500, 1, 1024, 512, 5000, "Xen", new CloudletSchedulerSpaceShared());
 
 			ArrayList<VmType> vmTypes2 = new ArrayList<>();
 			vmTypes2.add(new VmType(vm1, noCloudlets, 0.9, 3600, "PB2_0.9"));
@@ -93,10 +93,10 @@ public class PublicCloudExample extends Example {
 			List<VmType> vmTypes = new ArrayList<>();
 			vmTypes.addAll(vmTypes1);
 			//vmTypes.addAll(vmTypes2);
-			List<MyVm> vmList = populateVmList(vmTypes);
+			List<OnlineVm> vmList = populateVmList(vmTypes);
 
 			/* Create the Cloudlet list. */
-			List<MyCloudlet> cloudletList = createRandomMyCloudlets(broker.getId(),noCloudlets,minLengthUnif, maxLengthUnif, seed, minArrivalUnif, maxArrivalUnif);
+			List<OnlineCloudlet> cloudletList = createRandomCloudlets(broker.getId(),noCloudlets,minLengthUnif, maxLengthUnif, seed, minArrivalUnif, maxArrivalUnif);
 			
 			/* Choose the scheduling algorithm. */
 			//SchedulingAlgorithm algorithm = new NOAlgorithm();

@@ -4,13 +4,13 @@ import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.UtilizationModel;
 
 /**
- * MyCloudlet adds to the Cloudsim Cloudlet a deadline to simulate deadline constrained tasks
+ * This class adds to the Cloudsim Cloudlet a deadline to simulate deadline constrained tasks
  * and a delay to simulate online arrival.
  * 
  * @author Alina Chera
  *
  */
-public class MyCloudlet extends Cloudlet {
+public class OnlineCloudlet extends Cloudlet {
 	/**
 	 * The cloudlet deadline. The amount of time in hours before the cloudlet
 	 * must be completed. A value of 0 means there is no deadline.
@@ -29,7 +29,7 @@ public class MyCloudlet extends Cloudlet {
 	private long arrivalTime;
 
 	/**
-	 * Allocates a MyCloudlet object.
+	 * Allocates a OnlineCloudlet object.
 	 * 
 	 * @param cloudletId
 	 *            the ID of this cloudlet
@@ -52,7 +52,7 @@ public class MyCloudlet extends Cloudlet {
 	 * @param utilizationModelBw
 	 *            the utilization model of the bandwidth
 	 */
-	public MyCloudlet(final int cloudletId, final long cloudletLength,
+	public OnlineCloudlet(final int cloudletId, final long cloudletLength,
 			final int pesNumber, final long cloudletFileSize,
 			final long cloudletOutputSize,
 			final UtilizationModel utilizationModelCpu,

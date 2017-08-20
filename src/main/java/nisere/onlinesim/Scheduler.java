@@ -87,19 +87,19 @@ public class Scheduler {
 		long delay = getSchedulingInterval();
 		List<Cloudlet> list = new LinkedList<>();
 		for (Cloudlet cloudlet : cloudlets) {
-			if ((cloudlet instanceof MyCloudlet) && ( ((MyCloudlet) cloudlet).getArrivalTime() > delay )) {
+			if ((cloudlet instanceof OnlineCloudlet) && ( ((OnlineCloudlet) cloudlet).getArrivalTime() > delay )) {
 				// this is the first of the next batch;
 				// schedule the batch then reset the list and add this cloudlet
 				getAlgorithm().prepare(delay);
 				getAlgorithm().computeSchedule(list, vms, types);
 				list = new LinkedList<>();
-				while (((MyCloudlet) cloudlet).getArrivalTime() > delay) {
+				while (((OnlineCloudlet) cloudlet).getArrivalTime() > delay) {
 					delay += getSchedulingInterval();
 				}
 			}
 			// update delay to take into account the scheduling interval
-			if (cloudlet instanceof MyCloudlet) {
-				((MyCloudlet) cloudlet).setDelay(delay);
+			if (cloudlet instanceof OnlineCloudlet) {
+				((OnlineCloudlet) cloudlet).setDelay(delay);
 			}
 			list.add(cloudlet);
 		}

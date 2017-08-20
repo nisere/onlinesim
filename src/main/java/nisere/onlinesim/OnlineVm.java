@@ -4,12 +4,12 @@ import org.cloudbus.cloudsim.CloudletScheduler;
 import org.cloudbus.cloudsim.Vm;
 
 /**
- * MyVm class adds to the Cloudsim Vm class a cost per instance and a connection to a datacenter.
+ * This class adds to the Cloudsim Vm class a cost per instance and a connection to a datacenter.
  * 
  * @author Alina Chera
  *
  */
-public class MyVm extends Vm {
+public class OnlineVm extends Vm {
 	/** Last id assigned to an object of this class */
 	public static int lastId = 0;
 
@@ -32,7 +32,7 @@ public class MyVm extends Vm {
 	private double cost;
 
 	/**
-	 * Creates a new MyVm object.
+	 * Creates a new OnlineVm object.
 	 * 
 	 * @param userId
 	 *            the id of this VM's owner
@@ -52,7 +52,7 @@ public class MyVm extends Vm {
 	 * @param cloudletScheduler
 	 *            the cloudlet scheduler policy for cloudlets scheduling
 	 */
-	public MyVm(final int userId, final double mips,
+	public OnlineVm(final int userId, final double mips,
 			final int numberOfPes, final int ram, final long bw,
 			final long size, final String vmm,
 			final CloudletScheduler cloudletScheduler) {
@@ -66,7 +66,7 @@ public class MyVm extends Vm {
 	}
 	
 	/**
-	 * Creates a new MyVm object.
+	 * Creates a new OnlineVm object.
 	 * 
 	 * @param userId
 	 *            the id of this VM's owner
@@ -88,7 +88,7 @@ public class MyVm extends Vm {
 	 * @param datacenterId
 	 *            the id of the datacenter assigned to the VM
 	 */
-	public MyVm(final int userId, final double mips,
+	public OnlineVm(final int userId, final double mips,
 			final int numberOfPes, final int ram, final long bw,
 			final long size, final String vmm,
 			final CloudletScheduler cloudletScheduler,
@@ -104,8 +104,8 @@ public class MyVm extends Vm {
 	 * @param vm the VM to be copied
 	 * @return the copy of the VM
 	 */
-	public static MyVm copy(MyVm vm) {
-		MyVm vm2 = new MyVm(vm.getUserId(), vm.getMips(), vm.getNumberOfPes(), vm.getRam(), vm.getBw(),
+	public static OnlineVm copy(OnlineVm vm) {
+		OnlineVm vm2 = new OnlineVm(vm.getUserId(), vm.getMips(), vm.getNumberOfPes(), vm.getRam(), vm.getBw(),
 				vm.getSize(), vm.getVmm(), vm.getCloudletScheduler());
 		vm2.setDatacenterId(vm.getDatacenterId());
 		vm2.setVmType(vm.getVmType());

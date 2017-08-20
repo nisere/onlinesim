@@ -26,20 +26,21 @@ import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
 
-import nisere.onlinesim.MyCloudlet;
-import nisere.onlinesim.MyDatacenterBroker;
-import nisere.onlinesim.MyVm;
+import nisere.onlinesim.OnlineCloudlet;
+import nisere.onlinesim.OnlineDatacenterBroker;
+import nisere.onlinesim.OnlineVm;
 import nisere.onlinesim.Scheduler;
 import nisere.onlinesim.VmType;
 import nisere.onlinesim.algorithm.NOAlgorithm;
 import nisere.onlinesim.algorithm.SchedulingAlgorithm;
 
 /**
- * Example class shows how to use schedsim extension. It creates a private cloud
- * and a public cloud and sets their characteristics accordingly. It shows how
- * to create the cloudlets to simulate online arrival. It sets the scheduler in
- * order to use batch scheduling. It shows how to chose from several scheduling
- * algorithms.
+ * Example class shows how to use this extension.
+ * It creates a private cloud and a public cloud 
+ * and sets their characteristics accordingly.
+ * It shows how to create the cloudlets to simulate online arrival.
+ * It sets the scheduler in order to use batch scheduling.
+ * It shows how to chose from several scheduling algorithms.
  * 
  * @author Alina Chera
  *
@@ -68,16 +69,16 @@ public class Example {
 			CloudSim.init(1, Calendar.getInstance(), false);
 
 			/* Create a broker object. */
-			MyDatacenterBroker broker = new MyDatacenterBroker("Broker");
+			OnlineDatacenterBroker broker = new OnlineDatacenterBroker("Broker");
 
 			/*------------------------------------------*/
 
 			/* Create a private cloud. */
 
 			/* Create random VM types. */
-			List<MyVm> vms0 = createRandomMyVms(broker.getId(), noVms, minMipsUnif, maxMipsUnif, seed, -1);
+			List<OnlineVm> vms0 = createRandomVms(broker.getId(), noVms, minMipsUnif, maxMipsUnif, seed, -1);
 			ArrayList<VmType> vmTypes0 = new ArrayList<>();
-			for (MyVm vm : vms0) {
+			for (OnlineVm vm : vms0) {
 				vmTypes0.add(new VmType(vm, 1, 0.0, 1, "PRVrand"));
 			}
 
@@ -89,9 +90,9 @@ public class Example {
 			/* Create a public cloud. */
 
 			/* Create custom VM types. */
-			MyVm vm1 = new MyVm(broker.getId(), 1000, 1, 1024, 1000, 10000, "Xen", new CloudletSchedulerSpaceShared());
-			MyVm vm2 = new MyVm(broker.getId(), 2000, 1, 1024, 1000, 10000, "Xen", new CloudletSchedulerSpaceShared());
-			MyVm vm3 = new MyVm(broker.getId(), 3000, 1, 1024, 1000, 10000, "Xen", new CloudletSchedulerSpaceShared());
+			OnlineVm vm1 = new OnlineVm(broker.getId(), 1000, 1, 1024, 1000, 10000, "Xen", new CloudletSchedulerSpaceShared());
+			OnlineVm vm2 = new OnlineVm(broker.getId(), 2000, 1, 1024, 1000, 10000, "Xen", new CloudletSchedulerSpaceShared());
+			OnlineVm vm3 = new OnlineVm(broker.getId(), 3000, 1, 1024, 1000, 10000, "Xen", new CloudletSchedulerSpaceShared());
 
 			ArrayList<VmType> vmTypes1 = new ArrayList<>();
 			vmTypes1.add(new VmType(vm1, noCloudlets, 1.0, 3600, "PB1_1.0"));
@@ -106,8 +107,8 @@ public class Example {
 			/* Create another public cloud. */
 
 			/* Create custom VM types. */
-			MyVm vm4 = new MyVm(broker.getId(), 1500, 1, 1024, 512, 5000, "Xen", new CloudletSchedulerSpaceShared());
-			MyVm vm5 = new MyVm(broker.getId(), 2500, 1, 1024, 512, 5000, "Xen", new CloudletSchedulerSpaceShared());
+			OnlineVm vm4 = new OnlineVm(broker.getId(), 1500, 1, 1024, 512, 5000, "Xen", new CloudletSchedulerSpaceShared());
+			OnlineVm vm5 = new OnlineVm(broker.getId(), 2500, 1, 1024, 512, 5000, "Xen", new CloudletSchedulerSpaceShared());
 
 			ArrayList<VmType> vmTypes2 = new ArrayList<>();
 			vmTypes2.add(new VmType(vm1, noCloudlets, 0.9, 3600, "PB2_0.9"));
@@ -124,10 +125,10 @@ public class Example {
 			vmTypes.addAll(vmTypes0);
 			vmTypes.addAll(vmTypes1);
 			vmTypes.addAll(vmTypes2);
-			List<MyVm> vmList = populateVmList(vmTypes);
+			List<OnlineVm> vmList = populateVmList(vmTypes);
 
 			/* Create the Cloudlet list. */
-			List<MyCloudlet> cloudletList = createRandomMyCloudlets(broker.getId(), noCloudlets, minLengthUnif,
+			List<OnlineCloudlet> cloudletList = createRandomCloudlets(broker.getId(), noCloudlets, minLengthUnif,
 					maxLengthUnif, seed, minDelayUnif, maxDelayUnif);
 
 			/* Choose the scheduling algorithm. */
@@ -185,7 +186,7 @@ public class Example {
 		// for each vm create a host
 		for (VmType type : vmTypes) {
 			int n = type.getCount();
-			MyVm vm = type.getVm();
+			OnlineVm vm = type.getVm();
 			List<Pe> peList = new ArrayList<Pe>();
 			peList.add(new Pe(0, new PeProvisionerSimple(vm.getMips())));
 			for (int i = 0; i < n; i++) {
@@ -207,13 +208,13 @@ public class Example {
 		return datacenter;
 	}
 
-	public static List<MyVm> populateVmList(List<? extends VmType> vmTypes) {
-		List<MyVm> vmlist = new ArrayList<>();
+	public static List<OnlineVm> populateVmList(List<? extends VmType> vmTypes) {
+		List<OnlineVm> vmlist = new ArrayList<>();
 
 		for (VmType type : vmTypes) {
-			MyVm vm = type.getVm();
+			OnlineVm vm = type.getVm();
 			for (int i = 0; i < type.getCount(); i++) {
-				MyVm vm2 = new MyVm(vm.getUserId(), vm.getMips(), vm.getNumberOfPes(), vm.getRam(), vm.getBw(),
+				OnlineVm vm2 = new OnlineVm(vm.getUserId(), vm.getMips(), vm.getNumberOfPes(), vm.getRam(), vm.getBw(),
 						vm.getSize(), vm.getVmm(), new CloudletSchedulerSpaceShared());
 				vm2.setDatacenterId(type.getDatacenter().getId());
 				vm2.setVmType(type);
@@ -224,9 +225,9 @@ public class Example {
 		return vmlist;
 	}
 
-	public static List<MyVm> createRandomMyVms(int brokerId, int noVms, int minMipsUnif, int maxMipsUnif, int seed,
+	public static List<OnlineVm> createRandomVms(int brokerId, int noVms, int minMipsUnif, int maxMipsUnif, int seed,
 			int datacenterId) {
-		List<MyVm> vmlist = new ArrayList<>();
+		List<OnlineVm> vmlist = new ArrayList<>();
 
 		// VM description
 		int mips = 1000;
@@ -241,15 +242,15 @@ public class Example {
 		// add noVms VMs
 		for (int i = 0; i < noVms; i++) {
 			int mult = (int) mipsUnif.sample();
-			vmlist.add(new MyVm(brokerId, mips * mult, pesNumber, ram, bw, size, vmm,
+			vmlist.add(new OnlineVm(brokerId, mips * mult, pesNumber, ram, bw, size, vmm,
 					new CloudletSchedulerSpaceShared(), datacenterId));
 		}
 		return vmlist;
 	}
 
-	public static List<MyCloudlet> createRandomMyCloudlets(int brokerId, int noCloudlets, int minLengthUnif,
+	public static List<OnlineCloudlet> createRandomCloudlets(int brokerId, int noCloudlets, int minLengthUnif,
 			int maxLengthUnif, int seed, int minArrivalUnif, int maxArrivalUnif) {
-		List<MyCloudlet> cloudletList = new ArrayList<>();
+		List<OnlineCloudlet> cloudletList = new ArrayList<>();
 
 		// Cloudlet properties
 		int id = 0;
@@ -268,7 +269,7 @@ public class Example {
 		for (int i = 0; i < noCloudlets; i++) {
 			int randomLength = (int) lengthUnif.sample();
 			delay += (long) delayUnif.sample();
-			MyCloudlet cloudlet = new MyCloudlet(id++, randomLength, pesNumber, fileSize, outputSize, utilizationModel,
+			OnlineCloudlet cloudlet = new OnlineCloudlet(id++, randomLength, pesNumber, fileSize, outputSize, utilizationModel,
 					utilizationModel, utilizationModel, deadline, delay);
 			cloudlet.setUserId(brokerId);
 			cloudletList.add(cloudlet);
@@ -277,12 +278,12 @@ public class Example {
 		return cloudletList;
 	}
 
-	public static void printResult(List<Cloudlet> list,List<MyVm> vmList) {
+	public static void printResult(List<Cloudlet> list,List<OnlineVm> vmList) {
 		int size = list.size();
 		Cloudlet cloudlet;
 		double flowtime = 0;
 		double cost = 0;
-		HashSet<MyVm> vmUsed = new HashSet<>();
+		HashSet<OnlineVm> vmUsed = new HashSet<>();
 
 		String indent = "    ";
 		Log.printLine();
@@ -302,7 +303,7 @@ public class Example {
 			if (cloudlet.getStatus() == Cloudlet.SUCCESS) {
 				Log.print("SUCCESS");
 				
-				MyVm vm = VmList.getById(vmList, cloudlet.getVmId());
+				OnlineVm vm = VmList.getById(vmList, cloudlet.getVmId());
 				vm.setUptime(cloudlet.getFinishTime());
 
 
@@ -327,14 +328,14 @@ public class Example {
 						+ indent + dft.format(cloudlet.getExecStartTime())
 						+ indent + indent
 						+ dft.format(cloudlet.getFinishTime())
-						+ indent + indent + dft.format(((MyCloudlet)cloudlet).getArrivalTime())
-						+ indent + indent + dft.format(((MyCloudlet)cloudlet).getDelay())
+						+ indent + indent + dft.format(((OnlineCloudlet)cloudlet).getArrivalTime())
+						+ indent + indent + dft.format(((OnlineCloudlet)cloudlet).getDelay())
 						+ indent + indent + dft.format(vm.getCost()));
 
 			}
 		}
 		
-		for (MyVm vm : vmUsed) {
+		for (OnlineVm vm : vmUsed) {
 			cost += vm.getCost();
 		}
 

@@ -8,9 +8,9 @@ import org.cloudbus.cloudsim.Datacenter;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
 
-import nisere.onlinesim.MyCloudlet;
-import nisere.onlinesim.MyDatacenterBroker;
-import nisere.onlinesim.MyVm;
+import nisere.onlinesim.OnlineCloudlet;
+import nisere.onlinesim.OnlineDatacenterBroker;
+import nisere.onlinesim.OnlineVm;
 import nisere.onlinesim.Scheduler;
 import nisere.onlinesim.VmType;
 import nisere.onlinesim.algorithm.SchedulingAlgorithm;
@@ -53,16 +53,16 @@ public class StaticAlgorithmsExample extends Example {
 			CloudSim.init(1, Calendar.getInstance(), false);
 			
 			/* Create a broker object. */
-			MyDatacenterBroker broker = new MyDatacenterBroker("Broker");
+			OnlineDatacenterBroker broker = new OnlineDatacenterBroker("Broker");
 
 			/*------------------------------------------*/
 			
 			/* Create a private cloud. */
 			
 			/* Create random VM types. */
-			List<MyVm> vms0 = createRandomMyVms(broker.getId(), noVms, minMipsUnif, maxMipsUnif, seed, -1);
+			List<OnlineVm> vms0 = createRandomVms(broker.getId(), noVms, minMipsUnif, maxMipsUnif, seed, -1);
 			ArrayList<VmType> vmTypes0 = new ArrayList<>();
-			for (MyVm vm : vms0) {
+			for (OnlineVm vm : vms0) {
 				vmTypes0.add(new VmType(vm, 1, 0.0, 1, "PRVrand"));
 			}
 
@@ -74,10 +74,10 @@ public class StaticAlgorithmsExample extends Example {
 			/* Create the VM list. */
 			List<VmType> vmTypes = new ArrayList<>();
 			vmTypes.addAll(vmTypes0);
-			List<MyVm> vmList = populateVmList(vmTypes);
+			List<OnlineVm> vmList = populateVmList(vmTypes);
 
 			/* Create the Cloudlet list. */
-			List<MyCloudlet> cloudletList = createRandomMyCloudlets(broker.getId(),noCloudlets,minLengthUnif, maxLengthUnif, seed,minArrivalUnif, maxArrivalUnif);
+			List<OnlineCloudlet> cloudletList = createRandomCloudlets(broker.getId(),noCloudlets,minLengthUnif, maxLengthUnif, seed,minArrivalUnif, maxArrivalUnif);
 			
 			/* Choose the scheduling algorithm. */
 			//SchedulingAlgorithm algorithm = new NOAlgorithm();

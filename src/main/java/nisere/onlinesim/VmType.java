@@ -7,7 +7,7 @@ public class VmType {
 	private Datacenter datacenter;
 	
 	/** A VM that can be used to create new VMs of this type */
-	private MyVm vm;
+	private OnlineVm vm;
 	
 	/** How many VMs of this type can be created; 0 means infinity */
 	private int count;
@@ -28,7 +28,7 @@ public class VmType {
 	 * @param priceInterval
 	 * @param name
 	 */
-	public VmType(MyVm vm, int count, double price, int priceInterval, String name) {
+	public VmType(OnlineVm vm, int count, double price, int priceInterval, String name) {
 		this.vm = vm;
 		this.count = count;
 		this.price = price;
@@ -44,11 +44,11 @@ public class VmType {
 		this.datacenter = datacenter;
 	}
 
-	public MyVm getVm() {
+	public OnlineVm getVm() {
 		return vm;
 	}
 
-	public void setVm(MyVm vm) {
+	public void setVm(OnlineVm vm) {
 		this.vm = vm;
 	}
 

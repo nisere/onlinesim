@@ -13,13 +13,13 @@ import org.cloudbus.cloudsim.core.SimEvent;
 import org.cloudbus.cloudsim.lists.VmList;
 
 /**
- * MyDatacenterBroker class adds to the DatacenterBroker the possibility to process
+ * This class adds to the DatacenterBroker the possibility to process
  * delayed cloudlets in order to simulate online arrival of tasks.
  * 
  * @author Alina Chera
  *
  */
-public class MyDatacenterBroker extends DatacenterBroker {
+public class OnlineDatacenterBroker extends DatacenterBroker {
 	/**
 	 * A constant indicating the CLOUDLET_DELAY event.
 	 * This event is used to delay submition of a specific cloudlet
@@ -28,12 +28,12 @@ public class MyDatacenterBroker extends DatacenterBroker {
 	public static final int CLOUDLET_DELAY = 999;
 
 	/**
-	 * Creates a new MyDatacenterBroker object.
+	 * Creates a new OnlineDatacenterBroker object.
 	 * 
 	 * @param name the name of the broker
 	 * @throws Exception 
 	 */
-	public MyDatacenterBroker(String name) throws Exception {
+	public OnlineDatacenterBroker(String name) throws Exception {
 		super(name);
 	}
 	
@@ -61,8 +61,8 @@ public class MyDatacenterBroker extends DatacenterBroker {
 		List<Cloudlet> successfullySubmitted = new ArrayList<Cloudlet>();
 		List<Cloudlet> cloudletList = getCloudletList();
 		for (Cloudlet cloudlet : cloudletList) {
-			if ((cloudlet instanceof MyCloudlet) && (CloudSim.clock() < ((MyCloudlet)cloudlet).getDelay())) {
-				send(getName(), ((MyCloudlet)cloudlet).getDelay(), CLOUDLET_DELAY);
+			if ((cloudlet instanceof OnlineCloudlet) && (CloudSim.clock() < ((OnlineCloudlet)cloudlet).getDelay())) {
+				send(getName(), ((OnlineCloudlet)cloudlet).getDelay(), CLOUDLET_DELAY);
 				break;
 			}
 			Vm vm;
@@ -118,8 +118,8 @@ public class MyDatacenterBroker extends DatacenterBroker {
 				continue;
 			
 			int otherId = datacenterId;
-			if ((vm instanceof MyVm) && ( ((MyVm)vm).getDatacenterId() >= 0 )) {
-				otherId = ((MyVm)vm).getDatacenterId();
+			if ((vm instanceof OnlineVm) && ( ((OnlineVm)vm).getDatacenterId() >= 0 )) {
+				otherId = ((OnlineVm)vm).getDatacenterId();
 			}
 			Log.printLine(CloudSim.clock() + ": " + getName() +
 					": Trying to Create VM #" + vm.getId()
