@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import org.cloudbus.cloudsim.Datacenter;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
 
@@ -40,7 +39,6 @@ public class StaticAlgorithmsExample extends Example {
 		int minLengthUnif = 100000;
 		int maxLengthUnif = 400000;
 		int seed = 9;
-		int vmId = 0; // used to create VM types
 		
 		int schedulingInterval = 0;
 		// generate arrival time [minArrivalUnif;maxArrivalUnif)
@@ -67,7 +65,7 @@ public class StaticAlgorithmsExample extends Example {
 			}
 
 			/* Create the datacenter. */
-			Datacenter datacenter0 = createDatacenter("Private", vmTypes0);
+			createDatacenter("Private", vmTypes0);
 			
 			/*------------------------------------------*/
 			
@@ -111,6 +109,4 @@ public class StaticAlgorithmsExample extends Example {
 			Log.printLine("The simulation has been terminated due to an unexpected error");
 		}
 	}
-	
-
 }

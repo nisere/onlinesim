@@ -5,7 +5,6 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.cloudbus.cloudsim.CloudletSchedulerSpaceShared;
-import org.cloudbus.cloudsim.Datacenter;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
 
@@ -32,15 +31,10 @@ public class PublicCloudExample extends Example {
 	
 	public static void main(String[] args) {
 		int noCloudlets = 4; // used to create random Cloudlets
-		int noVms = 2; // used to create random VMs
-		// generate [minMipsUnif;maxMipsUnif) and multiply with 1000 to get mips
-		int minMipsUnif = 1;
-		int maxMipsUnif = 2;
 		// generate length [minLengthUnif;maxLengthUnif)
 		int minLengthUnif = 100000;
 		int maxLengthUnif = 200000;
 		int seed = 1;
-		int vmId = 0; // used to create VM types
 		int schedulingInterval = 200; // in seconds
 		// generate arrival time [minArrivalUnif;maxArrivalUnif)
 		int minArrivalUnif = 0;
@@ -69,7 +63,7 @@ public class PublicCloudExample extends Example {
 			vmTypes1.add(new VmType(vm3, noCloudlets, 2.5, 3600, "PB1_2.5"));
 
 			/* Create the datacenter. */
-			Datacenter datacenter1 = createDatacenter("Public1", vmTypes1);
+			createDatacenter("Public1", vmTypes1);
 
 			/*------------------------------------------*/
 
@@ -85,7 +79,7 @@ public class PublicCloudExample extends Example {
 			vmTypes2.add(new VmType(vm5, noCloudlets, 2.0, 3600, "PB2_2.0"));
 
 			/* Create the datacenter. */
-			Datacenter datacenter2 = createDatacenter("Public2", vmTypes2);
+			createDatacenter("Public2", vmTypes2);
 			
 			/*------------------------------------------*/
 			
@@ -130,7 +124,4 @@ public class PublicCloudExample extends Example {
 			Log.printLine("The simulation has been terminated due to an unexpected error");
 		}
 	}
-		/** Prints the results */
-
-
 }

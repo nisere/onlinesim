@@ -57,7 +57,6 @@ public class Example {
 		int minLengthUnif = 100000;
 		int maxLengthUnif = 200000;
 		int seed = 1;
-		int vmId = 0; // used to create VM types
 		int schedulingInterval = 200; // in seconds
 		// generate delay [minDelayUnif;maxDelayUnif)
 		int minDelayUnif = 0;
@@ -83,7 +82,7 @@ public class Example {
 			}
 
 			/* Create the datacenter. */
-			Datacenter datacenter0 = createDatacenter("Private", vmTypes0);
+			createDatacenter("Private", vmTypes0);
 
 			/*------------------------------------------*/
 
@@ -100,7 +99,7 @@ public class Example {
 			vmTypes1.add(new VmType(vm3, noCloudlets, 2.5, 3600, "PB1_2.5"));
 
 			/* Create the datacenter. */
-			Datacenter datacenter1 = createDatacenter("Public1", vmTypes1);
+			createDatacenter("Public1", vmTypes1);
 
 			/*------------------------------------------*/
 
@@ -116,7 +115,7 @@ public class Example {
 			vmTypes2.add(new VmType(vm5, noCloudlets, 2.0, 3600, "PB2_2.0"));
 
 			/* Create the datacenter. */
-			Datacenter datacenter2 = createDatacenter("Public2", vmTypes2);
+			createDatacenter("Public2", vmTypes2);
 
 			/*------------------------------------------*/
 
