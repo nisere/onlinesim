@@ -18,7 +18,7 @@ public abstract class SchedulingAlgorithm {
 	private List<? extends OnlineCloudlet> cloudletScheduledList;
 	
 	/** Cost of the execution of cloudlets */
-	double cost;
+	private double cost;
 
 	/**
 	 * Gets the list of scheduled cloudlets

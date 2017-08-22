@@ -15,16 +15,16 @@ public class OnlineCloudlet extends Cloudlet {
 	public static int lastId = 0;
 	
 	/**
-	 * The cloudlet deadline. The amount of time in hours before the cloudlet
+	 * The cloudlet deadline. The amount of time in seconds before the cloudlet
 	 * must be completed. A value of 0 means there is no deadline.
 	 */
-	private int deadline;
+	private long deadline;
 
 	/**
 	 * The delay from the start of the simulation when this cloudlet was
-	 * processed. The delay of the cloudlet is in seconds.
+	 * processed.
 	 */
-	private long delay;
+	private double delay;
 	
 	/**
 	 * The arrival time of the cloudlet, in seconds.
@@ -64,85 +64,31 @@ public class OnlineCloudlet extends Cloudlet {
 				cloudletFileSize, cloudletOutputSize, utilizationModelCpu,
 				utilizationModelRam, utilizationModelBw);
 
-		this.deadline = Math.max(0, deadline);
-		this.arrivalTime = Math.max(0, arrivalTime);
+		setDeadline(deadline);
+		setArrivalTime(arrivalTime);
 	}
 
-	/**
-	 * Gets the deadline of this cloudlet.
-	 * 
-	 * @return the deadline of this cloudlet (in hours)
-	 */
-	public int getDeadline() {
+	public long getDeadline() {
 		return deadline;
 	}
-	
-	/**
-	 * Gets the delay of this cloudlet.
-	 * 
-	 * @return the delay of this cloudlet (in seconds)
-	 */
-	public long getDelay() {
+
+	public void setDeadline(long deadline) {
+		this.deadline = deadline;
+	}
+
+	public double getDelay() {
 		return delay;
 	}
-	
-	/**
-	 * Gets the arrival time of this cloudlet.
-	 * 
-	 * @return the arrival time of this cloudlet (in seconds)
-	 */
+
+	public void setDelay(double delay) {
+		this.delay = delay;
+	}
+
 	public long getArrivalTime() {
 		return arrivalTime;
 	}
 
-	/**
-	 * Sets the deadline of this cloudlet.
-	 * 
-	 * @param deadline
-	 *            the deadline of this cloudlet (in hours)
-	 * @return <code>true</code> if it is successful, <code>false</code>
-	 *         otherwise
-	 */
-	public boolean setDeadline(final int deadline) {
-		boolean success = false;
-		if (deadline >= 0) {
-			this.deadline = deadline;
-			success = true;
-		}
-		return success;
-	}
-
-	/**
-	 * Sets the delay of this cloudlet.
-	 * 
-	 * @param delay
-	 *            the delay of this cloudlet (in seconds)
-	 * @return <code>true</code> if it is successful, <code>false</code>
-	 *         otherwise
-	 */
-	public boolean setDelay(final long delay) {
-		boolean success = false;
-		if (delay >= 0) {
-			this.delay = delay;
-			success = true;
-		}
-		return success;
-	}
-
-	/**
-	 * Sets the arrival time of this cloudlet.
-	 * 
-	 * @param arrivalTime
-	 *            the arrival time of this cloudlet (in seconds)
-	 * @return <code>true</code> if it is successful, <code>false</code>
-	 *         otherwise
-	 */
-	public boolean setArrivalTime(final long arrivalTime) {
-		boolean success = false;
-		if (delay >= 0) {
-			this.arrivalTime = arrivalTime;
-			success = true;
-		}
-		return success;
+	public void setArrivalTime(long arrivalTime) {
+		this.arrivalTime = arrivalTime;
 	}
 }

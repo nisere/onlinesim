@@ -1,6 +1,15 @@
 package nisere.onlinesim;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.cloudbus.cloudsim.CloudletSchedulerSpaceShared;
 import org.cloudbus.cloudsim.Datacenter;
+import org.cloudbus.cloudsim.Pe;
+import org.cloudbus.cloudsim.VmSchedulerSpaceShared;
+import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
+import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
+import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
 
 public class VmType {
 	/** The datacenter to which this VM type belongs */
@@ -35,7 +44,31 @@ public class VmType {
 		this.priceInterval = priceInterval;
 		this.name = name;
 	}
-
+	
+	/**
+	 * Creates an VM of this type and a host for this VM which is added to the datacenter
+	 * @return the created VM
+	 */
+	public OnlineVm createVm() {
+		OnlineVm vm = getVm();
+		OnlineVm newVm = new OnlineVm(vm.getUserId(), vm.getMips(), vm.getNumberOfPes(), vm.getRam(), vm.getBw(),
+				vm.getSize(), vm.getVmm(), new CloudletSchedulerSpaceShared(), datacenter.getId());
+		newVm.setVmType(this);
+		
+		List<Pe> peList = new ArrayList<Pe>();
+		peList.add(new Pe(0, new PeProvisionerSimple(vm.getMips())));
+		OnlineHost host = new OnlineHost(new RamProvisionerSimple(vm.getRam()),
+				new BwProvisionerSimple(vm.getBw()), vm.getSize(), peList, new VmSchedulerSpaceShared(peList));
+		host.setDatacenter(datacenter);
+		
+		//datacenter.getHostList().add(host);
+		//interface OnlineVmAllocationPolicy addHost method, simple like this+implements interface
+		if (datacenter.getVmAllocationPolicy() instanceof OnlineVmAllocationPolicySimple)
+			((OnlineVmAllocationPolicySimple)datacenter.getVmAllocationPolicy()).addHost(host);
+		
+		return newVm;
+	}
+	
 	public Datacenter getDatacenter() {
 		return datacenter;
 	}

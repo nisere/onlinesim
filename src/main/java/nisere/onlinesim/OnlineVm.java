@@ -1,5 +1,7 @@
 package nisere.onlinesim;
 
+import java.util.List;
+
 import org.cloudbus.cloudsim.CloudletScheduler;
 import org.cloudbus.cloudsim.Vm;
 
@@ -21,9 +23,6 @@ public class OnlineVm extends Vm {
 	
 	/** The instance type */
 	private VmType vmType;
-	
-	/** Start time of this VM */
-	private double startTime;
 	
 	/** Uptime of this VM */
 	private double uptime;
@@ -60,7 +59,6 @@ public class OnlineVm extends Vm {
 				cloudletScheduler);
 
 		setDatacenterId(-1);
-		setStartTime(0.0);
 		setUptime(0.0);
 		setCost(0.0);
 	}
@@ -100,19 +98,6 @@ public class OnlineVm extends Vm {
 	}
 	
 	/**
-	 * Creates a copy of a VM
-	 * @param vm the VM to be copied
-	 * @return the copy of the VM
-	 */
-	public static OnlineVm copy(OnlineVm vm) {
-		OnlineVm vm2 = new OnlineVm(vm.getUserId(), vm.getMips(), vm.getNumberOfPes(), vm.getRam(), vm.getBw(),
-				vm.getSize(), vm.getVmm(), vm.getCloudletScheduler());
-		vm2.setDatacenterId(vm.getDatacenterId());
-		vm2.setVmType(vm.getVmType());
-		return vm2;
-	}
-
-	/**
 	 * Gets the id of the datacenter to which this VM belongs.
 	 * 
 	 * @return the id of the datacenter to which this VM belongs
@@ -136,14 +121,6 @@ public class OnlineVm extends Vm {
 
 	public void setVmType(VmType vmType) {
 		this.vmType = vmType;
-	}
-
-	public double getStartTime() {
-		return startTime;
-	}
-
-	public void setStartTime(double startTime) {
-		this.startTime = startTime;
 	}
 
 	public double getUptime() {

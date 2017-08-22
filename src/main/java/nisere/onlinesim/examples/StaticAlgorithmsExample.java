@@ -65,7 +65,7 @@ public class StaticAlgorithmsExample extends Example {
 			}
 
 			/* Create the datacenter. */
-			createDatacenter("Private", vmTypes0);
+			createDatacenter("Private", vmTypes0,true);
 			
 			/*------------------------------------------*/
 			
@@ -101,7 +101,7 @@ public class StaticAlgorithmsExample extends Example {
 			CloudSim.stopSimulation();
 
 			/* Print the results. */
-			printResult(scheduler.getFinishedCloudlets(),vmList);
+			printResult(scheduler.getFinishedCloudlets(),scheduler.getVmList());
 			
 			Log.printLine("Simulation finished!");
 		} catch (Exception e) {

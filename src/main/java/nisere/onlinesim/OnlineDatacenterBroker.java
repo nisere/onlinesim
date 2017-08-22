@@ -53,7 +53,7 @@ public class OnlineDatacenterBroker extends DatacenterBroker {
 	 * Submit cloudlets to the created VMs taking into account the delay of the cloudlet before submitting.
 	 * 
 	 * For the case when it is used to simulate online arrival of cloudlets,
-	 * it expects the cloudlet list to be sorted by delay ascending to simulate a real queue.
+	 * it expects the cloudlet list to be sorted by delay ascending to simulate a real queue.????
 	 */
 	@Override
 	protected void submitCloudlets() {
@@ -61,10 +61,10 @@ public class OnlineDatacenterBroker extends DatacenterBroker {
 		List<OnlineCloudlet> successfullySubmitted = new ArrayList<>();
 		List<OnlineCloudlet> cloudletList = getCloudletList();
 		for (OnlineCloudlet cloudlet : cloudletList) {
-			if (CloudSim.clock() < cloudlet.getDelay()) {
-				send(getName(), cloudlet.getDelay(), CLOUDLET_DELAY);
-				break;
-			}
+//			if (CloudSim.clock() < cloudlet.getDelay()) {
+//				send(getName(), cloudlet.getDelay(), CLOUDLET_DELAY);
+//				break;
+//			}
 			Vm vm;
 			// if user didn't bind this cloudlet and it has not been executed yet
 			if (cloudlet.getVmId() == -1) {
@@ -86,7 +86,10 @@ public class OnlineDatacenterBroker extends DatacenterBroker {
 			}
 			
 			cloudlet.setVmId(vm.getId());
-			sendNow(getVmsToDatacentersMap().get(vm.getId()), CloudSimTags.CLOUDLET_SUBMIT, cloudlet);
+
+			send(getVmsToDatacentersMap().get(vm.getId()), cloudlet.getDelay(), CloudSimTags.CLOUDLET_SUBMIT, cloudlet);
+			//sendNow(getVmsToDatacentersMap().get(vm.getId()), CloudSimTags.CLOUDLET_SUBMIT, cloudlet);
+			
 			cloudletsSubmitted++;
 			vmIndex = (vmIndex + 1) % getVmsCreatedList().size();
 			getCloudletSubmittedList().add(cloudlet);

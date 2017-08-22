@@ -26,9 +26,11 @@ import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
 
+import nisere.onlinesim.OnlineHost;
 import nisere.onlinesim.OnlineCloudlet;
 import nisere.onlinesim.OnlineDatacenterBroker;
 import nisere.onlinesim.OnlineVm;
+import nisere.onlinesim.OnlineVmAllocationPolicySimple;
 import nisere.onlinesim.Scheduler;
 import nisere.onlinesim.VmType;
 import nisere.onlinesim.algorithm.NOAlgorithm;
@@ -82,7 +84,7 @@ public class Example {
 			}
 
 			/* Create the datacenter. */
-			createDatacenter("Private", vmTypes0);
+			createDatacenter("Private", vmTypes0, true);
 
 			/*------------------------------------------*/
 
@@ -99,7 +101,7 @@ public class Example {
 			vmTypes1.add(new VmType(vm3, noCloudlets, 2.5, 3600, "PB1_2.5"));
 
 			/* Create the datacenter. */
-			createDatacenter("Public1", vmTypes1);
+			createDatacenter("Public1", vmTypes1, false);
 
 			/*------------------------------------------*/
 
@@ -115,7 +117,7 @@ public class Example {
 			vmTypes2.add(new VmType(vm5, noCloudlets, 2.0, 3600, "PB2_2.0"));
 
 			/* Create the datacenter. */
-			createDatacenter("Public2", vmTypes2);
+			createDatacenter("Public2", vmTypes2, false);
 
 			/*------------------------------------------*/
 
@@ -156,7 +158,7 @@ public class Example {
 			CloudSim.stopSimulation();
 
 			/* Print the results. */
-			printResult(scheduler.getFinishedCloudlets(),vmList);
+			printResult(scheduler.getFinishedCloudlets(),scheduler.getVmList());
 
 			Log.printLine("Simulation finished!");
 		} catch (Exception e) {
@@ -165,7 +167,7 @@ public class Example {
 		}
 	}
 
-	public static Datacenter createDatacenter(String name, List<VmType> vmTypes) throws Exception {
+	public static Datacenter createDatacenter(String name, List<VmType> vmTypes, boolean populate) throws Exception {
 		Datacenter datacenter;
 
 		// Create a DatacenterCharacteristics object
@@ -179,25 +181,31 @@ public class Example {
 		double costPerBw = 0.0; // the cost of using bw in this resource
 		LinkedList<Storage> storageList = new LinkedList<Storage>(); // we are not adding SAN devices
 
-		ArrayList<Host> hostList = new ArrayList<>();
-		int hostId = 0;
-		// for each vm type check how many must be created;
-		// for each vm create a host
-		for (VmType type : vmTypes) {
-			int n = type.getCount();
-			OnlineVm vm = type.getVm();
-			List<Pe> peList = new ArrayList<Pe>();
-			peList.add(new Pe(0, new PeProvisionerSimple(vm.getMips())));
-			for (int i = 0; i < n; i++) {
-				hostList.add(new Host(hostId++, new RamProvisionerSimple(vm.getRam()),
-						new BwProvisionerSimple(vm.getBw()), vm.getSize(), peList, new VmSchedulerSpaceShared(peList)));
+		ArrayList<OnlineHost> hostList = new ArrayList<>();
+		if (populate) {
+			// for each vm type check how many must be created;
+			// for each vm create a host
+			for (VmType type : vmTypes) {
+				int n = type.getCount();
+				OnlineVm vm = type.getVm();
+				List<Pe> peList = new ArrayList<Pe>();
+				peList.add(new Pe(0, new PeProvisionerSimple(vm.getMips())));
+				for (int i = 0; i < n; i++) {
+					hostList.add(new OnlineHost(new RamProvisionerSimple(vm.getRam()),
+							new BwProvisionerSimple(vm.getBw()), vm.getSize(), peList, new VmSchedulerSpaceShared(peList)));
+				}
 			}
+		} else {
+			List<Pe> peList = new ArrayList<Pe>();
+			peList.add(new Pe(0, new PeProvisionerSimple(0)));
+			hostList.add(new OnlineHost(new RamProvisionerSimple(0),
+					new BwProvisionerSimple(0), 0, peList, new VmSchedulerSpaceShared(peList)));
 		}
 
 		DatacenterCharacteristics characteristics = new DatacenterCharacteristics(arch, os, vmm, hostList, time_zone,
 				cost, costPerMem, costPerStorage, costPerBw);
 
-		datacenter = new Datacenter(name, characteristics, new VmAllocationPolicySimple(hostList), storageList, 0);
+		datacenter = new Datacenter(name, characteristics, new OnlineVmAllocationPolicySimple(hostList), storageList, 0);
 
 		// Update datacenter reference in vmTypes
 		for (VmType type : vmTypes) {
@@ -287,8 +295,8 @@ public class Example {
 		Log.printLine();
 		Log.printLine("========== OUTPUT ==========");
 		Log.printLine("Cloudlet ID" + indent + "STATUS" + indent
-				+ "Datacenter" + indent + "VM ID" + indent + "VM Type " + indent + "Time"
-				+ indent + "Start Time" + indent + "Finish Time" + indent + "Arrival" + indent + "Delay" + indent + "Cost");
+				+ "VM ID" + indent + "VM Type " + indent + "Estimation" + indent + "Execution"
+				+ indent + "Start" + indent + "Finish" + indent + "Arrival" + indent + "Delay" + indent + "Cost");
 
 		int[] counter = new int[13];
 		int index = 0;
@@ -319,14 +327,13 @@ public class Example {
 				
 				vmUsed.add(vm);
 				
-				Log.printLine(indent + indent + vm.getDatacenterId()
-						+ indent + indent + indent + cloudlet.getVmId()
-						+ indent + vm.getVmType().getName() + indent
-						+ dft.format(cloudlet.getActualCPUTime()) + indent
-						+ indent + dft.format(cloudlet.getExecStartTime())
-						+ indent + indent
-						+ dft.format(cloudlet.getFinishTime())
-						+ indent + indent + dft.format(((OnlineCloudlet)cloudlet).getArrivalTime())
+				Log.printLine(indent + indent + cloudlet.getVmId()
+						+ indent + vm.getVmType().getName()
+						+ indent + dft.format(cloudlet.getCloudletLength() / vm.getMips())
+						+ indent + indent + dft.format(cloudlet.getActualCPUTime())
+						+ indent + indent + dft.format(cloudlet.getExecStartTime())
+						+ indent + indent + dft.format(cloudlet.getFinishTime())
+						+ indent + dft.format(((OnlineCloudlet)cloudlet).getArrivalTime())
 						+ indent + indent + dft.format(((OnlineCloudlet)cloudlet).getDelay())
 						+ indent + indent + dft.format(vm.getCost()));
 

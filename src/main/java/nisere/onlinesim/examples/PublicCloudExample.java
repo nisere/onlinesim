@@ -5,6 +5,8 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.cloudbus.cloudsim.CloudletSchedulerSpaceShared;
+import org.cloudbus.cloudsim.Datacenter;
+import org.cloudbus.cloudsim.Host;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
 
@@ -13,8 +15,7 @@ import nisere.onlinesim.OnlineDatacenterBroker;
 import nisere.onlinesim.OnlineVm;
 import nisere.onlinesim.Scheduler;
 import nisere.onlinesim.VmType;
-import nisere.onlinesim.algorithm.SchedulingAlgorithm;
-import nisere.onlinesim.algorithm.WorkQueueAlgorithm;
+import nisere.onlinesim.algorithm.*;
 
 /**
  * Example class shows how to use this extension.
@@ -35,10 +36,13 @@ public class PublicCloudExample extends Example {
 		int minLengthUnif = 100000;
 		int maxLengthUnif = 200000;
 		int seed = 1;
-		int schedulingInterval = 200; // in seconds
-		// generate arrival time [minArrivalUnif;maxArrivalUnif)
+		int schedulingInterval = 0; // in seconds; 0 is now
+		// generate arrival time [minArrivalUnif;maxArrivalUnif); [0;1) means all tasks now
 		int minArrivalUnif = 0;
-		int maxArrivalUnif = 500;
+		int maxArrivalUnif = 1;
+		//price intervals for datacenters
+		int priceInterval1 = 400;
+		int priceInterval2 = 400;
 
 		Log.printLine("Starting simulation...");
 		try {
@@ -58,12 +62,12 @@ public class PublicCloudExample extends Example {
 			OnlineVm vm3 = new OnlineVm(broker.getId(), 3000, 1, 1024, 1000, 10000, "Xen", new CloudletSchedulerSpaceShared());
 
 			ArrayList<VmType> vmTypes1 = new ArrayList<>();
-			vmTypes1.add(new VmType(vm1, noCloudlets, 1.0, 3600, "PB1_1.0"));
-			vmTypes1.add(new VmType(vm2, noCloudlets, 1.5, 3600, "PB1_1.5"));
-			vmTypes1.add(new VmType(vm3, noCloudlets, 2.5, 3600, "PB1_2.5"));
+			vmTypes1.add(new VmType(vm1, noCloudlets, 1.0, priceInterval1, "PB1_1.0"));
+			vmTypes1.add(new VmType(vm2, noCloudlets, 1.5, priceInterval1, "PB1_1.5"));
+			vmTypes1.add(new VmType(vm3, noCloudlets, 2.5, priceInterval1, "PB1_2.5"));
 
 			/* Create the datacenter. */
-			createDatacenter("Public1", vmTypes1);
+			Datacenter datacenter1 = createDatacenter("Public1", vmTypes1,false);
 
 			/*------------------------------------------*/
 
@@ -74,32 +78,34 @@ public class PublicCloudExample extends Example {
 			OnlineVm vm5 = new OnlineVm(broker.getId(), 2500, 1, 1024, 512, 5000, "Xen", new CloudletSchedulerSpaceShared());
 
 			ArrayList<VmType> vmTypes2 = new ArrayList<>();
-			vmTypes2.add(new VmType(vm1, noCloudlets, 0.9, 3600, "PB2_0.9"));
-			vmTypes2.add(new VmType(vm4, noCloudlets, 1.5, 3600, "PB2_1.5"));
-			vmTypes2.add(new VmType(vm5, noCloudlets, 2.0, 3600, "PB2_2.0"));
+			vmTypes2.add(new VmType(vm1, noCloudlets, 0.9, priceInterval2, "PB2_0.9"));
+			vmTypes2.add(new VmType(vm4, noCloudlets, 1.5, priceInterval2, "PB2_1.5"));
+			vmTypes2.add(new VmType(vm5, noCloudlets, 2.0, priceInterval2, "PB2_2.0"));
 
 			/* Create the datacenter. */
-			createDatacenter("Public2", vmTypes2);
+			Datacenter datacenter2 = createDatacenter("Public2", vmTypes2,false);
 			
 			/*------------------------------------------*/
 			
 			/* Create the VM list. */
 			List<VmType> vmTypes = new ArrayList<>();
 			vmTypes.addAll(vmTypes1);
-			//vmTypes.addAll(vmTypes2);
-			List<OnlineVm> vmList = populateVmList(vmTypes);
+			vmTypes.addAll(vmTypes2);
+			//List<OnlineVm> vmList = populateVmList(vmTypes);
+			List<OnlineVm> vmList = new ArrayList<>();
 
 			/* Create the Cloudlet list. */
 			List<OnlineCloudlet> cloudletList = createRandomCloudlets(broker.getId(),noCloudlets,minLengthUnif, maxLengthUnif, seed, minArrivalUnif, maxArrivalUnif);
 			
 			/* Choose the scheduling algorithm. */
 			//SchedulingAlgorithm algorithm = new NOAlgorithm();
-			SchedulingAlgorithm algorithm = new WorkQueueAlgorithm();
+			//SchedulingAlgorithm algorithm = new WorkQueueAlgorithm();
 			//SchedulingAlgorithm algorithm = new SufferageAlgorithm();
 			//SchedulingAlgorithm algorithm = new MinMinAlgorithm();
 			//SchedulingAlgorithm algorithm = new MinMaxAlgorithm();
 			//SchedulingAlgorithm algorithm = new MaxMinAlgorithm();
 			//SchedulingAlgorithm algorithm = new LJFR_SJFRAlgorithm();
+			SchedulingAlgorithm algorithm = new PublicAlgorithm();
 			
 			/* Create a scheduler. */
 			Scheduler scheduler = new Scheduler(vmTypes,broker,vmList,cloudletList,algorithm,schedulingInterval);
@@ -108,6 +114,15 @@ public class PublicCloudExample extends Example {
 			 * This is the step where the algorithm is run. 
 			 */
 			scheduler.prepareSimulation();
+			
+			Log.printLine("dc1");
+			for (Host host : datacenter1.getHostList()) {
+				Log.printLine(host.getId());
+			}
+			Log.printLine("dc2");			
+			for (Host host : datacenter2.getHostList()) {
+				Log.printLine(host.getId());
+			}
 
 			/* Start simulation. */
 			CloudSim.startSimulation();
@@ -116,7 +131,7 @@ public class PublicCloudExample extends Example {
 			CloudSim.stopSimulation();
 
 			/* Print the results. */		
-			printResult(scheduler.getFinishedCloudlets(),vmList);
+			printResult(scheduler.getFinishedCloudlets(),scheduler.getVmList());
 			
 			Log.printLine("Simulation finished!");
 		} catch (Exception e) {
