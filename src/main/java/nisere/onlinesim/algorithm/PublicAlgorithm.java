@@ -56,13 +56,20 @@ public class PublicAlgorithm extends SchedulingAlgorithm {
 	
 	public double computeCost(OnlineCloudlet cloudlet, OnlineVm vm) {
 		double execTime = cloudlet.getCloudletLength() / vm.getMips();
-		double cost = Math.ceil((vm.getUptime() + execTime)/vm.getVmType().getPriceInterval()*vm.getVmType().getPrice());
+		double finishTime = vm.getUptime() + execTime;
+		double cost = Double.MAX_VALUE;
+		if (cloudlet.getDeadline() <= finishTime) {
+			cost = Math.ceil((vm.getUptime() + execTime)/vm.getVmType().getPriceInterval()*vm.getVmType().getPrice());
+		}
 		return cost;
 	}
 	
 	public double computeCost(OnlineCloudlet cloudlet, VmType type) {
 		double execTime = cloudlet.getCloudletLength() / type.getVm().getMips();
-		double cost = Math.ceil(execTime/type.getPriceInterval()*type.getPrice());
+		double cost = Double.MAX_VALUE;
+		if (cloudlet.getDeadline() <= execTime) {
+			cost = Math.ceil(execTime/type.getPriceInterval()*type.getPrice());
+		}
 		return cost;
 	}
 	
