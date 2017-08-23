@@ -23,47 +23,57 @@ public class PublicAlgorithm extends SchedulingAlgorithm {
 	@Override
 	public void computeSchedule(List<? extends OnlineCloudlet> cloudletList, List<? extends OnlineVm> vmList,
 			List<? extends VmType> vmTypes) {
-		OnlineVm optimVm = null;
+
 		for (OnlineCloudlet cloudlet : cloudletList) {
-			double minCost = -1.0;
+			OnlineVm optimVm = null;
+			VmType optimType = null;
+			double minVmCost = Double.MAX_VALUE;
+			double minTypeCost = Double.MAX_VALUE;
+			
 			for (OnlineVm vm : vmList) {
 				double cost  = computeCost(cloudlet,vm);
-				if (minCost == -1.0 || minCost > cost) {
+				if (minVmCost > cost) {
 					optimVm = vm;
-					minCost = cost;
+					minVmCost = cost;
 				}
 			}
 			for (VmType type : vmTypes) {
 				double cost  = computeCost(cloudlet,type);
-				if (minCost == -1.0 || minCost > cost) {
-					OnlineVm vm = type.createVm();//should not create here
-					((List<OnlineVm>)vmList).add(vm);
-					optimVm = vm;
-					minCost = cost;
+				if (minTypeCost > cost) {
+					optimType = type;
+					minTypeCost = cost;
 				}
 			}
-			if (optimVm != null) {
-				cloudlet.setDelay(optimVm.getUptime());
-				cloudlet.setVmId(optimVm.getId());
-				
-				double execTime = cloudlet.getCloudletLength() / optimVm.getMips();
-				optimVm.setUptime(optimVm.getUptime() + execTime);
-				optimVm.setCost(Math.ceil(optimVm.getUptime()/optimVm.getVmType().getPriceInterval()*optimVm.getVmType().getPrice()));
-				
-				getCloudletScheduledList().add(cloudlet);
-			}
+			if (minVmCost < minTypeCost) {
+				assignCloudletToVm(cloudlet,optimVm);
+			} else if (optimType != null) {
+					optimVm = optimType.createVm();
+					((List<OnlineVm>)vmList).add(optimVm);
+					assignCloudletToVm(cloudlet,optimVm);		
+			} //if there is no optimVm or optimType do nothing
 		}
 	}
 	
-	protected double computeCost(OnlineCloudlet cloudlet, OnlineVm vm) {
+	public double computeCost(OnlineCloudlet cloudlet, OnlineVm vm) {
 		double execTime = cloudlet.getCloudletLength() / vm.getMips();
 		double cost = Math.ceil((vm.getUptime() + execTime)/vm.getVmType().getPriceInterval()*vm.getVmType().getPrice());
 		return cost;
 	}
 	
-	protected double computeCost(OnlineCloudlet cloudlet, VmType type) {
+	public double computeCost(OnlineCloudlet cloudlet, VmType type) {
 		double execTime = cloudlet.getCloudletLength() / type.getVm().getMips();
 		double cost = Math.ceil(execTime/type.getPriceInterval()*type.getPrice());
 		return cost;
+	}
+	
+	public void assignCloudletToVm(OnlineCloudlet cloudlet, OnlineVm vm) {
+		cloudlet.setDelay(vm.getUptime());
+		cloudlet.setVmId(vm.getId());
+		
+		double execTime = cloudlet.getCloudletLength() / vm.getMips();
+		vm.setUptime(vm.getUptime() + execTime);
+		vm.setCost(Math.ceil(vm.getUptime()/vm.getVmType().getPriceInterval()*vm.getVmType().getPrice()));
+		
+		getCloudletScheduledList().add(cloudlet);
 	}
 }
