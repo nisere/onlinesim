@@ -59,7 +59,7 @@ public class PublicAlgorithm extends SchedulingAlgorithm {
 		double finishTime = vm.getUptime() + execTime;
 		double cost = Double.MAX_VALUE;
 		if (cloudlet.getDeadline() <= finishTime) {
-			cost = Math.ceil((vm.getUptime() + execTime)/vm.getVmType().getPriceInterval()*vm.getVmType().getPrice());
+			cost = Math.ceil(finishTime/vm.getVmType().getPriceInterval()) * vm.getVmType().getPrice() - vm.getCost();
 		}
 		return cost;
 	}
@@ -68,7 +68,7 @@ public class PublicAlgorithm extends SchedulingAlgorithm {
 		double execTime = cloudlet.getCloudletLength() / type.getVm().getMips();
 		double cost = Double.MAX_VALUE;
 		if (cloudlet.getDeadline() <= execTime) {
-			cost = Math.ceil(execTime/type.getPriceInterval()*type.getPrice());
+			cost = Math.ceil(execTime/type.getPriceInterval()) * type.getPrice();
 		}
 		return cost;
 	}
@@ -79,7 +79,7 @@ public class PublicAlgorithm extends SchedulingAlgorithm {
 		
 		double execTime = cloudlet.getCloudletLength() / vm.getMips();
 		vm.setUptime(vm.getUptime() + execTime);
-		vm.setCost(Math.ceil(vm.getUptime()/vm.getVmType().getPriceInterval()*vm.getVmType().getPrice()));
+		vm.setCost(Math.ceil(vm.getUptime()/vm.getVmType().getPriceInterval()) * vm.getVmType().getPrice());
 		
 		getCloudletScheduledList().add(cloudlet);
 	}
