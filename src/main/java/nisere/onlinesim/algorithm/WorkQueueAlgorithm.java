@@ -19,7 +19,9 @@ public class WorkQueueAlgorithm extends StaticAlgorithm {
 	 * the selection of cloudlets is in order and not random like in the original algorithm
 	 */
 	public void computeSchedule(List<? extends OnlineCloudlet> cloudletList,
-			List<? extends OnlineVm> vmList, List<? extends VmType> vmTypes) {
+			List<? extends OnlineVm> vmList, List<? extends VmType> vmTypes, double time) {
+		
+		updateWorkload(time);
 		
 		boolean isNotScheduled = true;
 		int randomId = 0;

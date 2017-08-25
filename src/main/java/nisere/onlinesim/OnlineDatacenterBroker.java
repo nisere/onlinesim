@@ -1,7 +1,6 @@
 package nisere.onlinesim;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.cloudbus.cloudsim.Cloudlet;
@@ -12,8 +11,6 @@ import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.CloudSimTags;
 import org.cloudbus.cloudsim.core.SimEvent;
 import org.cloudbus.cloudsim.lists.VmList;
-
-import nisere.onlinesim.algorithm.SchedulingAlgorithm;
 
 /**
  * This class adds to the DatacenterBroker the possibility to process

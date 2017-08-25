@@ -1,5 +1,6 @@
 package nisere.onlinesim.algorithm;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import nisere.onlinesim.OnlineCloudlet;
@@ -18,6 +19,9 @@ public abstract class SchedulingAlgorithm {
 	
 	/** Cost of the execution of cloudlets */
 	private double cost;
+	
+	/** List of unscheduled cloudlets */
+	private List<? extends OnlineCloudlet> cloudletUnscheduledList;
 
 	/**
 	 * Gets the list of scheduled cloudlets
@@ -44,11 +48,22 @@ public abstract class SchedulingAlgorithm {
 		this.cost = cost;
 	}
 
-	/** Initialize CloudletScheduledList with your choice */
-	protected abstract void initCloudletScheduledList();
+	public List<? extends OnlineCloudlet> getCloudletUnscheduledList() {
+		return cloudletUnscheduledList;
+	}
+
+	public void setCloudletUnscheduledList(List<? extends OnlineCloudlet> cloudletUnscheduledList) {
+		this.cloudletUnscheduledList = cloudletUnscheduledList;
+	}
+
+	/** Override this to initialize CloudletScheduledList with your choice */
+	protected void initialize() {
+		setCloudletScheduledList(new LinkedList<OnlineCloudlet>());	
+		setCloudletUnscheduledList(new LinkedList<OnlineCloudlet>());
+	}
 
 	public SchedulingAlgorithm() {
-		initCloudletScheduledList();
+		initialize();
 	}
 	
 	/** 
@@ -58,13 +73,11 @@ public abstract class SchedulingAlgorithm {
 	 * @param vmTypes the list of VM types from all the datacenters; 
 	 * use the datacenter id associated to the VM to get information about count and price;
 	 * use the vmTypes to create VM as needed and add them to vmList
+	 * @param time TODO
 	 */
 	public abstract void computeSchedule(List<? extends OnlineCloudlet> cloudletList,
-			List<? extends OnlineVm> vmList, List<? extends VmType> vmTypes);
-	
-	/** To be overridden. Use this as you need */
-	public void prepare(double time) {
-		
-	}
+			List<? extends OnlineVm> vmList, List<? extends VmType> vmTypes, double time);
+
+	public abstract void removeScheduledCloudlet(OnlineCloudlet cloudlet, double delay);
 
 }

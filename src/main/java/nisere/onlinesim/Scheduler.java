@@ -89,8 +89,7 @@ public class Scheduler {
 			if (cloudlet.getArrivalTime() > delay) {
 				// this is the first of the next batch;
 				// schedule the batch then reset the list and add this cloudlet
-				getAlgorithm().prepare(delay);
-				getAlgorithm().computeSchedule(list, vms, types);
+				runSchedulingAlgorithm(list, vms, types, delay);
 				list = new LinkedList<>();
 				while (cloudlet.getArrivalTime() > delay) {
 					delay += getSchedulingInterval();
@@ -102,9 +101,13 @@ public class Scheduler {
 			
 			list.add(cloudlet);
 		}
-		getAlgorithm().prepare(delay);
-		getAlgorithm().computeSchedule(list, vms, types);
+		runSchedulingAlgorithm(list, vms, types, delay);
 		return getAlgorithm().getCloudletScheduledList();
+	}
+	
+	protected void runSchedulingAlgorithm(List<? extends OnlineCloudlet> cloudlets, 
+			List<? extends OnlineVm> vms, List<? extends VmType> types, double delay) {
+		getAlgorithm().computeSchedule(cloudlets, vms, types, delay);
 	}
 
 	/**

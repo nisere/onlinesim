@@ -73,7 +73,6 @@ public class StaticAlgorithmsExample extends Example {
 			List<OnlineCloudlet> cloudletList = createRandomCloudlets(broker.getId(),noCloudlets,minLengthUnif, maxLengthUnif, seed,minArrivalUnif, maxArrivalUnif);
 			
 			/* Choose the scheduling algorithm. */
-			//SchedulingAlgorithm algorithm = new NOAlgorithm();
 			SchedulingAlgorithm algorithm = new WorkQueueAlgorithm();
 			//SchedulingAlgorithm algorithm = new SufferageAlgorithm();
 			//SchedulingAlgorithm algorithm = new MinMinAlgorithm();

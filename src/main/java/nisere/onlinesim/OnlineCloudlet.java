@@ -30,6 +30,9 @@ public class OnlineCloudlet extends Cloudlet {
 	 * The arrival time of the cloudlet, in seconds.
 	 */
 	private long arrivalTime;
+	
+	/** The VM on which the cloudlet is scheduled to run */
+	private OnlineVm vm;
 
 	/**
 	 * Allocates a OnlineCloudlet object.
@@ -90,5 +93,13 @@ public class OnlineCloudlet extends Cloudlet {
 
 	public void setArrivalTime(long arrivalTime) {
 		this.arrivalTime = arrivalTime;
+	}
+
+	public OnlineVm getVm() {
+		return vm;
+	}
+
+	public void setVm(OnlineVm vm) {
+		this.vm = vm;
 	}
 }

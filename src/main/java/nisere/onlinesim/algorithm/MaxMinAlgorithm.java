@@ -18,8 +18,10 @@ public class MaxMinAlgorithm extends StaticAlgorithm {
 	 * Creates the schedule with MaxMin algorithm.
 	 */
 	public void computeSchedule(List<? extends OnlineCloudlet> cloudletList,
-			List<? extends OnlineVm> vmList, List<? extends VmType> vmTypes) {
+			List<? extends OnlineVm> vmList, List<? extends VmType> vmTypes, double time) {
 
+		updateWorkload(time);
+		
 		boolean isNotScheduled = true;
 		while (isNotScheduled) {
 			OnlineCloudlet maxCloudlet = null;

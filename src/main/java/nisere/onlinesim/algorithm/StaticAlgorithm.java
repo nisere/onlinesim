@@ -1,11 +1,10 @@
 package nisere.onlinesim.algorithm;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 
 import nisere.onlinesim.OnlineCloudlet;
-
+import nisere.onlinesim.OnlineVm;
 
 public abstract class StaticAlgorithm extends SchedulingAlgorithm {
 
@@ -51,38 +50,30 @@ public abstract class StaticAlgorithm extends SchedulingAlgorithm {
 	public void setWorkload(int vmId, double workload) {
 		getWorkloadMap().put(vmId, workload);
 	}
-
-	@Override
-	protected void initCloudletScheduledList() {
-		setCloudletScheduledList(new LinkedList<OnlineCloudlet>());
-	}
 	
 	/**
 	 * The workload is updated with the maximum of the moment in time and the previous workload.
 	 * @param time the moment in time
 	 */
-	@Override
-	public void prepare(double time) {
-//		List<OnlineCloudlet> removedList = new LinkedList<>();
-//		for (OnlineCloudlet cloudlet : getCloudletScheduledList()) {
-//			//if scheduled cloudlet hasn't run yet, reschedule
-//			if (time < cloudlet.getDelay()) {
-//				double work = getWorkload(cloudlet.getVmId());
-//				work -= cloudlet.getCloudletLength() / cloudlet.getVm().getMips();
-//				setWorkload(cloudlet.getVmId(),work);
-//				
-//				cloudlet.setVmId(-1);
-//				cloudlet.setVm(null);
-//				cloudlet.setDelay(time);
-//				
-//				removedList.add(cloudlet);			
-//			}
-//		}
-//		getCloudletScheduledList().removeAll(removedList);
-		
+	public void updateWorkload(double time) {
 		for (Map.Entry<Integer, Double> entry : getWorkloadMap().entrySet()) {
 			double value = Math.max(time, entry.getValue());
 			getWorkloadMap().put(entry.getKey(), value);
 		}
 	}
+
+	@Override
+	public void removeScheduledCloudlet(OnlineCloudlet cloudlet, double delay) {
+		//OnlineVm vm = cloudlet.getVm();
+		//vm.setUptime(vm.getUptime() - cloudlet.getCloudletLength() / vm.getMips());
+		double work = getWorkload(cloudlet.getVmId());
+		work -= cloudlet.getCloudletLength() / cloudlet.getVm().getMips();
+		setWorkload(cloudlet.getVmId(),work);
+		
+		cloudlet.setVmId(-1);
+		cloudlet.setVm(null);
+		cloudlet.setDelay(delay);
+	}
+
+	
 }

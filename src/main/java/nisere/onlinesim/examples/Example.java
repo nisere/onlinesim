@@ -124,8 +124,7 @@ public class Example {
 					maxLengthUnif, seed, minDelayUnif, maxDelayUnif);
 
 			/* Choose the scheduling algorithm. */
-			SchedulingAlgorithm algorithm = new NOAlgorithm();
-			// SchedulingAlgorithm algorithm = new WorkQueueAlgorithm();
+			SchedulingAlgorithm algorithm = new WorkQueueAlgorithm();
 			// SchedulingAlgorithm algorithm = new SufferageAlgorithm();
 			// SchedulingAlgorithm algorithm = new MinMinAlgorithm();
 			// SchedulingAlgorithm algorithm = new MinMaxAlgorithm();

@@ -1,7 +1,5 @@
 package nisere.onlinesim;
 
-import java.util.List;
-
 import org.cloudbus.cloudsim.CloudletScheduler;
 import org.cloudbus.cloudsim.Vm;
 

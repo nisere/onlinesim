@@ -15,14 +15,14 @@ import nisere.onlinesim.VmType;
 public class PublicAlgorithm extends SchedulingAlgorithm {
 
 	@Override
-	protected void initCloudletScheduledList() {
+	protected void initialize() {
 		setCloudletScheduledList(new LinkedList<OnlineCloudlet>());
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void computeSchedule(List<? extends OnlineCloudlet> cloudletList, List<? extends OnlineVm> vmList,
-			List<? extends VmType> vmTypes) {
+			List<? extends VmType> vmTypes, double time) {
 
 		for (OnlineCloudlet cloudlet : cloudletList) {
 			OnlineVm optimVm = null;
@@ -82,5 +82,11 @@ public class PublicAlgorithm extends SchedulingAlgorithm {
 		vm.setCost(Math.ceil(vm.getUptime()/vm.getVmType().getPriceInterval()) * vm.getVmType().getPrice());
 		
 		getCloudletScheduledList().add(cloudlet);
+	}
+
+	@Override
+	public void removeScheduledCloudlet(OnlineCloudlet cloudlet, double delay) {
+		// TODO Auto-generated method stub
+		
 	}
 }
