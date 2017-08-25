@@ -7,13 +7,8 @@ import java.util.List;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
 
-import nisere.onlinesim.OnlineCloudlet;
-import nisere.onlinesim.OnlineDatacenterBroker;
-import nisere.onlinesim.OnlineVm;
-import nisere.onlinesim.Scheduler;
-import nisere.onlinesim.VmType;
-import nisere.onlinesim.algorithm.SchedulingAlgorithm;
-import nisere.onlinesim.algorithm.WorkQueueAlgorithm;
+import nisere.onlinesim.*;
+import nisere.onlinesim.algorithm.*;
 
 /**
  * StaticAlgorithmsExample class is used to test static scheduling algorithms.

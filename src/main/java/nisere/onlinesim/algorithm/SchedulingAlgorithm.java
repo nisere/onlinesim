@@ -13,7 +13,6 @@ import nisere.onlinesim.VmType;
  *
  */
 public abstract class SchedulingAlgorithm {
-
 	/** List of scheduled cloudlets. */
 	private List<? extends OnlineCloudlet> cloudletScheduledList;
 	

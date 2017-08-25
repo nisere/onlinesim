@@ -24,15 +24,8 @@ import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
 
-import nisere.onlinesim.OnlineHost;
-import nisere.onlinesim.OnlineCloudlet;
-import nisere.onlinesim.OnlineDatacenterBroker;
-import nisere.onlinesim.OnlineVm;
-import nisere.onlinesim.OnlineVmAllocationPolicySimple;
-import nisere.onlinesim.Scheduler;
-import nisere.onlinesim.VmType;
-import nisere.onlinesim.algorithm.NOAlgorithm;
-import nisere.onlinesim.algorithm.SchedulingAlgorithm;
+import nisere.onlinesim.*;
+import nisere.onlinesim.algorithm.*;
 
 /**
  * Example class shows how to use this extension.

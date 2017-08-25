@@ -1,6 +1,7 @@
 package nisere.onlinesim;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.cloudbus.cloudsim.Cloudlet;
@@ -11,6 +12,8 @@ import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.CloudSimTags;
 import org.cloudbus.cloudsim.core.SimEvent;
 import org.cloudbus.cloudsim.lists.VmList;
+
+import nisere.onlinesim.algorithm.SchedulingAlgorithm;
 
 /**
  * This class adds to the DatacenterBroker the possibility to process
@@ -66,9 +69,10 @@ public class OnlineDatacenterBroker extends DatacenterBroker {
 //				break;
 //			}
 			Vm vm;
-			// if user didn't bind this cloudlet and it has not been executed yet
+			// if user hasn't bound this cloudlet and it hasn't been executed yet
 			if (cloudlet.getVmId() == -1) {
 				vm = getVmsCreatedList().get(vmIndex);
+				vmIndex = (vmIndex + 1) % getVmsCreatedList().size();
 			} else { // submit to the specific vm
 				vm = VmList.getById(getVmsCreatedList(), cloudlet.getVmId());
 				if (vm == null) { // vm was not created
@@ -91,7 +95,6 @@ public class OnlineDatacenterBroker extends DatacenterBroker {
 			//sendNow(getVmsToDatacentersMap().get(vm.getId()), CloudSimTags.CLOUDLET_SUBMIT, cloudlet);
 			
 			cloudletsSubmitted++;
-			vmIndex = (vmIndex + 1) % getVmsCreatedList().size();
 			getCloudletSubmittedList().add(cloudlet);
 			successfullySubmitted.add(cloudlet);
 		}
@@ -157,59 +160,5 @@ public class OnlineDatacenterBroker extends DatacenterBroker {
            clearDatacenters();
            finishExecution();
        } // else some cloudlets haven't finished yet
-	}
-	
-
-	/**
-	 * Process the ack received due to a request for VM creation.
-	 * Not changed, added for debugging purposes.
-	 * 
-	 * @param ev a SimEvent object
-	 * @pre ev != null
-	 * @post $none
-	 */
-	protected void processVmCreate(SimEvent ev) {
-		int[] data = (int[]) ev.getData();
-		int datacenterId = data[0];
-		int vmId = data[1];
-		int result = data[2];
-
-		if (result == CloudSimTags.TRUE) {
-			getVmsToDatacentersMap().put(vmId, datacenterId);
-			getVmsCreatedList().add(VmList.getById(getVmList(), vmId));
-			Log.printConcatLine(CloudSim.clock(), ": ", getName(), ": VM #", vmId,
-					" has been created in Datacenter #", datacenterId, ", Host #",
-					VmList.getById(getVmsCreatedList(), vmId).getHost().getId());
-		} else {
-			Log.printConcatLine(CloudSim.clock(), ": ", getName(), ": Creation of VM #", vmId,
-					" failed in Datacenter #", datacenterId);
-		}
-
-		incrementVmsAcks();
-
-		// all the requested VMs have been created
-		if (getVmsCreatedList().size() == getVmList().size() - getVmsDestroyed()) {
-			submitCloudlets();
-		} else {
-			// all the acks received, but some VMs were not created
-			if (getVmsRequested() == getVmsAcks()) {
-				// find id of the next datacenter that has not been tried
-				for (int nextDatacenterId : getDatacenterIdsList()) {
-					if (!getDatacenterRequestedIdsList().contains(nextDatacenterId)) {
-						createVmsInDatacenter(nextDatacenterId);
-						return;
-					}
-				}
-
-				// all datacenters already queried
-				if (getVmsCreatedList().size() > 0) { // if some vm were created
-					submitCloudlets();
-				} else { // no vms created. abort
-					Log.printLine(CloudSim.clock() + ": " + getName()
-							+ ": none of the required VMs could be created. Aborting");
-					finishExecution();
-				}
-			}
-		}
 	}
 }

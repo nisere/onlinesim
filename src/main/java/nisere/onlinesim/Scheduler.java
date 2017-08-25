@@ -75,6 +75,7 @@ public class Scheduler {
 	 * 
 	 * @param cloudlets cloudlet list
 	 * @param vms VM list
+	 * @param types VM types
 	 * 
 	 * @return a list with scheduled cloudlets
 	 */
