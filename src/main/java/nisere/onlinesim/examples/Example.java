@@ -255,7 +255,7 @@ public class Example {
 		long fileSize = 0;
 		long outputSize = 0;
 		UtilizationModel utilizationModel = new UtilizationModelFull();
-		int deadline = 0;
+		long deadline = Long.MAX_VALUE;
 		long delay = 0; // in seconds
 
 		UniformDistr lengthUnif = new UniformDistr(minLengthUnif, maxLengthUnif, seed);
@@ -286,7 +286,7 @@ public class Example {
 		Log.printLine("========== OUTPUT ==========");
 		Log.printLine("Cloudlet ID" + indent + "STATUS" + indent
 				+ "VM ID" + indent + "VM Type " + indent + "Estimation" + indent + "Execution"
-				+ indent + "Start" + indent + "Finish" + indent + "Arrival" + indent + "Delay" + indent + "Cost");
+				+ indent + "Start" + indent + "Finish" + indent + "Arrival" + indent + "Delay" + indent + "Deadline");
 
 		int[] counter = new int[13];
 		int index = 0;
@@ -325,7 +325,8 @@ public class Example {
 						+ indent + indent + dft.format(cloudlet.getFinishTime())
 						+ indent + dft.format(((OnlineCloudlet)cloudlet).getArrivalTime())
 						+ indent + indent + dft.format(((OnlineCloudlet)cloudlet).getDelay())
-						+ indent + indent + dft.format(vm.getCost()));
+						//+ indent + indent + dft.format(vm.getCost()));
+						+ indent + indent + dft.format(cloudlet.getDeadline()));
 
 			}
 		}

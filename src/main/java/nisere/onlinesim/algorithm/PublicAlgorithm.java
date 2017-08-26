@@ -95,12 +95,12 @@ public class PublicAlgorithm extends SchedulingAlgorithm {
 	public boolean checkDeadline(OnlineCloudlet cloudlet, OnlineVm vm) {
 		double execTime = cloudlet.getCloudletLength() / vm.getMips();
 		double finishTime = vm.getUptime() + execTime;
-		return cloudlet.getDeadline() <= finishTime;
+		return finishTime <= cloudlet.getDeadline();
 	}
 	
 	public boolean checkDeadline(OnlineCloudlet cloudlet, VmType type) {
 		double execTime = cloudlet.getCloudletLength() / type.getVm().getMips();
-		return cloudlet.getDeadline() <= execTime;
+		return execTime <= cloudlet.getDeadline();
 	}
 	
 	public void assignCloudletToVm(OnlineCloudlet cloudlet, OnlineVm vm) {

@@ -16,7 +16,7 @@ public class OnlineCloudlet extends Cloudlet {
 	
 	/**
 	 * The cloudlet deadline. The amount of time in seconds before the cloudlet
-	 * must be completed. A value of 0 means there is no deadline.
+	 * must be completed.
 	 */
 	private long deadline;
 
@@ -62,7 +62,7 @@ public class OnlineCloudlet extends Cloudlet {
 			final UtilizationModel utilizationModelCpu,
 			final UtilizationModel utilizationModelRam,
 			final UtilizationModel utilizationModelBw,
-			final int deadline, final long arrivalTime) {
+			final long deadline, final long arrivalTime) {
 		super(++lastId, cloudletLength, Math.max(1, pesNumber),
 				cloudletFileSize, cloudletOutputSize, utilizationModelCpu,
 				utilizationModelRam, utilizationModelBw);

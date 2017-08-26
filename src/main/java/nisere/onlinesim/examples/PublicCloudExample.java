@@ -27,10 +27,10 @@ import nisere.onlinesim.algorithm.*;
 public class PublicCloudExample extends Example {
 	
 	public static void main(String[] args) {
-		int noCloudlets = 4; // used to create random Cloudlets
+		int noCloudlets = 8; // used to create random Cloudlets
 		// generate length [minLengthUnif;maxLengthUnif)
-		int minLengthUnif = 100000;
-		int maxLengthUnif = 200000;
+		int minLengthUnif = 600000;
+		int maxLengthUnif = 900000;
 		int seed = 1;
 		int schedulingInterval = 0; // in seconds; 0 is now
 		// generate arrival time [minArrivalUnif;maxArrivalUnif); [0;1) means all tasks now
@@ -48,6 +48,11 @@ public class PublicCloudExample extends Example {
 			/* Create a broker object. */
 			OnlineDatacenterBroker broker = new OnlineDatacenterBroker("Broker");
 
+			/* Create the Cloudlet list. */
+			List<OnlineCloudlet> cloudletList = createRandomCloudlets(broker.getId(),noCloudlets,minLengthUnif, maxLengthUnif, seed, minArrivalUnif, maxArrivalUnif);
+			cloudletList.get(0).setDeadline(300);
+			cloudletList.get(noCloudlets - 1).setDeadline(300);
+			
 			/*------------------------------------------*/
 			
 			/* Create a public cloud. */
@@ -90,9 +95,6 @@ public class PublicCloudExample extends Example {
 			//List<OnlineVm> vmList = populateVmList(vmTypes);
 			List<OnlineVm> vmList = new ArrayList<>();
 
-			/* Create the Cloudlet list. */
-			List<OnlineCloudlet> cloudletList = createRandomCloudlets(broker.getId(),noCloudlets,minLengthUnif, maxLengthUnif, seed, minArrivalUnif, maxArrivalUnif);
-			
 			/* Choose the scheduling algorithm. */
 			SchedulingAlgorithm algorithm = new PublicAlgorithm();
 			
