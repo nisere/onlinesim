@@ -285,8 +285,8 @@ public class Example {
 		Log.printLine();
 		Log.printLine("========== OUTPUT ==========");
 		Log.printLine("Cloudlet ID" + indent + "STATUS" + indent
-				+ "VM ID" + indent + "VM Type " + indent + "Estimation" + indent + "Execution"
-				+ indent + "Start" + indent + "Finish" + indent + "Arrival" + indent + "Delay" + indent + "Deadline");
+				+ "VM ID" + indent + "VM Type " + indent + "Execution" + indent + "Start" + indent + "Finish" 
+				+ indent + "Arrival" + indent + "Delay" + indent + "Cost" + indent + "Deadline");
 
 		int[] counter = new int[13];
 		int index = 0;
@@ -319,13 +319,12 @@ public class Example {
 				
 				Log.printLine(indent + indent + cloudlet.getVmId()
 						+ indent + vm.getVmType().getName()
-						+ indent + dft.format(cloudlet.getCloudletLength() / vm.getMips())
 						+ indent + indent + dft.format(cloudlet.getActualCPUTime())
 						+ indent + indent + dft.format(cloudlet.getExecStartTime())
 						+ indent + indent + dft.format(cloudlet.getFinishTime())
 						+ indent + dft.format(((OnlineCloudlet)cloudlet).getArrivalTime())
 						+ indent + indent + dft.format(((OnlineCloudlet)cloudlet).getDelay())
-						//+ indent + indent + dft.format(vm.getCost()));
+						+ indent + indent + dft.format(vm.getCost())
 						+ indent + indent + dft.format(cloudlet.getDeadline()));
 
 			}
