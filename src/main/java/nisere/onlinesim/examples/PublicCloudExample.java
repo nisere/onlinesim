@@ -32,10 +32,10 @@ public class PublicCloudExample extends Example {
 		int minLengthUnif = 600000;
 		int maxLengthUnif = 900000;
 		int seed = 1;
-		int schedulingInterval = 0; // in seconds; 0 is now
+		int schedulingInterval = 1000; // in seconds
 		// generate arrival time [minArrivalUnif;maxArrivalUnif); [0;1) means all tasks now
 		int minArrivalUnif = 0;
-		int maxArrivalUnif = 1;
+		int maxArrivalUnif = 200;
 		//price intervals for datacenters
 		int priceInterval1 = 400;
 		int priceInterval2 = 400;
@@ -50,7 +50,7 @@ public class PublicCloudExample extends Example {
 
 			/* Create the Cloudlet list. */
 			List<OnlineCloudlet> cloudletList = createRandomCloudlets(broker.getId(),noCloudlets,minLengthUnif, maxLengthUnif, seed, minArrivalUnif, maxArrivalUnif);
-			cloudletList.get(0).setDeadline(300);
+			cloudletList.get(0).setDeadline(240);
 			cloudletList.get(noCloudlets - 1).setDeadline(300);
 			
 			/*------------------------------------------*/

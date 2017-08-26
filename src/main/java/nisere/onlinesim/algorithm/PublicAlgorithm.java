@@ -24,6 +24,8 @@ public class PublicAlgorithm extends SchedulingAlgorithm {
 	@Override
 	public void computeSchedule(List<? extends OnlineCloudlet> cloudletList, List<? extends OnlineVm> vmList,
 			List<? extends VmType> vmTypes, double time) {
+		//start with a fresh list of VM
+		List<? extends OnlineVm> vms = new LinkedList<>();
 		
 		for (OnlineCloudlet cloudlet : cloudletList) {
 			OnlineVm optimVm = null;
@@ -36,7 +38,7 @@ public class PublicAlgorithm extends SchedulingAlgorithm {
 			VmType minType = null;
 			double minCost = Double.MAX_VALUE;
 			
-			for (OnlineVm vm : vmList) {
+			for (OnlineVm vm : vms) {
 				double cost  = computeCost(cloudlet,vm);
 				if (minVmCost > cost && checkDeadline(cloudlet,vm)) {
 					optimVm = vm;
@@ -60,25 +62,27 @@ public class PublicAlgorithm extends SchedulingAlgorithm {
 				}
 			}
 			if (minVmCost < minTypeCost) { //chose optimVm if exists
-				assignCloudletToVm(cloudlet,optimVm);
+				assignCloudletToVm(cloudlet,optimVm, time);
 			} else if (optimType != null) { //choose optimType if exists
 				optimVm = optimType.createVm();
-				((List<OnlineVm>)vmList).add(optimVm);
-				assignCloudletToVm(cloudlet,optimVm);
+				((List<OnlineVm>)vms).add(optimVm);
+				assignCloudletToVm(cloudlet,optimVm, time);
 			} else {//no optimVm nor optimType exist
 				//getCloudletUnscheduledList().add(cloudlet); //leave unscheduled
 				//assign to cheapest
 				if (minVm != null) {
-					assignCloudletToVm(cloudlet,minVm);
+					assignCloudletToVm(cloudlet,minVm, time);
 				} else if (minType != null) {
 					minVm = minType.createVm();
-					((List<OnlineVm>)vmList).add(minVm);
-					assignCloudletToVm(cloudlet,minVm);
+					((List<OnlineVm>)vms).add(minVm);
+					assignCloudletToVm(cloudlet,minVm, time);
 				} else {
 					getCloudletUnscheduledList().add(cloudlet); //leave unscheduled
 				}
 			}
 		}
+		//add the new VM to the scheduler VM list
+		((List<OnlineVm>)vmList).addAll(vms);
 	}
 	
 	public double computeCost(OnlineCloudlet cloudlet, OnlineVm vm) {
@@ -103,8 +107,8 @@ public class PublicAlgorithm extends SchedulingAlgorithm {
 		return execTime <= cloudlet.getDeadline();
 	}
 	
-	public void assignCloudletToVm(OnlineCloudlet cloudlet, OnlineVm vm) {
-		cloudlet.setDelay(vm.getUptime());
+	public void assignCloudletToVm(OnlineCloudlet cloudlet, OnlineVm vm, double delay) {
+		cloudlet.setDelay(delay + vm.getUptime());
 		cloudlet.setVmId(vm.getId());
 		
 		double execTime = cloudlet.getCloudletLength() / vm.getMips();

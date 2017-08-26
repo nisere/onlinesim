@@ -1,5 +1,6 @@
 package nisere.onlinesim;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -57,18 +58,34 @@ public class Scheduler {
 		this.vmList = vmList;
 		this.cloudletList = cloudletList;		
 		this.algorithm = algorithm;	
-		this.schedulingInterval = Math.max(0, schedulingInterval);
+		this.schedulingInterval = Math.max(1, schedulingInterval);
 	}
 
 	/**
 	 * This method takes the cloudlets, schedules them and sends them to the broker.
 	 */
 	public void prepareSimulation() {
+		//sortCloudletsByArrivalTime();
 		scheduleCloudlets();
 		getBroker().submitVmList(getVmList());
 		getBroker().submitCloudletList(getAlgorithm().getCloudletScheduledList());
 	}
 	
+	protected void sortCloudletsByArrivalTime() {
+//		Collections.sort(getCloudletList(), new Comparator<? super OnlineCloudlet>() {
+//			@Override
+//			public int compare(OnlineCloudlet c1, OnlineCloudlet c2) {
+//				if (c1.getDeadline() < c2.getDeadline()) 
+//					return -1;
+//				else if (c1.getDeadline() > c2.getDeadline()) 
+//					return 1;
+//				return 0;
+//			}
+//		});
+		Collections.sort(getCloudletList(), (c1,c2) -> 
+			(c1.getDeadline() < c2.getDeadline() ? -1 : (c1.getDeadline() > c2.getDeadline() ? 1 : 0)));
+	}
+
 	/**
 	 * This method computes the schedule for all the cloudlets.
 	 * The scheduling algorithm is run in batches. 

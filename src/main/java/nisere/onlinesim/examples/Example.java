@@ -321,7 +321,7 @@ public class Example {
 						+ indent + vm.getVmType().getName()
 						+ indent + indent + dft.format(cloudlet.getActualCPUTime())
 						+ indent + indent + dft.format(cloudlet.getExecStartTime())
-						+ indent + indent + dft.format(cloudlet.getFinishTime())
+						+ indent + dft.format(cloudlet.getFinishTime())
 						+ indent + dft.format(((OnlineCloudlet)cloudlet).getArrivalTime())
 						+ indent + indent + dft.format(((OnlineCloudlet)cloudlet).getDelay())
 						+ indent + indent + dft.format(vm.getCost())
