@@ -1,5 +1,6 @@
 package nisere.onlinesim.algorithm;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class PublicAlgorithm extends SchedulingAlgorithm {
 	public void computeSchedule(List<? extends OnlineCloudlet> cloudletList, List<? extends OnlineVm> vmList,
 			List<? extends VmType> vmTypes, double time) {
 		//start with a fresh list of VM
-		List<? extends OnlineVm> vms = new LinkedList<>();
+		List<? extends OnlineVm> vms = new ArrayList<>();
 		
 		for (OnlineCloudlet cloudlet : cloudletList) {
 			OnlineVm optimVm = null;

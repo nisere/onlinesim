@@ -311,9 +311,6 @@ public class Example {
 					index++;
 					counter[index] = counter[index - 1] + 1;
 				}
-
-				double intervals = Math.ceil(1.0*vm.getUptime()/vm.getVmType().getPriceInterval());
-				vm.setCost(intervals * vm.getVmType().getPrice());
 				
 				vmUsed.add(vm);
 				
