@@ -286,7 +286,7 @@ public class Example {
 		Log.printLine("========== OUTPUT ==========");
 		Log.printLine("Cloudlet ID" + indent + "STATUS" + indent
 				+ "VM ID" + indent + "VM Type " + indent + "Execution" + indent + "Start" + indent + "Finish" 
-				+ indent + "Arrival" + indent + "Delay" + indent + "Cost" + indent + "Deadline");
+				+ indent + "Arrival" + indent + "Delay" + indent + "VM Cost" + indent + "Deadline");
 
 		int[] counter = new int[13];
 		int index = 0;

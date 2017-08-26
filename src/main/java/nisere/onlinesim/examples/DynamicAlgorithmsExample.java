@@ -16,7 +16,7 @@ import nisere.onlinesim.algorithm.*;
  * @author Alina Chera
  *
  */
-public class StaticAlgorithmsExample extends Example {
+public class DynamicAlgorithmsExample extends Example {
 	
 	public static void main(String[] args) {
 
@@ -81,7 +81,7 @@ public class StaticAlgorithmsExample extends Example {
 			//SchedulingAlgorithm algorithm = new LJFR_SJFRAlgorithm();
 			
 			/* Create a scheduler. */
-			Scheduler scheduler = new Scheduler(vmTypes,broker,vmList,cloudletList,algorithm,schedulingInterval);
+			Scheduler scheduler = new DynamicScheduler(vmTypes,broker,vmList,cloudletList,algorithm,schedulingInterval);
 
 			/* Make the necessary preparations before starting the simulation. 
 			 * This is the step where the algorithm is run. 

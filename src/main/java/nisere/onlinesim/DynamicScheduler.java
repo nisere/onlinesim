@@ -26,6 +26,7 @@ public class DynamicScheduler extends Scheduler {
 			}
 		}
 		getAlgorithm().getCloudletScheduledList().removeAll(removedList);
+		((List<OnlineCloudlet>)cloudlets).addAll(removedList);
 		
 		getAlgorithm().computeSchedule(cloudlets, getVmList(), getVmTypes(), delay);
 	}

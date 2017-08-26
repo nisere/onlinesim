@@ -27,6 +27,7 @@ public class MinMinAlgorithm extends StaticAlgorithm {
 		while (isNotScheduled) {
 			OnlineCloudlet minCloudlet = null;
 			int minVmId = -1;
+			OnlineVm minVm = null;
 			double min = -1;
 			for (OnlineCloudlet cloudlet : cloudletList) {
 				// if this cloudlet is bound to a VM continue
@@ -43,11 +44,13 @@ public class MinMinAlgorithm extends StaticAlgorithm {
 								+ cloudlet.getCloudletLength() / vm.getMips();
 						minCloudlet = cloudlet;
 						minVmId = vm.getId();
+						minVm = vm;
 					}
 				}
 			}
 			if (min >= 0) {
 				minCloudlet.setVmId(minVmId);
+				minCloudlet.setVm(minVm);
 				minCloudlet.setDelay(getWorkload(minVmId));
 				setWorkload(minVmId, min);
 				getCloudletScheduledList().add(minCloudlet);

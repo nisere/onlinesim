@@ -48,6 +48,7 @@ public class HybridScheduler extends Scheduler{
 			}
 		}
 		getAlgorithm().getCloudletScheduledList().removeAll(removedList);
+		((List<OnlineCloudlet>)cloudlets).addAll(removedList);
 
 		//run private algorithm
 		getAlgorithm().computeSchedule(cloudlets, getVmList(), getVmTypes(), delay);
