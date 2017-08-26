@@ -32,7 +32,7 @@ public class PublicCloudExample extends Example {
 		int minLengthUnif = 600000;
 		int maxLengthUnif = 900000;
 		int seed = 1;
-		int schedulingInterval = 1000; // in seconds
+		int schedulingInterval = 500; // in seconds
 		// generate arrival time [minArrivalUnif;maxArrivalUnif); [0;1) means all tasks now
 		int minArrivalUnif = 0;
 		int maxArrivalUnif = 200;
