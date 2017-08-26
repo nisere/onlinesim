@@ -64,9 +64,9 @@ public class Scheduler {
 	 * This method takes the cloudlets, schedules them and sends them to the broker.
 	 */
 	public void prepareSimulation() {
-		List<OnlineCloudlet> scheduledCloudlets = getScheduledCloudlets(getCloudletList(), getVmList(), getVmTypes());
+		scheduleCloudlets();
 		getBroker().submitVmList(getVmList());
-		getBroker().submitCloudletList(scheduledCloudlets);
+		getBroker().submitCloudletList(getAlgorithm().getCloudletScheduledList());
 	}
 	
 	/**
@@ -79,17 +79,16 @@ public class Scheduler {
 	 * 
 	 * @return a list with scheduled cloudlets
 	 */
-	protected <T extends OnlineCloudlet> List<T> getScheduledCloudlets(List<? extends OnlineCloudlet> cloudlets, 
-			List<? extends OnlineVm> vms, List<? extends VmType> types) {
+	protected void scheduleCloudlets() {
 		
 		long delay = getSchedulingInterval();
 		List<OnlineCloudlet> list = new LinkedList<>();
 		
-		for (OnlineCloudlet cloudlet : cloudlets) {
+		for (OnlineCloudlet cloudlet : getCloudletList()) {
 			if (cloudlet.getArrivalTime() > delay) {
 				// this is the first of the next batch;
 				// schedule the batch then reset the list and add this cloudlet
-				runSchedulingAlgorithm(list, vms, types, delay);
+				runSchedulingAlgorithm(list, delay);
 				list = new LinkedList<>();
 				while (cloudlet.getArrivalTime() > delay) {
 					delay += getSchedulingInterval();
@@ -101,13 +100,11 @@ public class Scheduler {
 			
 			list.add(cloudlet);
 		}
-		runSchedulingAlgorithm(list, vms, types, delay);
-		return getAlgorithm().getCloudletScheduledList();
+		runSchedulingAlgorithm(list, delay);
 	}
 	
-	protected void runSchedulingAlgorithm(List<? extends OnlineCloudlet> cloudlets, 
-			List<? extends OnlineVm> vms, List<? extends VmType> types, double delay) {
-		getAlgorithm().computeSchedule(cloudlets, vms, types, delay);
+	protected void runSchedulingAlgorithm(List<? extends OnlineCloudlet> cloudlets, double delay) {
+		getAlgorithm().computeSchedule(cloudlets, getVmList(), getVmTypes(), delay);
 	}
 
 	/**

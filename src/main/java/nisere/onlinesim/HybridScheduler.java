@@ -10,30 +10,34 @@ import nisere.onlinesim.algorithm.SchedulingAlgorithm;
 public class HybridScheduler extends Scheduler{
 	
 	private SchedulingAlgorithm publicAlgorithm;
-	private List<? extends Datacenter> privateDatacenters;
-	private List<? extends Datacenter> publicDatacenters;
+	private List<? extends OnlineVm> publicVmList;
+	private List<? extends VmType> publicVmTypes;
 	
 	public HybridScheduler(List<? extends VmType> vmTypes, OnlineDatacenterBroker broker,
 			List<? extends OnlineVm> vmList, List<? extends OnlineCloudlet> cloudletList, SchedulingAlgorithm algorithm,
 			SchedulingAlgorithm publicAlgorithm, int schedulingInterval,
-			List<? extends Datacenter> privateDatacenters,
-			List<? extends Datacenter> publicDatacenters) throws Exception {
+			List<? extends OnlineVm> publicVmList, 
+			List<? extends VmType> publicVmTypes) throws Exception {
 		super(vmTypes, broker, vmList, cloudletList, algorithm, schedulingInterval);
 		this.publicAlgorithm = publicAlgorithm;
-		this.privateDatacenters = privateDatacenters;
-		this.publicDatacenters = publicDatacenters;
+		this.publicVmList = publicVmList;
+		this.publicVmTypes = publicVmTypes;
 	}
 	
 	public void prepareSimulation() {
-		List<OnlineCloudlet> scheduledCloudlets = getScheduledCloudlets(getCloudletList(), getVmList(), getVmTypes());
+		scheduleCloudlets();
+		
+		List<? extends OnlineCloudlet> scheduledCloudlets = getAlgorithm().getCloudletScheduledList();
 		scheduledCloudlets.addAll(getPublicAlgorithm().getCloudletScheduledList());
+
+		getVmList().addAll(getPublicVmList());
+		
 		getBroker().submitVmList(getVmList());
 		getBroker().submitCloudletList(scheduledCloudlets);
 	}
 	
 	@Override
-	protected void runSchedulingAlgorithm(List<? extends OnlineCloudlet> cloudlets, 
-			List<? extends OnlineVm> vms, List<? extends VmType> types, double delay) {
+	protected void runSchedulingAlgorithm(List<? extends OnlineCloudlet> cloudlets, double delay) {
 		
 		//update cloudlet queue: add to cloudletList scheduled cloudlets not executed yet to be rescheduled
 		List<OnlineCloudlet> removedList = new LinkedList<>();
@@ -44,12 +48,12 @@ public class HybridScheduler extends Scheduler{
 			}
 		}
 		getAlgorithm().getCloudletScheduledList().removeAll(removedList);
-		
+
 		//run private algorithm
-		getAlgorithm().computeSchedule(cloudlets, vms, types, delay);
+		getAlgorithm().computeSchedule(cloudlets, getVmList(), getVmTypes(), delay);
 		
 		//run public algorithm
-		getPublicAlgorithm().computeSchedule(getAlgorithm().getCloudletUnscheduledList(), vms, types, delay);
+		getPublicAlgorithm().computeSchedule(getAlgorithm().getCloudletUnscheduledList(), getPublicVmList(), getPublicVmTypes(), delay);
 	}
 
 	public SchedulingAlgorithm getPublicAlgorithm() {
@@ -60,20 +64,22 @@ public class HybridScheduler extends Scheduler{
 		this.publicAlgorithm = publicAlgorithm;
 	}
 
-	public List<? extends Datacenter> getPrivateDatacenters() {
-		return privateDatacenters;
+	@SuppressWarnings("unchecked")
+	public <T extends OnlineVm> List<T> getPublicVmList() {
+		return (List<T>)publicVmList;
 	}
 
-	public void setPrivateDatacenters(List<? extends Datacenter> privateDatacenters) {
-		this.privateDatacenters = privateDatacenters;
+	public void setPublicVmList(List<? extends OnlineVm> publicVmList) {
+		this.publicVmList = publicVmList;
 	}
 
-	public List<? extends Datacenter> getPublicDatacenters() {
-		return publicDatacenters;
+	@SuppressWarnings("unchecked")
+	public <T extends VmType> List<T> getPublicVmTypes() {
+		return (List<T>)publicVmTypes;
 	}
 
-	public void setPublicDatacenters(List<? extends Datacenter> publicDatacenters) {
-		this.publicDatacenters = publicDatacenters;
+	public void setPublicVmTypes(List<? extends VmType> publicVmTypes) {
+		this.publicVmTypes = publicVmTypes;
 	}
 
 }

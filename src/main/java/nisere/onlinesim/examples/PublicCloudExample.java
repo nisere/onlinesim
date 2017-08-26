@@ -119,7 +119,7 @@ public class PublicCloudExample extends Example {
 			/* Stop simulation. */
 			CloudSim.stopSimulation();
 
-			/* Print the results. */		
+			/* Print the results. */
 			printResult(scheduler.getFinishedCloudlets(),scheduler.getVmList());
 			
 			Log.printLine("Simulation finished!");

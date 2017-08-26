@@ -15,8 +15,7 @@ public class DynamicScheduler extends Scheduler {
 	}
 	
 	@Override
-	protected void runSchedulingAlgorithm(List<? extends OnlineCloudlet> cloudlets, 
-			List<? extends OnlineVm> vms, List<? extends VmType> types, double delay) {
+	protected void runSchedulingAlgorithm(List<? extends OnlineCloudlet> cloudlets, double delay) {
 		
 		//update cloudlet queue: add to cloudletList scheduled cloudlets not executed yet to be rescheduled
 		List<OnlineCloudlet> removedList = new LinkedList<>();
@@ -28,7 +27,7 @@ public class DynamicScheduler extends Scheduler {
 		}
 		getAlgorithm().getCloudletScheduledList().removeAll(removedList);
 		
-		getAlgorithm().computeSchedule(cloudlets, vms, types, delay);
+		getAlgorithm().computeSchedule(cloudlets, getVmList(), getVmTypes(), delay);
 	}
 
 }

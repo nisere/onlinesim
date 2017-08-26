@@ -48,8 +48,9 @@ public abstract class SchedulingAlgorithm {
 		this.cost = cost;
 	}
 
-	public List<? extends OnlineCloudlet> getCloudletUnscheduledList() {
-		return cloudletUnscheduledList;
+	@SuppressWarnings("unchecked")
+	public  <T extends OnlineCloudlet> List<T>  getCloudletUnscheduledList() {
+		return (List<T>)cloudletUnscheduledList;
 	}
 
 	public void setCloudletUnscheduledList(List<? extends OnlineCloudlet> cloudletUnscheduledList) {
