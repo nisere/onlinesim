@@ -35,7 +35,7 @@ public class DynamicHybridSchedulerExample extends Example {
 		// generate length [minLengthUnif;maxLengthUnif)
 		int minLengthUnif = 800000;
 		int maxLengthUnif = 900000;
-		int seed = 10;
+		int seed = 1;
 		
 		int schedulingInterval = 100;
 		// generate arrival time [minArrivalUnif;maxArrivalUnif)
@@ -152,7 +152,7 @@ public class DynamicHybridSchedulerExample extends Example {
 			CloudSim.stopSimulation();
 
 			/* Print the results. */
-			printResult(scheduler.getFinishedCloudlets(),scheduler.getVmList());
+			printResult(scheduler);
 			
 			Log.printLine("Simulation finished!");
 		} catch (Exception e) {

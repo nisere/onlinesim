@@ -35,6 +35,8 @@ public class DynamicHybridScheduler extends Scheduler{
 		
 		getBroker().submitVmList(getVmList());
 		getBroker().submitCloudletList(scheduledCloudlets);
+		
+		getAlgorithm().getUnscheduledCloudletList().addAll(getPublicAlgorithm().getUnscheduledCloudletList());
 	}
 	
 	@Override

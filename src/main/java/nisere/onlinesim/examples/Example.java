@@ -152,7 +152,7 @@ public class Example {
 			CloudSim.stopSimulation();
 
 			/* Print the results. */
-			printResult(scheduler.getFinishedCloudlets(),scheduler.getVmList());
+			printResult(scheduler);
 
 			Log.printLine("Simulation finished!");
 		} catch (Exception e) {
@@ -280,7 +280,10 @@ public class Example {
 		return cloudletList;
 	}
 
-	public static void printResult(List<OnlineCloudlet> list,List<OnlineVm> vmList) {
+	public static void printResult(Scheduler scheduler) {
+		List<OnlineCloudlet> list = scheduler.getFinishedCloudlets();
+		List<OnlineVm> vmList = scheduler.getVmList();
+		
 		int size = list.size();
 		OnlineCloudlet cloudlet;
 		double flowtime = 0;
@@ -292,7 +295,7 @@ public class Example {
 		Log.printLine("========== OUTPUT ==========");
 		Log.printLine("Cloudlet ID" + indent + "STATUS" + indent
 				+ "VM ID" + indent + "VM Type " + indent + "Execution" + indent + "Start" + indent + "Finish" 
-				+ indent + "Arrival" + indent + "Delay" + indent + "VM Cost" + indent + "Deadline");
+				+ indent + "Arrival" + indent + "Delay" + indent + "VM Cost" + indent + "Deadline Time");
 
 		int[] counter = new int[13];
 		int index = 0;
@@ -326,7 +329,7 @@ public class Example {
 						+ indent + dft.format(cloudlet.getArrivalTime())
 						+ indent + indent + dft.format(cloudlet.getDelay())
 						+ indent + indent + dft.format(cloudlet.getVm().getCost())
-						+ indent + indent + dft.format(cloudlet.getDeadline()));
+						+ indent + indent + dft.format(cloudlet.getArrivalTime() + cloudlet.getDeadline()));
 
 				if (cloudlet.getFinishTime() > cloudlet.getArrivalTime() + cloudlet.getDeadline()) {
 					dead++;
@@ -347,6 +350,7 @@ public class Example {
 		Log.printLine();
 		Log.printLine("Cost: " + cost);
 		Log.printLine("Deadlines not met: " + dead);
+		Log.printLine("Unscheduled cloudlets: " + scheduler.getAlgorithm().getUnscheduledCloudletList().size());
 	}
 
 }

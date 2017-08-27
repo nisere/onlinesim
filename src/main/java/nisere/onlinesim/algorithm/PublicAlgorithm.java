@@ -52,7 +52,7 @@ public class PublicAlgorithm extends SchedulingAlgorithm {
 			}
 			for (VmType type : vmTypes) {
 				double cost  = computeCost(cloudlet,type);
-				if (minTypeCost > cost && checkDeadline(cloudlet,type)) {
+				if (minTypeCost > cost && checkDeadline(cloudlet,type,time)) {
 					optimType = type;
 					minTypeCost = cost;
 				}
@@ -69,17 +69,17 @@ public class PublicAlgorithm extends SchedulingAlgorithm {
 				((List<OnlineVm>)vms).add(optimVm);
 				assignCloudletToVm(cloudlet,optimVm, time);
 			} else {//no optimVm nor optimType exist
-				//getCloudletUnscheduledList().add(cloudlet); //leave unscheduled
-				//assign to cheapest
-				if (minVm != null) {
-					assignCloudletToVm(cloudlet,minVm, time);
-				} else if (minType != null) {
-					minVm = minType.createVm();
-					((List<OnlineVm>)vms).add(minVm);
-					assignCloudletToVm(cloudlet,minVm, time);
-				} else {
-					getUnscheduledCloudletList().add(cloudlet); //leave unscheduled
-				}
+				getUnscheduledCloudletList().add(cloudlet); //leave unscheduled
+//				//assign to cheapest
+//				if (minVm != null) {
+//					assignCloudletToVm(cloudlet,minVm, time);
+//				} else if (minType != null) {
+//					minVm = minType.createVm();
+//					((List<OnlineVm>)vms).add(minVm);
+//					assignCloudletToVm(cloudlet,minVm, time);
+//				} else {
+//					getUnscheduledCloudletList().add(cloudlet); //leave unscheduled
+//				}
 			}
 		}
 		//add the new VM to the scheduler VM list
@@ -99,13 +99,12 @@ public class PublicAlgorithm extends SchedulingAlgorithm {
 	
 	public boolean checkDeadline(OnlineCloudlet cloudlet, OnlineVm vm) {
 		double execTime = cloudlet.getCloudletLength() / vm.getMips();
-		double finishTime = vm.getUptime() + execTime;
-		return finishTime <= cloudlet.getDeadline();
+		return vm.getUptime() + execTime <= cloudlet.getArrivalTime() + cloudlet.getDeadline();
 	}
 	
-	public boolean checkDeadline(OnlineCloudlet cloudlet, VmType type) {
+	public boolean checkDeadline(OnlineCloudlet cloudlet, VmType type, double delay) {
 		double execTime = cloudlet.getCloudletLength() / type.getVm().getMips();
-		return execTime <= cloudlet.getDeadline();
+		return delay + execTime <= cloudlet.getArrivalTime() + cloudlet.getDeadline();
 	}
 	
 	public void assignCloudletToVm(OnlineCloudlet cloudlet, OnlineVm vm, double delay) {

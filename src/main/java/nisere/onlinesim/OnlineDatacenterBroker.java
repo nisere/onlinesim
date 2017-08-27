@@ -57,7 +57,6 @@ public class OnlineDatacenterBroker extends DatacenterBroker {
 	 */
 	@Override
 	protected void submitCloudlets() {
-		int vmIndex = 0;
 		List<OnlineCloudlet> successfullySubmitted = new ArrayList<>();
 		List<OnlineCloudlet> cloudletList = getCloudletList();
 		for (OnlineCloudlet cloudlet : cloudletList) {
@@ -66,10 +65,9 @@ public class OnlineDatacenterBroker extends DatacenterBroker {
 //				break;
 //			}
 			Vm vm;
-			// if user hasn't bound this cloudlet and it hasn't been executed yet
+			// if user hasn't bound this cloudlet ignore it
 			if (cloudlet.getVmId() == -1) {
-				vm = getVmsCreatedList().get(vmIndex);
-				vmIndex = (vmIndex + 1) % getVmsCreatedList().size();
+				continue;
 			} else { // submit to the specific vm
 				vm = VmList.getById(getVmsCreatedList(), cloudlet.getVmId());
 				if (vm == null) { // vm was not created
