@@ -27,8 +27,8 @@ public class HybridSchedulerExample extends Example {
 		// hi-lo 1-10 100000-400000
 		// lo-hi 1-2 1-1000000
 		
-		int noCloudlets = 100; // used to create random Cloudlets
-		int noVms = 5; // used to create random VMs
+		int noCloudlets = 1000; // used to create random Cloudlets
+		int noVms = 10; // used to create random VMs
 		// generate [minMipsUnif;maxMipsUnif) and multiply with 1000 to get mips
 		int minMipsUnif = 1;
 		int maxMipsUnif = 3;

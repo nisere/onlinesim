@@ -289,6 +289,8 @@ public class Example {
 		double flowtime = 0;
 		double cost = 0;
 		int dead = 0;
+		
+		int counter_no = 20;
 
 		String indent = "    ";
 		Log.printLine();
@@ -297,7 +299,7 @@ public class Example {
 				+ "VM ID" + indent + "VM Type " + indent + "Execution" + indent + "Start" + indent + "Finish" 
 				+ indent + "Arrival" + indent + "Delay" + indent + "VM Cost" + indent + "Deadline Time");
 
-		int[] counter = new int[13];
+		int[] counter = new int[counter_no];
 		int index = 0;
 		int step = 1000;
 		DecimalFormat dft = new DecimalFormat("###.##");
@@ -314,12 +316,13 @@ public class Example {
 
 				flowtime += cloudlet.getFinishTime();
 
-				if (cloudlet.getFinishTime() <= step * (index + 1)) {
-					counter[index]++;
-				} else {
-					index++;
-					counter[index] = counter[index - 1] + 1;
-				}
+				if (index < counter_no - 1)
+					if (cloudlet.getFinishTime() <= step * (index + 1)) {
+						counter[index]++;
+					} else {
+						index++;
+						counter[index] = counter[index - 1] + 1;
+					}
 				
 				Log.printLine(indent + indent + cloudlet.getVmId()
 						+ indent + cloudlet.getVm().getVmType().getName()
@@ -344,7 +347,7 @@ public class Example {
 		Log.printLine();
 		Log.printLine("Flowtime: " + dft.format(flowtime));
 		Log.printLine("Finished after " + step + ",2x" + step + "...");
-		for (int i = 0; i < 13; i++) {
+		for (int i = 0; i < counter_no; i++) {
 			Log.print(counter[i] + ",");
 		}
 		Log.printLine();
