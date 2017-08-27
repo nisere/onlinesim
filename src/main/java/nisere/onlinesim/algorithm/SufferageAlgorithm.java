@@ -26,6 +26,7 @@ public class SufferageAlgorithm extends StaticAlgorithm {
 		while (isNotScheduled) {
 			OnlineCloudlet maxCloudlet = null;
 			int maxVmId = -1;
+			OnlineVm maxVm = null;
 			double maxSuffer = -1;
 			double maxC = -1;
 			for (OnlineCloudlet cloudlet : cloudletList) {
@@ -35,6 +36,7 @@ public class SufferageAlgorithm extends StaticAlgorithm {
 				}
 				OnlineCloudlet minCloudlet = null;
 				int minVmId = -1;
+				OnlineVm minVm = null;
 				double firstMin = -1;
 				double secondMin = -1;
 				for (OnlineVm vm : vmList) {
@@ -47,6 +49,7 @@ public class SufferageAlgorithm extends StaticAlgorithm {
 						firstMin = cij;
 						minCloudlet = cloudlet;
 						minVmId = vm.getId();
+						minVm = vm;
 						if (secondMin == -1 || oldFirstMin < secondMin) {
 							secondMin = oldFirstMin;
 						}
@@ -65,10 +68,12 @@ public class SufferageAlgorithm extends StaticAlgorithm {
 					maxC = firstMin;
 					maxCloudlet = minCloudlet;
 					maxVmId = minVmId;
+					maxVm = minVm;
 				}
 			}
 			if (maxSuffer >= 0) {
 				maxCloudlet.setVmId(maxVmId);
+				maxCloudlet.setVm(maxVm);
 				maxCloudlet.setDelay(getWorkload(maxVmId));
 				setWorkload(maxVmId,maxC);
 				getCloudletScheduledList().add(maxCloudlet);

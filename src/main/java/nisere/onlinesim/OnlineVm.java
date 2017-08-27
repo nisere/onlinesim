@@ -11,7 +11,7 @@ import org.cloudbus.cloudsim.Vm;
  */
 public class OnlineVm extends Vm {
 	/** Last id assigned to an object of this class */
-	public static int lastId = 0;
+	protected static int lastId = 0;
 
 	/**
 	 * The datacenter id where this VM is assigned.

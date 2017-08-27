@@ -30,7 +30,8 @@ public class LJFR_SJFRAlgorithm extends StaticAlgorithm {
 			countVm--;
 
 			OnlineCloudlet maxCloudlet = null;
-			int maxVmId = -1;
+			//int maxVmId = -1;
+			OnlineVm maxVm = null;
 			double max = -1;
 			for (OnlineCloudlet cloudlet : cloudletList) {
 				// if this cloudlet was bound to a VM continue
@@ -39,6 +40,7 @@ public class LJFR_SJFRAlgorithm extends StaticAlgorithm {
 				}
 				OnlineCloudlet minCloudlet = null;
 				int minVmId = -1;
+				OnlineVm minVm = null;
 				double min = -1;
 				for (OnlineVm vm : vmList) {
 					// find min of Cij = Wi + Eij
@@ -50,17 +52,19 @@ public class LJFR_SJFRAlgorithm extends StaticAlgorithm {
 								+ cloudlet.getCloudletLength() / vm.getMips();
 						minCloudlet = cloudlet;
 						minVmId = vm.getId();
+						minVm = vm;
 					}
 				}
 				// find max of Cxy, where Cxy = min of Cij found above
 				if (min >= 0 && (max == -1 || max < min)) {
 					max = min;
 					maxCloudlet = minCloudlet;
-					maxVmId = minVmId;
+					//maxVmId = minVmId;
+					maxVm = minVm;
 				}
 			}
 			if (max >= 0) {
-				assignCloudletToVm(maxCloudlet,maxVmId,max);
+				assignCloudletToVm(maxCloudlet,maxVm,max);
 			} else {
 				isNotScheduled = false;
 			}
@@ -69,7 +73,8 @@ public class LJFR_SJFRAlgorithm extends StaticAlgorithm {
 		// next use alternatively MinMin and MaxMin
 		while (isNotScheduled) {
 			OnlineCloudlet minminCloudlet = null;
-			int minminVmId = -1;
+			//int minminVmId = -1;
+			OnlineVm minminVm = null;
 			double minmin = -1;
 			for (OnlineCloudlet cloudlet : cloudletList) {
 				// if this cloudlet was bound to a VM continue
@@ -85,12 +90,13 @@ public class LJFR_SJFRAlgorithm extends StaticAlgorithm {
 						minmin = getWorkload(vm.getId())
 								+ cloudlet.getCloudletLength() / vm.getMips();
 						minminCloudlet = cloudlet;
-						minminVmId = vm.getId();
+						//minminVmId = vm.getId();
+						minminVm = vm;
 					}
 				}
 			}
 			if (minmin >= 0) {
-				assignCloudletToVm(minminCloudlet,minminVmId,minmin);
+				assignCloudletToVm(minminCloudlet,minminVm,minmin);
 			} else {
 				isNotScheduled = false;
 			}
@@ -100,7 +106,8 @@ public class LJFR_SJFRAlgorithm extends StaticAlgorithm {
 			}
 
 			OnlineCloudlet maxCloudlet = null;
-			int maxVmId = -1;
+			//int maxVmId = -1;
+			OnlineVm maxVm = null;
 			double max = -1;
 			
 			for (OnlineCloudlet cloudlet : cloudletList) {
@@ -109,7 +116,8 @@ public class LJFR_SJFRAlgorithm extends StaticAlgorithm {
 					continue;
 				}
 				OnlineCloudlet minCloudlet = null;
-				int minVmId = -1;
+				//int minVmId = -1;
+				OnlineVm minVm = null;
 				double min = -1;
 				for (OnlineVm vm : vmList) {
 					// find min of Cij = Wi + Eij
@@ -120,28 +128,31 @@ public class LJFR_SJFRAlgorithm extends StaticAlgorithm {
 						min = getWorkload(vm.getId())
 								+ cloudlet.getCloudletLength() / vm.getMips();
 						minCloudlet = cloudlet;
-						minVmId = vm.getId();
+						//minVmId = vm.getId();
+						minVm = vm;
 					}
 				}
 				// find max of Cxy, where Cxy = min of Cij found above
 				if (min >= 0 && (max == -1 || max < min)) {
 					max = min;
 					maxCloudlet = minCloudlet;
-					maxVmId = minVmId;
+					//maxVmId = minVmId;
+					maxVm = minVm;
 				}
 			}
 			if (max >= 0) {
-				assignCloudletToVm(maxCloudlet,maxVmId,max);
+				assignCloudletToVm(maxCloudlet,maxVm,max);
 			} else {
 				isNotScheduled = false;
 			}
 		}
 	}
 	
-	protected void assignCloudletToVm(OnlineCloudlet cloudlet, int vmId, double workload) {
-		cloudlet.setVmId(vmId);
-		cloudlet.setDelay(getWorkload(vmId));
-		setWorkload(vmId, workload);
+	protected void assignCloudletToVm(OnlineCloudlet cloudlet, OnlineVm vm, double workload) {
+		cloudlet.setVmId(vm.getId());
+		cloudlet.setVm(vm);
+		cloudlet.setDelay(getWorkload(vm.getId()));
+		setWorkload(vm.getId(), workload);
 		getCloudletScheduledList().add(cloudlet);
 	}
 }

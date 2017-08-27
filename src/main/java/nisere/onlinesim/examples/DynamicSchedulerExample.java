@@ -16,7 +16,7 @@ import nisere.onlinesim.algorithm.*;
  * @author Alina Chera
  *
  */
-public class DynamicAlgorithmsExample extends Example {
+public class DynamicSchedulerExample extends Example {
 	
 	public static void main(String[] args) {
 
@@ -75,10 +75,10 @@ public class DynamicAlgorithmsExample extends Example {
 			/* Choose the scheduling algorithm. */
 			//SchedulingAlgorithm algorithm = new WorkQueueAlgorithm();
 			//SchedulingAlgorithm algorithm = new SufferageAlgorithm();
-			SchedulingAlgorithm algorithm = new MinMinAlgorithm();
+			//SchedulingAlgorithm algorithm = new MinMinAlgorithm();
 			//SchedulingAlgorithm algorithm = new MinMaxAlgorithm();
 			//SchedulingAlgorithm algorithm = new MaxMinAlgorithm();
-			//SchedulingAlgorithm algorithm = new LJFR_SJFRAlgorithm();
+			SchedulingAlgorithm algorithm = new LJFR_SJFRAlgorithm();
 			
 			/* Create a scheduler. */
 			Scheduler scheduler = new DynamicScheduler(vmTypes,broker,vmList,cloudletList,algorithm,schedulingInterval);

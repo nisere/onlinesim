@@ -11,7 +11,7 @@ import org.cloudbus.cloudsim.provisioners.RamProvisioner;
 public class OnlineHost extends Host {
 	
 	/** Last id assigned to an object of this class */
-	public static int lastId = 0;
+	protected static int lastId = 0;
 	
 	/**
 	 * Instantiates a new host.

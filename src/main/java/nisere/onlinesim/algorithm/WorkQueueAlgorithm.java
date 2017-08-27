@@ -48,6 +48,7 @@ public class WorkQueueAlgorithm extends StaticAlgorithm {
 			if (min >= 0) {
 				// schedule cloudlet on VM with min workload
 				cloudlet.setVmId(minvm.getId());
+				cloudlet.setVm(minvm);
 				cloudlet.setDelay(getWorkload(minvm.getId()));
 				getCloudletScheduledList().add(cloudlet);
 				double newWorkload = getWorkload(minvm.getId()) + cloudlet.getCloudletLength() 

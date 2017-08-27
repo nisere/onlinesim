@@ -27,6 +27,7 @@ public class MinMaxAlgorithm extends StaticAlgorithm {
 		while (isNotScheduled) {
 			OnlineCloudlet maxCloudlet = null;
 			int maxVmId = -1;
+			OnlineVm maxVm = null;
 			double max = -1;
 			double maxC = -1;
 			for (OnlineCloudlet cloudlet : cloudletList) {
@@ -36,6 +37,7 @@ public class MinMaxAlgorithm extends StaticAlgorithm {
 				}
 				OnlineCloudlet minCloudlet = null;
 				int minVmId = -1;
+				OnlineVm minVm = null;
 				double minC = -1;
 				double minCE = -1;
 				double minE = -1;
@@ -50,6 +52,7 @@ public class MinMaxAlgorithm extends StaticAlgorithm {
 						minCE = cloudlet.getCloudletLength() / vm.getMips();
 						minCloudlet = cloudlet;
 						minVmId = vm.getId();
+						minVm = vm;
 					}
 					if (minE == -1
 							|| minE > cloudlet.getCloudletLength()
@@ -70,10 +73,12 @@ public class MinMaxAlgorithm extends StaticAlgorithm {
 					maxC = minC;
 					maxCloudlet = minCloudlet;
 					maxVmId = minVmId;
+					maxVm = minVm;
 				}
 			}
 			if (max >= 0) {
 				maxCloudlet.setVmId(maxVmId);
+				maxCloudlet.setVm(maxVm);
 				maxCloudlet.setDelay(getWorkload(maxVmId));
 				setWorkload(maxVmId,maxC);
 				getCloudletScheduledList().add(maxCloudlet);

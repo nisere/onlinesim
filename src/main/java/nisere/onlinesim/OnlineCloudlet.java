@@ -12,7 +12,7 @@ import org.cloudbus.cloudsim.UtilizationModel;
  */
 public class OnlineCloudlet extends Cloudlet {
 	/** Last id assigned to an object of this class */
-	public static int lastId = 0;
+	protected static int lastId = 0;
 	
 	/**
 	 * The cloudlet deadline. The amount of time in seconds before the cloudlet
