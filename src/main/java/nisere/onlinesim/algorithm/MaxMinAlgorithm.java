@@ -63,7 +63,7 @@ public class MaxMinAlgorithm extends StaticAlgorithm {
 				maxCloudlet.setVm(maxVm);
 				maxCloudlet.setDelay(getWorkload(maxVmId));
 				setWorkload(maxVmId,max);
-				getCloudletScheduledList().add(maxCloudlet);
+				getScheduledCloudletList().add(maxCloudlet);
 			} else {
 				isNotScheduled = false;
 			}

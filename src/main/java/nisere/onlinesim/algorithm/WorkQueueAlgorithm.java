@@ -50,7 +50,7 @@ public class WorkQueueAlgorithm extends StaticAlgorithm {
 				cloudlet.setVmId(minvm.getId());
 				cloudlet.setVm(minvm);
 				cloudlet.setDelay(getWorkload(minvm.getId()));
-				getCloudletScheduledList().add(cloudlet);
+				getScheduledCloudletList().add(cloudlet);
 				double newWorkload = getWorkload(minvm.getId()) + cloudlet.getCloudletLength() 
 						/ minvm.getMips();
 				setWorkload(minvm.getId(), newWorkload);

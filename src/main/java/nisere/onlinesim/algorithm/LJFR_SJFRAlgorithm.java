@@ -153,6 +153,6 @@ public class LJFR_SJFRAlgorithm extends StaticAlgorithm {
 		cloudlet.setVm(vm);
 		cloudlet.setDelay(getWorkload(vm.getId()));
 		setWorkload(vm.getId(), workload);
-		getCloudletScheduledList().add(cloudlet);
+		getScheduledCloudletList().add(cloudlet);
 	}
 }

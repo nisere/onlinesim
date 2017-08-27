@@ -15,10 +15,10 @@ public class OnlineCloudlet extends Cloudlet {
 	protected static int lastId = 0;
 	
 	/**
-	 * The cloudlet deadline. The amount of time in seconds before the cloudlet
-	 * must be completed.
+	 * The cloudlet deadline. The amount of time in which this cloudlet
+	 * must be completed after arrivalTime
 	 */
-	private long deadline;
+	private double deadline;
 
 	/**
 	 * The delay from the start of the simulation when this cloudlet was
@@ -29,7 +29,7 @@ public class OnlineCloudlet extends Cloudlet {
 	/**
 	 * The arrival time of the cloudlet, in seconds.
 	 */
-	private long arrivalTime;
+	private double arrivalTime;
 	
 	/** The VM on which the cloudlet is scheduled to run */
 	private OnlineVm vm;
@@ -62,7 +62,7 @@ public class OnlineCloudlet extends Cloudlet {
 			final UtilizationModel utilizationModelCpu,
 			final UtilizationModel utilizationModelRam,
 			final UtilizationModel utilizationModelBw,
-			final long deadline, final long arrivalTime) {
+			final double deadline, final double arrivalTime) {
 		super(++lastId, cloudletLength, Math.max(1, pesNumber),
 				cloudletFileSize, cloudletOutputSize, utilizationModelCpu,
 				utilizationModelRam, utilizationModelBw);
@@ -71,11 +71,11 @@ public class OnlineCloudlet extends Cloudlet {
 		setArrivalTime(arrivalTime);
 	}
 
-	public long getDeadline() {
+	public double getDeadline() {
 		return deadline;
 	}
 
-	public void setDeadline(long deadline) {
+	public void setDeadline(double deadline) {
 		this.deadline = deadline;
 	}
 
@@ -87,11 +87,11 @@ public class OnlineCloudlet extends Cloudlet {
 		this.delay = delay;
 	}
 
-	public long getArrivalTime() {
+	public double getArrivalTime() {
 		return arrivalTime;
 	}
 
-	public void setArrivalTime(long arrivalTime) {
+	public void setArrivalTime(double arrivalTime) {
 		this.arrivalTime = arrivalTime;
 	}
 

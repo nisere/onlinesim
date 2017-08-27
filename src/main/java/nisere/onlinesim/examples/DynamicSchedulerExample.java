@@ -33,7 +33,7 @@ public class DynamicSchedulerExample extends Example {
 		// generate length [minLengthUnif;maxLengthUnif)
 		int minLengthUnif = 800000;
 		int maxLengthUnif = 900000;
-		int seed = 9;
+		int seed = 8;
 		
 		int schedulingInterval = 100;
 		// generate arrival time [minArrivalUnif;maxArrivalUnif)

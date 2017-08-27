@@ -76,7 +76,7 @@ public class SufferageAlgorithm extends StaticAlgorithm {
 				maxCloudlet.setVm(maxVm);
 				maxCloudlet.setDelay(getWorkload(maxVmId));
 				setWorkload(maxVmId,maxC);
-				getCloudletScheduledList().add(maxCloudlet);
+				getScheduledCloudletList().add(maxCloudlet);
 			} else {
 				isNotScheduled = false;
 			}

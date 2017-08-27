@@ -16,7 +16,7 @@ public class HybridScheduler extends Scheduler{
 	public HybridScheduler(List<? extends VmType> vmTypes, OnlineDatacenterBroker broker,
 			List<? extends OnlineVm> vmList, List<? extends OnlineCloudlet> cloudletList, 
 			SchedulingAlgorithm algorithm, int schedulingInterval,
-			SchedulingAlgorithm publicAlgorithm, 
+			SchedulingAlgorithm publicAlgorithm,
 			List<? extends OnlineVm> publicVmList, 
 			List<? extends VmType> publicVmTypes) throws Exception {
 		super(vmTypes, broker, vmList, cloudletList, algorithm, schedulingInterval);
@@ -28,8 +28,8 @@ public class HybridScheduler extends Scheduler{
 	public void prepareSimulation() {
 		scheduleCloudlets();
 		
-		List<? extends OnlineCloudlet> scheduledCloudlets = getAlgorithm().getCloudletScheduledList();
-		scheduledCloudlets.addAll(getPublicAlgorithm().getCloudletScheduledList());
+		List<? extends OnlineCloudlet> scheduledCloudlets = getAlgorithm().getScheduledCloudletList();
+		scheduledCloudlets.addAll(getPublicAlgorithm().getScheduledCloudletList());
 
 		getVmList().addAll(getPublicVmList());
 		
@@ -40,11 +40,22 @@ public class HybridScheduler extends Scheduler{
 	@Override
 	protected void runSchedulingAlgorithm(List<? extends OnlineCloudlet> cloudlets, double delay) {
 		
+		//update cloudlet queue: add to cloudletList scheduled cloudlets not executed yet to be rescheduled
+		List<OnlineCloudlet> removedList = new LinkedList<>();
+		for (OnlineCloudlet cloudlet : getAlgorithm().getScheduledCloudletList()) {
+			if (delay < cloudlet.getDelay()) {
+				getAlgorithm().unscheduleCloudlet(cloudlet, delay);
+				removedList.add(cloudlet);			
+			}
+		}
+		getAlgorithm().getScheduledCloudletList().removeAll(removedList);
+		((List<OnlineCloudlet>)cloudlets).addAll(removedList);
+
 		//run private algorithm
 		getAlgorithm().computeSchedule(cloudlets, getVmList(), getVmTypes(), delay);
 		
 		//run public algorithm
-		getPublicAlgorithm().computeSchedule(getAlgorithm().getCloudletUnscheduledList(), getPublicVmList(), getPublicVmTypes(), delay);
+		getPublicAlgorithm().computeSchedule(getAlgorithm().getUnscheduledCloudletList(), getPublicVmList(), getPublicVmTypes(), delay);
 	}
 
 	public SchedulingAlgorithm getPublicAlgorithm() {

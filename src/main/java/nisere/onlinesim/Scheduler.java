@@ -68,7 +68,7 @@ public class Scheduler {
 		sortCloudletsByArrivalTime();
 		scheduleCloudlets();
 		getBroker().submitVmList(getVmList());
-		getBroker().submitCloudletList(getAlgorithm().getCloudletScheduledList());
+		getBroker().submitCloudletList(getAlgorithm().getScheduledCloudletList());
 	}
 	
 	protected void sortCloudletsByArrivalTime() {

@@ -255,8 +255,8 @@ public class Example {
 		long fileSize = 0;
 		long outputSize = 0;
 		UtilizationModel utilizationModel = new UtilizationModelFull();
-		long deadline = Long.MAX_VALUE;
-		long delay = 0; // in seconds
+		double deadline = Double.POSITIVE_INFINITY;
+		double delay = 0; // in seconds
 
 		UniformDistr lengthUnif = new UniformDistr(minLengthUnif, maxLengthUnif, seed);
 		UniformDistr delayUnif = new UniformDistr(minArrivalUnif, maxArrivalUnif, seed);

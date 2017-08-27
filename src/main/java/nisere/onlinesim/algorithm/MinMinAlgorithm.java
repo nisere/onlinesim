@@ -53,7 +53,7 @@ public class MinMinAlgorithm extends StaticAlgorithm {
 				minCloudlet.setVm(minVm);
 				minCloudlet.setDelay(getWorkload(minVmId));
 				setWorkload(minVmId, min);
-				getCloudletScheduledList().add(minCloudlet);
+				getScheduledCloudletList().add(minCloudlet);
 			} else {
 				isNotScheduled = false;
 			}

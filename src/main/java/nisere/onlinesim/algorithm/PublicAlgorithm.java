@@ -17,8 +17,8 @@ public class PublicAlgorithm extends SchedulingAlgorithm {
 	
 	@Override
 	protected void initialize() {
-		setCloudletScheduledList(new LinkedList<OnlineCloudlet>());
-		setCloudletUnscheduledList(new LinkedList<OnlineCloudlet>());
+		setScheduledCloudletList(new LinkedList<OnlineCloudlet>());
+		setUnscheduledCloudletList(new LinkedList<OnlineCloudlet>());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -78,7 +78,7 @@ public class PublicAlgorithm extends SchedulingAlgorithm {
 					((List<OnlineVm>)vms).add(minVm);
 					assignCloudletToVm(cloudlet,minVm, time);
 				} else {
-					getCloudletUnscheduledList().add(cloudlet); //leave unscheduled
+					getUnscheduledCloudletList().add(cloudlet); //leave unscheduled
 				}
 			}
 		}
@@ -111,12 +111,13 @@ public class PublicAlgorithm extends SchedulingAlgorithm {
 	public void assignCloudletToVm(OnlineCloudlet cloudlet, OnlineVm vm, double delay) {
 		cloudlet.setDelay(delay + vm.getUptime());
 		cloudlet.setVmId(vm.getId());
+		cloudlet.setVm(vm);
 		
 		double execTime = cloudlet.getCloudletLength() / vm.getMips();
 		vm.setUptime(vm.getUptime() + execTime);
 		vm.setCost(Math.ceil(vm.getUptime()/vm.getVmType().getPriceInterval()) * vm.getVmType().getPrice());
 		
-		getCloudletScheduledList().add(cloudlet);
+		getScheduledCloudletList().add(cloudlet);
 	}
 
 	@Override

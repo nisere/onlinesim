@@ -19,13 +19,13 @@ public class DynamicScheduler extends Scheduler {
 		
 		//update cloudlet queue: add to cloudletList scheduled cloudlets not executed yet to be rescheduled
 		List<OnlineCloudlet> removedList = new LinkedList<>();
-		for (OnlineCloudlet cloudlet : getAlgorithm().getCloudletScheduledList()) {
+		for (OnlineCloudlet cloudlet : getAlgorithm().getScheduledCloudletList()) {
 			if (delay < cloudlet.getDelay()) {
 				getAlgorithm().unscheduleCloudlet(cloudlet, delay);
 				removedList.add(cloudlet);			
 			}
 		}
-		getAlgorithm().getCloudletScheduledList().removeAll(removedList);
+		getAlgorithm().getScheduledCloudletList().removeAll(removedList);
 		((List<OnlineCloudlet>)cloudlets).addAll(removedList);
 		
 		getAlgorithm().computeSchedule(cloudlets, getVmList(), getVmTypes(), delay);

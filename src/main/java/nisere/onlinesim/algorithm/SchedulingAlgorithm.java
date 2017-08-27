@@ -15,29 +15,29 @@ import nisere.onlinesim.VmType;
  */
 public abstract class SchedulingAlgorithm {
 	/** List of scheduled cloudlets. */
-	private List<? extends OnlineCloudlet> cloudletScheduledList;
+	private List<? extends OnlineCloudlet> scheduledCloudletList;
 	
 	/** Cost of the execution of cloudlets */
 	private double cost;
 	
 	/** List of unscheduled cloudlets */
-	private List<? extends OnlineCloudlet> cloudletUnscheduledList;
+	private List<? extends OnlineCloudlet> unscheduledCloudletList;
 
 	/**
 	 * Gets the list of scheduled cloudlets
 	 * @return the list of scheduled cloudlets casted to the real type
 	 */
 	@SuppressWarnings("unchecked")
-	public <T extends OnlineCloudlet> List<T> getCloudletScheduledList() {
-		return (List<T>)cloudletScheduledList;
+	public <T extends OnlineCloudlet> List<T> getScheduledCloudletList() {
+		return (List<T>)scheduledCloudletList;
 	}
 	
 	/**
 	 * Sets the list of scheduled cloudlets
-	 * @param cloudletScheduledList the list
+	 * @param scheduledCloudletList the list
 	 */
-	public void setCloudletScheduledList(List<? extends OnlineCloudlet> cloudletScheduledList) {
-		this.cloudletScheduledList = cloudletScheduledList;
+	public void setScheduledCloudletList(List<? extends OnlineCloudlet> cloudletScheduledList) {
+		this.scheduledCloudletList = cloudletScheduledList;
 	}
 
 	public double getCost() {
@@ -49,18 +49,18 @@ public abstract class SchedulingAlgorithm {
 	}
 
 	@SuppressWarnings("unchecked")
-	public  <T extends OnlineCloudlet> List<T>  getCloudletUnscheduledList() {
-		return (List<T>)cloudletUnscheduledList;
+	public  <T extends OnlineCloudlet> List<T>  getUnscheduledCloudletList() {
+		return (List<T>)unscheduledCloudletList;
 	}
 
-	public void setCloudletUnscheduledList(List<? extends OnlineCloudlet> cloudletUnscheduledList) {
-		this.cloudletUnscheduledList = cloudletUnscheduledList;
+	public void setUnscheduledCloudletList(List<? extends OnlineCloudlet> cloudletUnscheduledList) {
+		this.unscheduledCloudletList = cloudletUnscheduledList;
 	}
 
 	/** Override this to initialize CloudletScheduledList with your choice */
 	protected void initialize() {
-		setCloudletScheduledList(new LinkedList<OnlineCloudlet>());	
-		setCloudletUnscheduledList(new LinkedList<OnlineCloudlet>());
+		setScheduledCloudletList(new LinkedList<OnlineCloudlet>());	
+		setUnscheduledCloudletList(new LinkedList<OnlineCloudlet>());
 	}
 
 	public SchedulingAlgorithm() {
