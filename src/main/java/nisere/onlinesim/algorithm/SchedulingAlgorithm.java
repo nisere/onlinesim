@@ -79,6 +79,6 @@ public abstract class SchedulingAlgorithm {
 	public abstract void computeSchedule(List<? extends OnlineCloudlet> cloudletList,
 			List<? extends OnlineVm> vmList, List<? extends VmType> vmTypes, double time);
 
-	public abstract void removeScheduledCloudlet(OnlineCloudlet cloudlet, double delay);
+	public abstract void unscheduleCloudlet(OnlineCloudlet cloudlet, double delay);
 
 }

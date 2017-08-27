@@ -65,7 +65,7 @@ public class Scheduler {
 	 * This method takes the cloudlets, schedules them and sends them to the broker.
 	 */
 	public void prepareSimulation() {
-		//sortCloudletsByArrivalTime();
+		sortCloudletsByArrivalTime();
 		scheduleCloudlets();
 		getBroker().submitVmList(getVmList());
 		getBroker().submitCloudletList(getAlgorithm().getCloudletScheduledList());
@@ -83,7 +83,7 @@ public class Scheduler {
 //			}
 //		});
 		Collections.sort(getCloudletList(), (c1,c2) -> 
-			(c1.getDeadline() < c2.getDeadline() ? -1 : (c1.getDeadline() > c2.getDeadline() ? 1 : 0)));
+			(c1.getArrivalTime() < c2.getArrivalTime() ? -1 : (c1.getArrivalTime() > c2.getArrivalTime() ? 1 : 0)));
 	}
 
 	/**

@@ -120,7 +120,7 @@ public class PublicAlgorithm extends SchedulingAlgorithm {
 	}
 
 	@Override
-	public void removeScheduledCloudlet(OnlineCloudlet cloudlet, double delay) {
+	public void unscheduleCloudlet(OnlineCloudlet cloudlet, double delay) {
 		// TODO Auto-generated method stub
 		
 	}

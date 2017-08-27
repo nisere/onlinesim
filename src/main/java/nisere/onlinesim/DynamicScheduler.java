@@ -21,7 +21,7 @@ public class DynamicScheduler extends Scheduler {
 		List<OnlineCloudlet> removedList = new LinkedList<>();
 		for (OnlineCloudlet cloudlet : getAlgorithm().getCloudletScheduledList()) {
 			if (delay < cloudlet.getDelay()) {
-				getAlgorithm().removeScheduledCloudlet(cloudlet, delay);
+				getAlgorithm().unscheduleCloudlet(cloudlet, delay);
 				removedList.add(cloudlet);			
 			}
 		}

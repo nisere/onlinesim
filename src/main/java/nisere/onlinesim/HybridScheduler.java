@@ -14,8 +14,9 @@ public class HybridScheduler extends Scheduler{
 	private List<? extends VmType> publicVmTypes;
 	
 	public HybridScheduler(List<? extends VmType> vmTypes, OnlineDatacenterBroker broker,
-			List<? extends OnlineVm> vmList, List<? extends OnlineCloudlet> cloudletList, SchedulingAlgorithm algorithm,
-			SchedulingAlgorithm publicAlgorithm, int schedulingInterval,
+			List<? extends OnlineVm> vmList, List<? extends OnlineCloudlet> cloudletList, 
+			SchedulingAlgorithm algorithm, int schedulingInterval,
+			SchedulingAlgorithm publicAlgorithm, 
 			List<? extends OnlineVm> publicVmList, 
 			List<? extends VmType> publicVmTypes) throws Exception {
 		super(vmTypes, broker, vmList, cloudletList, algorithm, schedulingInterval);
@@ -39,17 +40,6 @@ public class HybridScheduler extends Scheduler{
 	@Override
 	protected void runSchedulingAlgorithm(List<? extends OnlineCloudlet> cloudlets, double delay) {
 		
-		//update cloudlet queue: add to cloudletList scheduled cloudlets not executed yet to be rescheduled
-		List<OnlineCloudlet> removedList = new LinkedList<>();
-		for (OnlineCloudlet cloudlet : getAlgorithm().getCloudletScheduledList()) {
-			if (delay < cloudlet.getDelay()) {
-				getAlgorithm().removeScheduledCloudlet(cloudlet, delay);
-				removedList.add(cloudlet);			
-			}
-		}
-		getAlgorithm().getCloudletScheduledList().removeAll(removedList);
-		((List<OnlineCloudlet>)cloudlets).addAll(removedList);
-
 		//run private algorithm
 		getAlgorithm().computeSchedule(cloudlets, getVmList(), getVmTypes(), delay);
 		

@@ -63,7 +63,7 @@ public abstract class StaticAlgorithm extends SchedulingAlgorithm {
 	}
 
 	@Override
-	public void removeScheduledCloudlet(OnlineCloudlet cloudlet, double delay) {
+	public void unscheduleCloudlet(OnlineCloudlet cloudlet, double delay) {
 		//OnlineVm vm = cloudlet.getVm();
 		//vm.setUptime(vm.getUptime() - cloudlet.getCloudletLength() / vm.getMips());
 		double work = getWorkload(cloudlet.getVmId());
