@@ -40,6 +40,10 @@ public class DynamicSchedulerExample extends Example {
 		int minArrivalUnif = 0;//0;
 		int maxArrivalUnif = 100;//500;
 		
+		// generate deadline [minDeadlineUnif;maxDeadlineUnif)
+		int minDeadlineUnif = 0;
+		int maxDeadlineUnif = 1000;
+		
 		Log.printLine("Starting simulation...");
 		try {
 			/* Initialize the simulation. */
@@ -70,7 +74,7 @@ public class DynamicSchedulerExample extends Example {
 			List<OnlineVm> vmList = populateVmList(vmTypes);
 
 			/* Create the Cloudlet list. */
-			List<OnlineCloudlet> cloudletList = createRandomCloudlets(broker.getId(),noCloudlets,minLengthUnif, maxLengthUnif, seed,minArrivalUnif, maxArrivalUnif);
+			List<OnlineCloudlet> cloudletList = createRandomCloudlets(broker.getId(),noCloudlets,minLengthUnif, maxLengthUnif, seed,minArrivalUnif, maxArrivalUnif, minDeadlineUnif, maxDeadlineUnif);
 			
 			/* Choose the scheduling algorithm. */
 			//SchedulingAlgorithm algorithm = new WorkQueueAlgorithm();

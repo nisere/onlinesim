@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.cloudbus.cloudsim.CloudletSchedulerSpaceShared;
 import org.cloudbus.cloudsim.Datacenter;
-import org.cloudbus.cloudsim.Host;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
 
@@ -14,38 +13,43 @@ import nisere.onlinesim.*;
 import nisere.onlinesim.algorithm.*;
 
 /**
- * Example class shows how to use this extension.
- * It creates a private cloud and a public cloud 
- * and sets their characteristics accordingly.
- * It shows how to create the cloudlets to simulate online arrival.
- * It sets the scheduler in order to use batch scheduling.
- * It shows how to chose from several scheduling algorithms.
+ * StaticAlgorithmsExample class is used to test static scheduling algorithms.
  * 
  * @author Alina Chera
  *
  */
-public class PublicCloudExample extends Example {
+public class DynamicHybridSchedulerExample extends Example {
 	
 	public static void main(String[] args) {
-		int noCloudlets = 8; // used to create random Cloudlets
+
+		// hi-hi 1-10 1-1000000
+		// lo-lo 1-2 100000-400000
+		// hi-lo 1-10 100000-400000
+		// lo-hi 1-2 1-1000000
+		
+		int noCloudlets = 100; // used to create random Cloudlets
+		int noVms = 5; // used to create random VMs
+		// generate [minMipsUnif;maxMipsUnif) and multiply with 1000 to get mips
+		int minMipsUnif = 1;
+		int maxMipsUnif = 3;
 		// generate length [minLengthUnif;maxLengthUnif)
-		int minLengthUnif = 600000;
+		int minLengthUnif = 800000;
 		int maxLengthUnif = 900000;
-		int seed = 1;
-		int schedulingInterval = 500; // in seconds
-		// generate arrival time [minArrivalUnif;maxArrivalUnif); [0;1) means all tasks now
-		int minArrivalUnif = 0;
-		int maxArrivalUnif = 200;
-		//price intervals for datacenters
-		int priceInterval1 = 400;
-		int priceInterval2 = 400;
-		// generate delay [minDelayUnif;maxDelayUnif)
-		int minDelayUnif = 0;
-		int maxDelayUnif = 500;
+		int seed = 10;
+		
+		int schedulingInterval = 100;
+		// generate arrival time [minArrivalUnif;maxArrivalUnif)
+		int minArrivalUnif = 0;//0;
+		int maxArrivalUnif = 100;//500;
+		
 		// generate deadline [minDeadlineUnif;maxDeadlineUnif)
 		int minDeadlineUnif = 0;
 		int maxDeadlineUnif = 1000;
-
+		
+		//price intervals for datacenters
+		int priceInterval1 = 400;
+		int priceInterval2 = 400;
+		
 		Log.printLine("Starting simulation...");
 		try {
 			/* Initialize the simulation. */
@@ -54,12 +58,39 @@ public class PublicCloudExample extends Example {
 			/* Create a broker object. */
 			OnlineDatacenterBroker broker = new OnlineDatacenterBroker("Broker");
 
-			/* Create the Cloudlet list. */
-			List<OnlineCloudlet> cloudletList = createRandomCloudlets(broker.getId(),noCloudlets,minLengthUnif, maxLengthUnif, seed,
-					minArrivalUnif, maxArrivalUnif, minDeadlineUnif, maxDeadlineUnif);
-			cloudletList.get(0).setDeadline(240);
-			cloudletList.get(noCloudlets - 1).setDeadline(300);
+			/* Choose the scheduling algorithm. */
+			//SchedulingAlgorithm algorithm = new WorkQueueAlgorithm();
+			//SchedulingAlgorithm algorithm = new SufferageAlgorithm();
+			//SchedulingAlgorithm algorithm = new MinMinAlgorithm();
+			//SchedulingAlgorithm algorithm = new MinMaxAlgorithm();
+			//SchedulingAlgorithm algorithm = new MaxMinAlgorithm();
+			//SchedulingAlgorithm algorithm = new LJFR_SJFRAlgorithm();
+			//SchedulingAlgorithm algorithm = new MinMinAlgorithm2();
+			SchedulingAlgorithm algorithm = new DeadlineAlgorithm();
 			
+			SchedulingAlgorithm publicAlgorithm = new PublicAlgorithm();
+			
+			
+			/* Create the Cloudlet list. */
+			List<OnlineCloudlet> cloudletList = createRandomCloudlets(broker.getId(),noCloudlets,minLengthUnif, maxLengthUnif, seed,minArrivalUnif, maxArrivalUnif, minDeadlineUnif, maxDeadlineUnif);
+			//cloudletList.get(0).setDeadline(500);
+			//cloudletList.get(noCloudlets - 1).setDeadline(500);
+			//cloudletList.get(noCloudlets - 1).setDeadline(900);
+			
+			/*------------------------------------------*/
+			
+			/* Create a private cloud. */
+			
+			/* Create random VM types. */
+			List<OnlineVm> vms0 = createRandomVms(broker.getId(), noVms, minMipsUnif, maxMipsUnif, seed, -1);
+			ArrayList<VmType> vmTypes0 = new ArrayList<>();
+			for (OnlineVm vm : vms0) {
+				vmTypes0.add(new VmType(vm, 1, 0.0, 1, "PRVrand"));
+			}
+
+			/* Create the datacenter. */
+			createDatacenter("Private", vmTypes0,true);
+
 			/*------------------------------------------*/
 			
 			/* Create a public cloud. */
@@ -75,7 +106,7 @@ public class PublicCloudExample extends Example {
 			vmTypes1.add(new VmType(vm3, noCloudlets, 2.5, priceInterval1, "PB1_2.5"));
 
 			/* Create the datacenter. */
-			Datacenter datacenter1 = createDatacenter("Public1", vmTypes1,false);
+			createDatacenter("Public1", vmTypes1,false);
 
 			/*------------------------------------------*/
 
@@ -91,36 +122,28 @@ public class PublicCloudExample extends Example {
 			vmTypes2.add(new VmType(vm5, noCloudlets, 2.0, priceInterval2, "PB2_2.0"));
 
 			/* Create the datacenter. */
-			Datacenter datacenter2 = createDatacenter("Public2", vmTypes2,false);
+			createDatacenter("Public2", vmTypes2,false);
 			
 			/*------------------------------------------*/
 			
 			/* Create the VM list. */
 			List<VmType> vmTypes = new ArrayList<>();
-			vmTypes.addAll(vmTypes1);
-			vmTypes.addAll(vmTypes2);
-			//List<OnlineVm> vmList = populateVmList(vmTypes);
-			List<OnlineVm> vmList = new ArrayList<>();
+			vmTypes.addAll(vmTypes0);
+			List<OnlineVm> vmList = populateVmList(vmTypes0);
+			List<VmType> publicVmTypes = new ArrayList<>();
+			publicVmTypes.addAll(vmTypes1);
+			publicVmTypes.addAll(vmTypes2);
+			List<OnlineVm> publicVmList = new ArrayList<>();
+			
 
-			/* Choose the scheduling algorithm. */
-			SchedulingAlgorithm algorithm = new PublicAlgorithm();
 			
 			/* Create a scheduler. */
-			Scheduler scheduler = new Scheduler(vmTypes,broker,vmList,cloudletList,algorithm,schedulingInterval);
+			Scheduler scheduler = new DynamicHybridScheduler(vmTypes,broker,vmList,cloudletList,algorithm, schedulingInterval, publicAlgorithm, publicVmList, publicVmTypes);
 
 			/* Make the necessary preparations before starting the simulation. 
 			 * This is the step where the algorithm is run. 
 			 */
 			scheduler.prepareSimulation();
-			
-			Log.printLine("dc1");
-			for (Host host : datacenter1.getHostList()) {
-				Log.printLine(host.getId());
-			}
-			Log.printLine("dc2");			
-			for (Host host : datacenter2.getHostList()) {
-				Log.printLine(host.getId());
-			}
 
 			/* Start simulation. */
 			CloudSim.startSimulation();

@@ -40,6 +40,10 @@ public class StaticAlgorithmsExample extends Example {
 		int minArrivalUnif = 0;//0;
 		int maxArrivalUnif = 1;//500;
 		
+		// generate deadline [minDeadlineUnif;maxDeadlineUnif)
+		int minDeadlineUnif = 0;
+		int maxDeadlineUnif = 1000;
+		
 		Log.printLine("Starting simulation...");
 		try {
 			/* Initialize the simulation. */
@@ -50,7 +54,7 @@ public class StaticAlgorithmsExample extends Example {
 
 
 			/* Create the Cloudlet list. */
-			List<OnlineCloudlet> cloudletList = createRandomCloudlets(broker.getId(),noCloudlets,minLengthUnif, maxLengthUnif, seed,minArrivalUnif, maxArrivalUnif);
+			List<OnlineCloudlet> cloudletList = createRandomCloudlets(broker.getId(),noCloudlets,minLengthUnif, maxLengthUnif, seed,minArrivalUnif, maxArrivalUnif, minDeadlineUnif, maxDeadlineUnif);
 			cloudletList.get(0).setDeadline(500);
 			//cloudletList.get(noCloudlets - 1).setDeadline(800);
 			cloudletList.get(noCloudlets - 1).setDeadline(900);

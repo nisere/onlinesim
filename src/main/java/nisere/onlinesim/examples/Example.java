@@ -54,6 +54,10 @@ public class Example {
 		// generate delay [minDelayUnif;maxDelayUnif)
 		int minDelayUnif = 0;
 		int maxDelayUnif = 500;
+		
+		// generate deadline [minDeadlineUnif;maxDeadlineUnif)
+		int minDeadlineUnif = 0;
+		int maxDeadlineUnif = 1000;
 
 		Log.printLine("Starting simulation...");
 		try {
@@ -121,7 +125,7 @@ public class Example {
 
 			/* Create the Cloudlet list. */
 			List<OnlineCloudlet> cloudletList = createRandomCloudlets(broker.getId(), noCloudlets, minLengthUnif,
-					maxLengthUnif, seed, minDelayUnif, maxDelayUnif);
+					maxLengthUnif, seed, minDelayUnif, maxDelayUnif, minDeadlineUnif, maxDeadlineUnif);
 
 			/* Choose the scheduling algorithm. */
 			SchedulingAlgorithm algorithm = new WorkQueueAlgorithm();
@@ -246,7 +250,7 @@ public class Example {
 	}
 
 	public static List<OnlineCloudlet> createRandomCloudlets(int brokerId, int noCloudlets, int minLengthUnif,
-			int maxLengthUnif, int seed, int minArrivalUnif, int maxArrivalUnif) {
+			int maxLengthUnif, int seed, int minArrivalUnif, int maxArrivalUnif, int minDeadlineUnif, int maxDeadlineUnif) {
 		List<OnlineCloudlet> cloudletList = new ArrayList<>();
 
 		// Cloudlet properties
@@ -260,11 +264,13 @@ public class Example {
 
 		UniformDistr lengthUnif = new UniformDistr(minLengthUnif, maxLengthUnif, seed);
 		UniformDistr delayUnif = new UniformDistr(minArrivalUnif, maxArrivalUnif, seed);
+		UniformDistr deadlineUnif = new UniformDistr(minDeadlineUnif, maxDeadlineUnif, seed);
 
 		// add noCloudlets*intervals cloudlets
 		for (int i = 0; i < noCloudlets; i++) {
-			int randomLength = (int) lengthUnif.sample();
-			delay += (long) delayUnif.sample();
+			int randomLength = (int)lengthUnif.sample();
+			delay += delayUnif.sample();
+			deadline = deadlineUnif.sample();
 			OnlineCloudlet cloudlet = new OnlineCloudlet(randomLength, pesNumber, fileSize, outputSize, utilizationModel,
 					utilizationModel, utilizationModel, deadline, delay);
 			cloudlet.setUserId(brokerId);
@@ -279,7 +285,7 @@ public class Example {
 		OnlineCloudlet cloudlet;
 		double flowtime = 0;
 		double cost = 0;
-		HashSet<OnlineVm> vmUsed = new HashSet<>();
+		int dead = 0;
 
 		String indent = "    ";
 		Log.printLine();
@@ -299,8 +305,8 @@ public class Example {
 			if (cloudlet.getStatus() == Cloudlet.SUCCESS) {
 				Log.print("SUCCESS");
 				
-				OnlineVm vm = VmList.getById(vmList, cloudlet.getVmId());
-				vm.setUptime(cloudlet.getFinishTime());
+				//OnlineVm vm = VmList.getById(vmList, cloudlet.getVmId());
+				//vm.setUptime(cloudlet.getFinishTime());
 
 
 				flowtime += cloudlet.getFinishTime();
@@ -312,22 +318,23 @@ public class Example {
 					counter[index] = counter[index - 1] + 1;
 				}
 				
-				vmUsed.add(vm);
-				
 				Log.printLine(indent + indent + cloudlet.getVmId()
-						+ indent + vm.getVmType().getName()
+						+ indent + cloudlet.getVm().getVmType().getName()
 						+ indent + indent + dft.format(cloudlet.getActualCPUTime())
 						+ indent + indent + dft.format(cloudlet.getExecStartTime())
 						+ indent + dft.format(cloudlet.getFinishTime())
-						+ indent + dft.format(((OnlineCloudlet)cloudlet).getArrivalTime())
-						+ indent + indent + dft.format(((OnlineCloudlet)cloudlet).getDelay())
-						+ indent + indent + dft.format(vm.getCost())
+						+ indent + dft.format(cloudlet.getArrivalTime())
+						+ indent + indent + dft.format(cloudlet.getDelay())
+						+ indent + indent + dft.format(cloudlet.getVm().getCost())
 						+ indent + indent + dft.format(cloudlet.getDeadline()));
 
+				if (cloudlet.getFinishTime() > cloudlet.getArrivalTime() + cloudlet.getDeadline()) {
+					dead++;
+				}
 			}
 		}
 		
-		for (OnlineVm vm : vmUsed) {
+		for (OnlineVm vm : vmList) {
 			cost += vm.getCost();
 		}
 
@@ -339,6 +346,7 @@ public class Example {
 		}
 		Log.printLine();
 		Log.printLine("Cost: " + cost);
+		Log.printLine("Deadlines not met: " + dead);
 	}
 
 }

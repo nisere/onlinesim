@@ -1,6 +1,5 @@
 package nisere.onlinesim;
 
-import java.lang.reflect.Constructor;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -8,13 +7,13 @@ import org.cloudbus.cloudsim.Datacenter;
 
 import nisere.onlinesim.algorithm.SchedulingAlgorithm;
 
-public class HybridScheduler extends Scheduler{
+public class DynamicHybridScheduler extends Scheduler{
 	
 	private SchedulingAlgorithm publicAlgorithm;
 	private List<? extends OnlineVm> publicVmList;
 	private List<? extends VmType> publicVmTypes;
 	
-	public HybridScheduler(List<? extends VmType> vmTypes, OnlineDatacenterBroker broker,
+	public DynamicHybridScheduler(List<? extends VmType> vmTypes, OnlineDatacenterBroker broker,
 			List<? extends OnlineVm> vmList, List<? extends OnlineCloudlet> cloudletList, 
 			SchedulingAlgorithm algorithm, int schedulingInterval,
 			SchedulingAlgorithm publicAlgorithm,
@@ -40,6 +39,17 @@ public class HybridScheduler extends Scheduler{
 	
 	@Override
 	protected void runSchedulingAlgorithm(List<? extends OnlineCloudlet> cloudlets, double delay) {
+		
+		//update cloudlet queue: add to cloudletList scheduled cloudlets not executed yet to be rescheduled
+		List<OnlineCloudlet> removedList = new LinkedList<>();
+		for (OnlineCloudlet cloudlet : getAlgorithm().getScheduledCloudletList()) {
+			if (delay < cloudlet.getDelay()) {
+				getAlgorithm().unscheduleCloudlet(cloudlet, delay);
+				removedList.add(cloudlet);			
+			}
+		}
+		getAlgorithm().getScheduledCloudletList().removeAll(removedList);
+		((List<OnlineCloudlet>)cloudlets).addAll(removedList);
 
 		//run private algorithm
 		getAlgorithm().computeSchedule(cloudlets, getVmList(), getVmTypes(), delay);

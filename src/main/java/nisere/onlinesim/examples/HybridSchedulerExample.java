@@ -27,20 +27,24 @@ public class HybridSchedulerExample extends Example {
 		// hi-lo 1-10 100000-400000
 		// lo-hi 1-2 1-1000000
 		
-		int noCloudlets = 10; // used to create random Cloudlets
-		int noVms = 4; // used to create random VMs
+		int noCloudlets = 100; // used to create random Cloudlets
+		int noVms = 5; // used to create random VMs
 		// generate [minMipsUnif;maxMipsUnif) and multiply with 1000 to get mips
 		int minMipsUnif = 1;
 		int maxMipsUnif = 3;
 		// generate length [minLengthUnif;maxLengthUnif)
 		int minLengthUnif = 800000;
 		int maxLengthUnif = 900000;
-		int seed = 8;
+		int seed = 10;
 		
 		int schedulingInterval = 100;
 		// generate arrival time [minArrivalUnif;maxArrivalUnif)
 		int minArrivalUnif = 0;//0;
-		int maxArrivalUnif = 1;//500;
+		int maxArrivalUnif = 100;//500;
+		
+		// generate deadline [minDeadlineUnif;maxDeadlineUnif)
+		int minDeadlineUnif = 0;
+		int maxDeadlineUnif = 1000;
 		
 		//price intervals for datacenters
 		int priceInterval1 = 400;
@@ -54,11 +58,23 @@ public class HybridSchedulerExample extends Example {
 			/* Create a broker object. */
 			OnlineDatacenterBroker broker = new OnlineDatacenterBroker("Broker");
 
-
+			/* Choose the scheduling algorithm. */
+			//SchedulingAlgorithm algorithm = new WorkQueueAlgorithm();
+			//SchedulingAlgorithm algorithm = new SufferageAlgorithm();
+			//SchedulingAlgorithm algorithm = new MinMinAlgorithm();
+			//SchedulingAlgorithm algorithm = new MinMaxAlgorithm();
+			//SchedulingAlgorithm algorithm = new MaxMinAlgorithm();
+			//SchedulingAlgorithm algorithm = new LJFR_SJFRAlgorithm();
+			//SchedulingAlgorithm algorithm = new MinMinAlgorithm2();
+			SchedulingAlgorithm algorithm = new DeadlineAlgorithm();
+			
+			SchedulingAlgorithm publicAlgorithm = new PublicAlgorithm();
+			
+			
 			/* Create the Cloudlet list. */
-			List<OnlineCloudlet> cloudletList = createRandomCloudlets(broker.getId(),noCloudlets,minLengthUnif, maxLengthUnif, seed,minArrivalUnif, maxArrivalUnif);
-			cloudletList.get(0).setDeadline(500);
-			cloudletList.get(noCloudlets - 1).setDeadline(800);
+			List<OnlineCloudlet> cloudletList = createRandomCloudlets(broker.getId(),noCloudlets,minLengthUnif, maxLengthUnif, seed,minArrivalUnif, maxArrivalUnif, minDeadlineUnif, maxDeadlineUnif);
+			//cloudletList.get(0).setDeadline(500);
+			//cloudletList.get(noCloudlets - 1).setDeadline(500);
 			//cloudletList.get(noCloudlets - 1).setDeadline(900);
 			
 			/*------------------------------------------*/
@@ -119,17 +135,7 @@ public class HybridSchedulerExample extends Example {
 			publicVmTypes.addAll(vmTypes2);
 			List<OnlineVm> publicVmList = new ArrayList<>();
 			
-			/* Choose the scheduling algorithm. */
-			//SchedulingAlgorithm algorithm = new WorkQueueAlgorithm();
-			//SchedulingAlgorithm algorithm = new SufferageAlgorithm();
-			//SchedulingAlgorithm algorithm = new MinMinAlgorithm();
-			//SchedulingAlgorithm algorithm = new MinMaxAlgorithm();
-			//SchedulingAlgorithm algorithm = new MaxMinAlgorithm();
-			//SchedulingAlgorithm algorithm = new LJFR_SJFRAlgorithm();
-			//SchedulingAlgorithm algorithm = new MinMinAlgorithm2();
-			SchedulingAlgorithm algorithm = new DeadlineAlgorithm();
-			
-			SchedulingAlgorithm publicAlgorithm = new PublicAlgorithm();
+
 			
 			/* Create a scheduler. */
 			Scheduler scheduler = new HybridScheduler(vmTypes,broker,vmList,cloudletList,algorithm, schedulingInterval, publicAlgorithm, publicVmList, publicVmTypes);

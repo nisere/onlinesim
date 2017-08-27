@@ -59,7 +59,14 @@ public abstract class SchedulingAlgorithm {
 
 	/** Override this to initialize CloudletScheduledList with your choice */
 	protected void initialize() {
+		initScheduledCloudletList();	
+		initUnscheduledCloudletList();
+	}
+	
+	public void initScheduledCloudletList() {
 		setScheduledCloudletList(new LinkedList<OnlineCloudlet>());	
+	}
+	public void initUnscheduledCloudletList() {
 		setUnscheduledCloudletList(new LinkedList<OnlineCloudlet>());
 	}
 
