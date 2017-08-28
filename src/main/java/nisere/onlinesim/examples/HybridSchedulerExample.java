@@ -5,12 +5,18 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.cloudbus.cloudsim.CloudletSchedulerSpaceShared;
-import org.cloudbus.cloudsim.Datacenter;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
 
-import nisere.onlinesim.*;
-import nisere.onlinesim.algorithm.*;
+import nisere.onlinesim.HybridScheduler;
+import nisere.onlinesim.OnlineCloudlet;
+import nisere.onlinesim.OnlineDatacenterBroker;
+import nisere.onlinesim.OnlineVm;
+import nisere.onlinesim.Scheduler;
+import nisere.onlinesim.VmType;
+import nisere.onlinesim.algorithm.MixDeadlineAlgorithm;
+import nisere.onlinesim.algorithm.PublicAlgorithm;
+import nisere.onlinesim.algorithm.SchedulingAlgorithm;
 
 /**
  * StaticAlgorithmsExample class is used to test static scheduling algorithms.
@@ -31,20 +37,20 @@ public class HybridSchedulerExample extends Example {
 		int noVms = 10; // used to create random VMs
 		// generate [minMipsUnif;maxMipsUnif) and multiply with 1000 to get mips
 		int minMipsUnif = 1;
-		int maxMipsUnif = 3;
+		int maxMipsUnif = 4;
 		// generate length [minLengthUnif;maxLengthUnif)
-		int minLengthUnif = 800000;
+		int minLengthUnif = 500000;
 		int maxLengthUnif = 900000;
-		int seed = 1;
+		int seed = 5;
 		
 		int schedulingInterval = 100;
-		// generate arrival time [minArrivalUnif;maxArrivalUnif)
+		// generate arrival time [minArrivalUnif;maxArrivalUnif) - time passed since the last arrival
 		int minArrivalUnif = 0;//0;
 		int maxArrivalUnif = 100;//500;
 		
 		// generate deadline [minDeadlineUnif;maxDeadlineUnif)
-		int minDeadlineUnif = 0;
-		int maxDeadlineUnif = 1000;
+		int minDeadlineUnif = 300;
+		int maxDeadlineUnif = 600;
 		
 		//price intervals for datacenters
 		int priceInterval1 = 400;
@@ -66,7 +72,11 @@ public class HybridSchedulerExample extends Example {
 			//SchedulingAlgorithm algorithm = new MaxMinAlgorithm();
 			//SchedulingAlgorithm algorithm = new LJFR_SJFRAlgorithm();
 			//SchedulingAlgorithm algorithm = new MinMinAlgorithm2();
-			SchedulingAlgorithm algorithm = new DeadlineAlgorithm();
+			//SchedulingAlgorithm algorithm = new DeadlineAlgorithm();
+			
+			MixDeadlineAlgorithm algorithm = new MixDeadlineAlgorithm();
+			algorithm.setDeadlineDelta(1.0001);
+			algorithm.setLengthDelta(1.7);
 			
 			SchedulingAlgorithm publicAlgorithm = new PublicAlgorithm();
 			

@@ -5,12 +5,18 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.cloudbus.cloudsim.CloudletSchedulerSpaceShared;
-import org.cloudbus.cloudsim.Datacenter;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
 
-import nisere.onlinesim.*;
-import nisere.onlinesim.algorithm.*;
+import nisere.onlinesim.DynamicHybridScheduler;
+import nisere.onlinesim.OnlineCloudlet;
+import nisere.onlinesim.OnlineDatacenterBroker;
+import nisere.onlinesim.OnlineVm;
+import nisere.onlinesim.Scheduler;
+import nisere.onlinesim.VmType;
+import nisere.onlinesim.algorithm.MaxDeadlineAlgorithm;
+import nisere.onlinesim.algorithm.PublicAlgorithm;
+import nisere.onlinesim.algorithm.SchedulingAlgorithm;
 
 /**
  * StaticAlgorithmsExample class is used to test static scheduling algorithms.
@@ -43,7 +49,7 @@ public class DynamicHybridSchedulerExample extends Example {
 		int maxArrivalUnif = 100;//500;
 		
 		// generate deadline [minDeadlineUnif;maxDeadlineUnif)
-		int minDeadlineUnif = 0;
+		int minDeadlineUnif = 500;
 		int maxDeadlineUnif = 1000;
 		
 		//price intervals for datacenters
@@ -66,7 +72,7 @@ public class DynamicHybridSchedulerExample extends Example {
 			//SchedulingAlgorithm algorithm = new MaxMinAlgorithm();
 			//SchedulingAlgorithm algorithm = new LJFR_SJFRAlgorithm();
 			//SchedulingAlgorithm algorithm = new MinMinAlgorithm2();
-			SchedulingAlgorithm algorithm = new DeadlineAlgorithm();
+			SchedulingAlgorithm algorithm = new MaxDeadlineAlgorithm();
 			
 			SchedulingAlgorithm publicAlgorithm = new PublicAlgorithm();
 			

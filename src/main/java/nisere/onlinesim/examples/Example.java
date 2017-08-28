@@ -3,7 +3,6 @@ package nisere.onlinesim.examples;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,13 +18,19 @@ import org.cloudbus.cloudsim.UtilizationModelFull;
 import org.cloudbus.cloudsim.VmSchedulerSpaceShared;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.distributions.UniformDistr;
-import org.cloudbus.cloudsim.lists.VmList;
 import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
 
-import nisere.onlinesim.*;
-import nisere.onlinesim.algorithm.*;
+import nisere.onlinesim.OnlineCloudlet;
+import nisere.onlinesim.OnlineDatacenterBroker;
+import nisere.onlinesim.OnlineHost;
+import nisere.onlinesim.OnlineVm;
+import nisere.onlinesim.OnlineVmAllocationPolicySimple;
+import nisere.onlinesim.Scheduler;
+import nisere.onlinesim.VmType;
+import nisere.onlinesim.algorithm.SchedulingAlgorithm;
+import nisere.onlinesim.algorithm.WorkQueueAlgorithm;
 
 /**
  * Example class shows how to use this extension.
@@ -263,8 +268,8 @@ public class Example {
 		double delay = 0; // in seconds
 
 		UniformDistr lengthUnif = new UniformDistr(minLengthUnif, maxLengthUnif, seed);
-		UniformDistr delayUnif = new UniformDistr(minArrivalUnif, maxArrivalUnif, seed);
-		UniformDistr deadlineUnif = new UniformDistr(minDeadlineUnif, maxDeadlineUnif, seed);
+		UniformDistr delayUnif = new UniformDistr(minArrivalUnif, maxArrivalUnif, seed+1);
+		UniformDistr deadlineUnif = new UniformDistr(minDeadlineUnif, maxDeadlineUnif, seed+2);
 
 		// add noCloudlets*intervals cloudlets
 		for (int i = 0; i < noCloudlets; i++) {

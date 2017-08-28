@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import nisere.onlinesim.OnlineCloudlet;
-import nisere.onlinesim.OnlineVm;
 
 public abstract class StaticAlgorithm extends SchedulingAlgorithm {
 

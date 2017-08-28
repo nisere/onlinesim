@@ -3,8 +3,6 @@ package nisere.onlinesim;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.cloudbus.cloudsim.Datacenter;
-
 import nisere.onlinesim.algorithm.SchedulingAlgorithm;
 
 public class DynamicHybridScheduler extends Scheduler{
