@@ -332,7 +332,7 @@ public class Example {
 						+ indent + indent + dft.format(cloudlet.getVm().getCost())
 						+ indent + indent + dft.format(cloudlet.getArrivalTime() + cloudlet.getDeadline()));
 
-				if (cloudlet.getFinishTime() > cloudlet.getArrivalTime() + cloudlet.getDeadline()) {
+				if (cloudlet.getActualCPUTime() > cloudlet.getArrivalTime() + cloudlet.getDeadline()) {
 					dead++;
 				}
 			}

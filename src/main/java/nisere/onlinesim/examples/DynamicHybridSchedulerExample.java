@@ -26,15 +26,15 @@ public class DynamicHybridSchedulerExample extends Example {
 		// hi-lo 1-10 100000-400000
 		// lo-hi 1-2 1-1000000
 		
-		int noCloudlets = 1000; // used to create random Cloudlets
-		int noVms = 10; // used to create random VMs
+		int noCloudlets = 1200; // used to create random Cloudlets
+		int noVms = 16; // used to create random VMs
 		// generate [minMipsUnif;maxMipsUnif) and multiply with 1000 to get mips
 		int minMipsUnif = 1;
-		int maxMipsUnif = 4;
+		int maxMipsUnif = 2;
 		// generate length [minLengthUnif;maxLengthUnif)
-		int minLengthUnif = 500000;
-		int maxLengthUnif = 900000;
-		int seed = 1;
+		int minLengthUnif = 100000;
+		int maxLengthUnif = 4000000;
+		int seed = 10;
 		
 		int schedulingInterval = 100;
 		// generate arrival time [minArrivalUnif;maxArrivalUnif)
@@ -42,12 +42,12 @@ public class DynamicHybridSchedulerExample extends Example {
 		int maxArrivalUnif = 100;//500;
 		
 		// generate deadline [minDeadlineUnif;maxDeadlineUnif)
-		int minDeadlineUnif = 300;
-		int maxDeadlineUnif = 600;
+		int minDeadlineUnif = 1000;
+		int maxDeadlineUnif = 4000;
 		
 		//price intervals for datacenters
-		int priceInterval1 = 400;
-		int priceInterval2 = 400;
+		int priceInterval1 = 500;
+		int priceInterval2 = 500;
 		
 		double computationTime = 10;
 		
@@ -68,6 +68,10 @@ public class DynamicHybridSchedulerExample extends Example {
 			//SchedulingAlgorithm algorithm = new LJFR_SJFRAlgorithm();
 			//SchedulingAlgorithm algorithm = new MinMinAlgorithm2();
 			SchedulingAlgorithm algorithm = new DeadlineAlgorithm();
+
+//			MixDeadlineAlgorithm algorithm = new MixDeadlineAlgorithm();
+//			algorithm.setDeadlineDelta(1.1);
+//			algorithm.setLengthDelta(1.7);
 			
 			SchedulingAlgorithm publicAlgorithm = new PublicAlgorithm();
 			
