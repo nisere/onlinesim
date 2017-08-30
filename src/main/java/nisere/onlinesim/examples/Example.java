@@ -22,15 +22,8 @@ import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
 
-import nisere.onlinesim.OnlineCloudlet;
-import nisere.onlinesim.OnlineDatacenterBroker;
-import nisere.onlinesim.OnlineHost;
-import nisere.onlinesim.OnlineVm;
-import nisere.onlinesim.OnlineVmAllocationPolicySimple;
-import nisere.onlinesim.Scheduler;
-import nisere.onlinesim.VmType;
-import nisere.onlinesim.algorithm.SchedulingAlgorithm;
-import nisere.onlinesim.algorithm.WorkQueueAlgorithm;
+import nisere.onlinesim.*;
+import nisere.onlinesim.algorithm.*;
 
 /**
  * Example class shows how to use this extension.
@@ -359,6 +352,7 @@ public class Example {
 		Log.printLine("Cost: " + cost);
 		Log.printLine("Deadlines not met: " + dead);
 		Log.printLine("Unscheduled cloudlets: " + scheduler.getAlgorithm().getUnscheduledCloudletList().size());
+		Log.printLine("Scheduled cloudlets: " + scheduler.getAlgorithm().getScheduledCloudletList().size());
 	}
 
 }

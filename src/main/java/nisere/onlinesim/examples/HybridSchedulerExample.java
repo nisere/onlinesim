@@ -8,15 +8,8 @@ import org.cloudbus.cloudsim.CloudletSchedulerSpaceShared;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
 
-import nisere.onlinesim.HybridScheduler;
-import nisere.onlinesim.OnlineCloudlet;
-import nisere.onlinesim.OnlineDatacenterBroker;
-import nisere.onlinesim.OnlineVm;
-import nisere.onlinesim.Scheduler;
-import nisere.onlinesim.VmType;
-import nisere.onlinesim.algorithm.MixDeadlineAlgorithm;
-import nisere.onlinesim.algorithm.PublicAlgorithm;
-import nisere.onlinesim.algorithm.SchedulingAlgorithm;
+import nisere.onlinesim.*;
+import nisere.onlinesim.algorithm.*;
 
 /**
  * StaticAlgorithmsExample class is used to test static scheduling algorithms.
@@ -72,11 +65,11 @@ public class HybridSchedulerExample extends Example {
 			//SchedulingAlgorithm algorithm = new MaxMinAlgorithm();
 			//SchedulingAlgorithm algorithm = new LJFR_SJFRAlgorithm();
 			//SchedulingAlgorithm algorithm = new MinMinAlgorithm2();
-			//SchedulingAlgorithm algorithm = new DeadlineAlgorithm();
+			SchedulingAlgorithm algorithm = new DeadlineAlgorithm();
 			
-			MixDeadlineAlgorithm algorithm = new MixDeadlineAlgorithm();
-			algorithm.setDeadlineDelta(1.0001);
-			algorithm.setLengthDelta(1.7);
+//			MixDeadlineAlgorithm algorithm = new MixDeadlineAlgorithm();
+//			algorithm.setDeadlineDelta(1.0001);
+//			algorithm.setLengthDelta(1.7);
 			
 			SchedulingAlgorithm publicAlgorithm = new PublicAlgorithm();
 			

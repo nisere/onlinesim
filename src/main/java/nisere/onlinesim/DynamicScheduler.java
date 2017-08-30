@@ -6,6 +6,8 @@ import java.util.List;
 import nisere.onlinesim.algorithm.SchedulingAlgorithm;
 
 public class DynamicScheduler extends Scheduler {
+	/** The estimated time required for scheduling */
+	private double computationTime ;
 
 	public DynamicScheduler(List<? extends VmType> vmTypes, OnlineDatacenterBroker broker,
 			List<? extends OnlineVm> vmList, List<? extends OnlineCloudlet> cloudletList, SchedulingAlgorithm algorithm,
@@ -20,7 +22,7 @@ public class DynamicScheduler extends Scheduler {
 		//update cloudlet queue: add to cloudletList scheduled cloudlets not executed yet to be rescheduled
 		List<OnlineCloudlet> removedList = new LinkedList<>();
 		for (OnlineCloudlet cloudlet : getAlgorithm().getScheduledCloudletList()) {
-			if (delay < cloudlet.getDelay()) {
+			if (delay + getComputationTime() < cloudlet.getDelay()) {
 				getAlgorithm().unscheduleCloudlet(cloudlet, delay);
 				removedList.add(cloudlet);			
 			}
@@ -29,6 +31,14 @@ public class DynamicScheduler extends Scheduler {
 		((List<OnlineCloudlet>)cloudlets).addAll(removedList);
 		
 		getAlgorithm().computeSchedule(cloudlets, getVmList(), getVmTypes(), delay);
+	}
+
+	public double getComputationTime() {
+		return computationTime;
+	}
+
+	public void setComputationTime(double computationTime) {
+		this.computationTime = computationTime;
 	}
 
 }

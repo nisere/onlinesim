@@ -14,8 +14,8 @@ public class OnlineVm extends Vm {
 	protected static int lastId = 0;
 
 	/**
-	 * The datacenter id where this VM is assigned.
-	 * A negative value means no assignment.
+	 * The id of the datacenter where this VM is allocated.
+	 * A negative value means no allocation.
 	 */
 	private int datacenterId;
 	

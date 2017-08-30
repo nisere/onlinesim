@@ -11,6 +11,9 @@ public class DynamicHybridScheduler extends Scheduler{
 	private List<? extends OnlineVm> publicVmList;
 	private List<? extends VmType> publicVmTypes;
 	
+	/** The estimated time required for scheduling */
+	private double computationTime ;
+	
 	public DynamicHybridScheduler(List<? extends VmType> vmTypes, OnlineDatacenterBroker broker,
 			List<? extends OnlineVm> vmList, List<? extends OnlineCloudlet> cloudletList, 
 			SchedulingAlgorithm algorithm, int schedulingInterval,
@@ -43,7 +46,7 @@ public class DynamicHybridScheduler extends Scheduler{
 		//update cloudlet queue: add to cloudletList scheduled cloudlets not executed yet to be rescheduled
 		List<OnlineCloudlet> removedList = new LinkedList<>();
 		for (OnlineCloudlet cloudlet : getAlgorithm().getScheduledCloudletList()) {
-			if (delay < cloudlet.getDelay()) {
+			if (delay + getComputationTime() < cloudlet.getDelay()) {
 				getAlgorithm().unscheduleCloudlet(cloudlet, delay);
 				removedList.add(cloudlet);			
 			}
@@ -83,6 +86,14 @@ public class DynamicHybridScheduler extends Scheduler{
 
 	public void setPublicVmTypes(List<? extends VmType> publicVmTypes) {
 		this.publicVmTypes = publicVmTypes;
+	}
+
+	public double getComputationTime() {
+		return computationTime;
+	}
+
+	public void setComputationTime(double computationTime) {
+		this.computationTime = computationTime;
 	}
 
 }

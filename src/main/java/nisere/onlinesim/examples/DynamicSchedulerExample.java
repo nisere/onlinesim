@@ -44,6 +44,8 @@ public class DynamicSchedulerExample extends Example {
 		int minDeadlineUnif = 0;
 		int maxDeadlineUnif = 1000;
 		
+		double computationTime = 10;
+		
 		Log.printLine("Starting simulation...");
 		try {
 			/* Initialize the simulation. */
@@ -85,8 +87,9 @@ public class DynamicSchedulerExample extends Example {
 			SchedulingAlgorithm algorithm = new LJFR_SJFRAlgorithm();
 			
 			/* Create a scheduler. */
-			Scheduler scheduler = new DynamicScheduler(vmTypes,broker,vmList,cloudletList,algorithm,schedulingInterval);
-
+			DynamicScheduler scheduler = new DynamicScheduler(vmTypes,broker,vmList,cloudletList,algorithm,schedulingInterval);
+			scheduler.setComputationTime(computationTime);
+			
 			/* Make the necessary preparations before starting the simulation. 
 			 * This is the step where the algorithm is run. 
 			 */

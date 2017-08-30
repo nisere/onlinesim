@@ -8,15 +8,8 @@ import org.cloudbus.cloudsim.CloudletSchedulerSpaceShared;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
 
-import nisere.onlinesim.DynamicHybridScheduler;
-import nisere.onlinesim.OnlineCloudlet;
-import nisere.onlinesim.OnlineDatacenterBroker;
-import nisere.onlinesim.OnlineVm;
-import nisere.onlinesim.Scheduler;
-import nisere.onlinesim.VmType;
-import nisere.onlinesim.algorithm.MaxDeadlineAlgorithm;
-import nisere.onlinesim.algorithm.PublicAlgorithm;
-import nisere.onlinesim.algorithm.SchedulingAlgorithm;
+import nisere.onlinesim.*;
+import nisere.onlinesim.algorithm.*;
 
 /**
  * StaticAlgorithmsExample class is used to test static scheduling algorithms.
@@ -37,9 +30,9 @@ public class DynamicHybridSchedulerExample extends Example {
 		int noVms = 10; // used to create random VMs
 		// generate [minMipsUnif;maxMipsUnif) and multiply with 1000 to get mips
 		int minMipsUnif = 1;
-		int maxMipsUnif = 3;
+		int maxMipsUnif = 4;
 		// generate length [minLengthUnif;maxLengthUnif)
-		int minLengthUnif = 800000;
+		int minLengthUnif = 500000;
 		int maxLengthUnif = 900000;
 		int seed = 1;
 		
@@ -49,12 +42,14 @@ public class DynamicHybridSchedulerExample extends Example {
 		int maxArrivalUnif = 100;//500;
 		
 		// generate deadline [minDeadlineUnif;maxDeadlineUnif)
-		int minDeadlineUnif = 500;
-		int maxDeadlineUnif = 1000;
+		int minDeadlineUnif = 300;
+		int maxDeadlineUnif = 600;
 		
 		//price intervals for datacenters
 		int priceInterval1 = 400;
 		int priceInterval2 = 400;
+		
+		double computationTime = 10;
 		
 		Log.printLine("Starting simulation...");
 		try {
@@ -72,7 +67,7 @@ public class DynamicHybridSchedulerExample extends Example {
 			//SchedulingAlgorithm algorithm = new MaxMinAlgorithm();
 			//SchedulingAlgorithm algorithm = new LJFR_SJFRAlgorithm();
 			//SchedulingAlgorithm algorithm = new MinMinAlgorithm2();
-			SchedulingAlgorithm algorithm = new MaxDeadlineAlgorithm();
+			SchedulingAlgorithm algorithm = new DeadlineAlgorithm();
 			
 			SchedulingAlgorithm publicAlgorithm = new PublicAlgorithm();
 			
@@ -144,8 +139,9 @@ public class DynamicHybridSchedulerExample extends Example {
 
 			
 			/* Create a scheduler. */
-			Scheduler scheduler = new DynamicHybridScheduler(vmTypes,broker,vmList,cloudletList,algorithm, schedulingInterval, publicAlgorithm, publicVmList, publicVmTypes);
-
+			DynamicHybridScheduler scheduler = new DynamicHybridScheduler(vmTypes,broker,vmList,cloudletList,algorithm, schedulingInterval, publicAlgorithm, publicVmList, publicVmTypes);
+			scheduler.setComputationTime(computationTime);
+			
 			/* Make the necessary preparations before starting the simulation. 
 			 * This is the step where the algorithm is run. 
 			 */
