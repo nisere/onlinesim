@@ -27,9 +27,9 @@ public class StaticAlgorithmsExample extends Example {
 		
 		int noCloudlets = 10; // used to create random Cloudlets
 		int noVms = 4; // used to create random VMs
-		// generate [minMipsUnif;maxMipsUnif) and multiply with 1000 to get mips
-		int minMipsUnif = 1;
-		int maxMipsUnif = 3;
+		// generate [minMipsUnif;maxMipsUnif)
+		int minMipsUnif = 1000;
+		int maxMipsUnif = 3000;
 		// generate length [minLengthUnif;maxLengthUnif)
 		int minLengthUnif = 800000;
 		int maxLengthUnif = 900000;

@@ -41,9 +41,9 @@ public class Example {
 	public static void main(String[] args) {
 		int noCloudlets = 4; // used to create random Cloudlets
 		int noVms = 2; // used to create random VMs
-		// generate [minMipsUnif;maxMipsUnif) and multiply with 1000 to get mips
-		int minMipsUnif = 1;
-		int maxMipsUnif = 2;
+		// generate [minMipsUnif;maxMipsUnif)
+		int minMipsUnif = 1000;
+		int maxMipsUnif = 2000;
 		// generate length [minLengthUnif;maxLengthUnif)
 		int minLengthUnif = 100000;
 		int maxLengthUnif = 200000;
@@ -229,7 +229,6 @@ public class Example {
 		List<OnlineVm> vmlist = new ArrayList<>();
 
 		// VM description
-		int mips = 1000;
 		long size = 10000; // image size (MB)
 		int ram = 1024; // vm memory (MB)
 		long bw = 1000;
@@ -240,8 +239,8 @@ public class Example {
 
 		// add noVms VMs
 		for (int i = 0; i < noVms; i++) {
-			int mult = (int) mipsUnif.sample();
-			vmlist.add(new OnlineVm(brokerId, mips * mult, pesNumber, ram, bw, size, vmm,
+			int mips = (int) mipsUnif.sample();
+			vmlist.add(new OnlineVm(brokerId, mips, pesNumber, ram, bw, size, vmm,
 					new CloudletSchedulerSpaceShared(), datacenterId));
 		}
 		return vmlist;

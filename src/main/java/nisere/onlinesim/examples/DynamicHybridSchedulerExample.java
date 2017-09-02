@@ -21,19 +21,19 @@ public class DynamicHybridSchedulerExample extends Example {
 	
 	public static void main(String[] args) {
 
-		// hi-hi 1-10 1-1000000
-		// lo-lo 1-2 100000-400000
-		// hi-lo 1-10 100000-400000
-		// lo-hi 1-2 1-1000000
+		// cloudlets x-2x to work (delta chosen is 1.7) 1000000-2000000 = lo (15% > 1.7)
+		// lo-lo 1000 1000000-2000000 / all 430-473
+		// hi-lo 1000-5000 1000000-2000000 / all 430-473
+		// lo-hi 1000 500000-5650000 / all 1050-1155
+		// hi-hi 1000-5000 500000-5650000 / all 1050-1155
 		
 		int noCloudlets = 1200; // used to create random Cloudlets
 		int noVms = 16; // used to create random VMs
-		// generate [minMipsUnif;maxMipsUnif) and multiply with 1000 to get mips
-		int minMipsUnif = 1;
-		int maxMipsUnif = 2;
+		int minMipsUnif = 1000;
+		int maxMipsUnif = 5000;
 		// generate length [minLengthUnif;maxLengthUnif)
-		int minLengthUnif = 100000;
-		int maxLengthUnif = 4000000;
+		int minLengthUnif = 500000;
+		int maxLengthUnif = 5650000;
 		int seed = 10;
 		
 		int schedulingInterval = 100;
@@ -42,8 +42,8 @@ public class DynamicHybridSchedulerExample extends Example {
 		int maxArrivalUnif = 100;//500;
 		
 		// generate deadline [minDeadlineUnif;maxDeadlineUnif)
-		int minDeadlineUnif = 1000;
-		int maxDeadlineUnif = 4000;
+		int minDeadlineUnif = 1050;
+		int maxDeadlineUnif = 1155;
 		
 		//price intervals for datacenters
 		int priceInterval1 = 500;
@@ -67,11 +67,11 @@ public class DynamicHybridSchedulerExample extends Example {
 			//SchedulingAlgorithm algorithm = new MaxMinAlgorithm();
 			//SchedulingAlgorithm algorithm = new LJFR_SJFRAlgorithm();
 			//SchedulingAlgorithm algorithm = new MinMinAlgorithm2();
-			SchedulingAlgorithm algorithm = new DeadlineAlgorithm();
+			//SchedulingAlgorithm algorithm = new DeadlineAlgorithm();
 
-//			MixDeadlineAlgorithm algorithm = new MixDeadlineAlgorithm();
-//			algorithm.setDeadlineDelta(1.1);
-//			algorithm.setLengthDelta(1.7);
+			MixDeadlineAlgorithm algorithm = new MixDeadlineAlgorithm();
+			algorithm.setDeadlineDelta(1.1);
+			algorithm.setLengthDelta(1.7);
 			
 			SchedulingAlgorithm publicAlgorithm = new PublicAlgorithm();
 			
@@ -102,13 +102,13 @@ public class DynamicHybridSchedulerExample extends Example {
 
 			/* Create custom VM types. */
 			OnlineVm vm1 = new OnlineVm(broker.getId(), 1000, 1, 1024, 1000, 10000, "Xen", new CloudletSchedulerSpaceShared());
-			OnlineVm vm2 = new OnlineVm(broker.getId(), 2000, 1, 1024, 1000, 10000, "Xen", new CloudletSchedulerSpaceShared());
-			OnlineVm vm3 = new OnlineVm(broker.getId(), 3000, 1, 1024, 1000, 10000, "Xen", new CloudletSchedulerSpaceShared());
+			OnlineVm vm2 = new OnlineVm(broker.getId(), 3000, 1, 1024, 1000, 10000, "Xen", new CloudletSchedulerSpaceShared());
+			OnlineVm vm3 = new OnlineVm(broker.getId(), 5000, 1, 1024, 1000, 10000, "Xen", new CloudletSchedulerSpaceShared());
 
 			ArrayList<VmType> vmTypes1 = new ArrayList<>();
 			vmTypes1.add(new VmType(vm1, noCloudlets, 1.0, priceInterval1, "PB1_1.0"));
-			vmTypes1.add(new VmType(vm2, noCloudlets, 1.5, priceInterval1, "PB1_1.5"));
-			vmTypes1.add(new VmType(vm3, noCloudlets, 2.5, priceInterval1, "PB1_2.5"));
+			vmTypes1.add(new VmType(vm2, noCloudlets, 3.0, priceInterval1, "PB1_3.0"));
+			vmTypes1.add(new VmType(vm3, noCloudlets, 5.0, priceInterval1, "PB1_5.0"));
 
 			/* Create the datacenter. */
 			createDatacenter("Public1", vmTypes1,false);
@@ -120,11 +120,12 @@ public class DynamicHybridSchedulerExample extends Example {
 			/* Create custom VM types. */
 			OnlineVm vm4 = new OnlineVm(broker.getId(), 1500, 1, 1024, 512, 5000, "Xen", new CloudletSchedulerSpaceShared());
 			OnlineVm vm5 = new OnlineVm(broker.getId(), 2500, 1, 1024, 512, 5000, "Xen", new CloudletSchedulerSpaceShared());
+			OnlineVm vm6 = new OnlineVm(broker.getId(), 4500, 1, 1024, 512, 5000, "Xen", new CloudletSchedulerSpaceShared());
 
 			ArrayList<VmType> vmTypes2 = new ArrayList<>();
-			vmTypes2.add(new VmType(vm1, noCloudlets, 0.9, priceInterval2, "PB2_0.9"));
-			vmTypes2.add(new VmType(vm4, noCloudlets, 1.5, priceInterval2, "PB2_1.5"));
-			vmTypes2.add(new VmType(vm5, noCloudlets, 2.0, priceInterval2, "PB2_2.0"));
+			vmTypes2.add(new VmType(vm4, noCloudlets, 0.9, priceInterval2, "PB2_1.4"));
+			vmTypes2.add(new VmType(vm5, noCloudlets, 1.5, priceInterval2, "PB2_2.6"));
+			vmTypes2.add(new VmType(vm6, noCloudlets, 2.0, priceInterval2, "PB2_4.4"));
 
 			/* Create the datacenter. */
 			createDatacenter("Public2", vmTypes2,false);
